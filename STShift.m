@@ -1,7 +1,6 @@
 function [stShiftedTrain] = STShift(stTrain, tOffset)
 
-% STShift - FUNCTION Offset a spike train in time
-% $Id: STShift.m 3987 2006-05-09 13:38:38Z dylan $
+% FUNCTION STShift - Offset a spike train in time
 %
 % Usage: [stShiftedTrain] = STShift(stTrain, tOffset)
 %
@@ -9,13 +8,12 @@ function [stShiftedTrain] = STShift(stTrain, tOffset)
 % time in seconds to offset the spike train by.  'stShiftedTrain' will have an
 % instance or mapping or both, depending on the input in 'stTrain'.
 %
-% Note that shifting a spike train with a definition will strip the definition
-% from the train.  Shifting a spike train with only a definition will erase
-% the train and STShift will return an empty matrix.
+% Note that shifting a spike train definition has no effect.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 3rd May, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
+
+% $Id: STShift.m,v 1.1 2004/06/04 09:35:48 dylan Exp $
 
 % -- Check arguments
 
@@ -29,43 +27,19 @@ if (nargin < 2)
    return;
 end
 
-% - Test for zero-duration spike trains
-if (STIsZeroDuration(stTrain))
-   stShiftedTrain = stTrain;
-   return;
-end
-
 
 % -- Shift train
 
-if (FieldExists(stTrain, 'instance'))
+if (isfield(stTrain, 'instance'))
    stShiftedTrain.instance = STShiftNode(stTrain.instance, tOffset);
-   stShiftedTrain.instance.tDuration = stShiftedTrain.instance.tDuration + tOffset;
 end
 
-if (FieldExists(stTrain, 'mapping'))
-	% - How many time bins should we shift?
-	nBinOffset = round(tOffset / stTrain.mapping.fTemporalResolution);
-	
-	% - Are we shifting at all?
-	if (abs(nBinOffset) < 1)
-		disp('--- STShift: The time offset was negligible for shifting the mapped train');
-		stShiftedTrain.mapping = stTrain.mapping;
-	else
-		stShiftedTrain.mapping = STShiftNode(stTrain.mapping, nBinOffset);
-	end
-   
-   % - Shift duration
-   stShiftedTrain.mapping.tDuration = stShiftedTrain.mapping.tDuration + tOffset;
+if (isfield(stTrain, 'mapping'))
+   stShiftedTrain.mapping = STShiftNode(stTrain.mapping, tOffset / stTrain.mapping.fTemporalResolution);
 end
 
 if (isfield(stTrain, 'definition'))
    disp('--- STShift: Warning: A spike train definition was stripped from the shifted train');
-end
-
-if (~exist('stShiftedTrain', 'var'))
-   disp('--- STShift: There''s nothing left!');
-   stShiftedTrain = [];
 end
 
 % --- FUNCTION STShiftNode
@@ -73,6 +47,13 @@ end
 function [nodeShifted] = STShiftNode(node, tOffset)
 
 nodeShifted = node;
+
+% -- Handle zero-duration ndoes
+
+if (node.tDuration == 0)
+   nodeShifted = node;
+   return;
+end
 
 % - Extract the spike train
 
@@ -97,3 +78,14 @@ else
 end
 
 % --- END of STShift.m ---
+
+% $Log: STShift.m,v $
+% Revision 1.1  2004/06/04 09:35:48  dylan
+% Reimported (nonote)
+%
+% Revision 1.3  2004/05/05 16:15:17  dylan
+% Added handling for zero-length spike trains to various toolbox functions
+%
+% Revision 1.2  2004/05/04 09:40:07  dylan
+% Added ID tags and logs to all version managed files
+%

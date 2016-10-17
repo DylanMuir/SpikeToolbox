@@ -1,30 +1,24 @@
 function [vInstFrequency] = STProfileFrequency(stTrain, tTimeWindow, strLevel)
 
-% STProfileFrequency - FUNCTION Calculate a frequency profile from a spike train
-% $Id: STProfileFrequency.m 3987 2006-05-09 13:38:38Z dylan $
+% FUNCTION STProfileFrequency - Calculate a frequency profile from a spike train
 %
 % Usage: [vInstFrequency] = STProfileFrequency(stTrain, tTimeWindow)
 %        [vInstFrequency] = STProfileFrequency(stTrain, tTimeWindow, strLevel)
 %
 % 'stTrain' is a spike train with either an instance or a mapping.
-% 'tTimeWindow' specifies the duration in seconds of the time bins that spikes
-% will be lumped into.  'strLevel' optionally specifies whether a spike train
-% instance or mapping will be used, and must be one of {instance, mapping}.
+% 'tTimeWindow' specifies the duration of the time bins that spikes will be
+% lumped into.  'strLevel' optionally specifies whether a spike train instance
+% or mapping will be used, and must be one of {instance, mapping}.
 % STProfileFrequency will calculate the spike train frequency for each bin.
 % These frequencies will be returned in 'vInstFrequency'.  The format will be
 % [time_stamp  frequency]. 'time_stamp' is a real value representing the median
 % time of each bin.  'frequency' is the average frequency of the spike train
 % during each time bin, in Hz.
-%
-% See STProfileCount for basic spike binning.
-% See STProfileFrequencyAddresses for profiling spikes from multiplexed mapped
-% spike trains.
-% Note that STProfileFrequency will calculate frequencies using spikes
-% irrespective of their source or target address.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 29th April, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
+
+% $Id: STProfileFrequency.m,v 1.1 2004/06/04 09:35:48 dylan Exp $
 
 % -- Check arguments
 
@@ -38,17 +32,10 @@ if (nargin < 2)
    return;
 end
 
-% - Test for a zero-duration spike train
-if (STIsZeroDuration(stTrain))
-   warning('SpikeToolbox:ZeroDuration','STProfileFrequency: Zero-duration spike train.');
-   vInstFrequency = [0 0];
-   return;
-end
-
 
 % -- Get binned counts
 
-if (exist('strLevel', 'var') == 1)
+if (exist('strLevel') == 1)
    vBinnedCounts = STProfileCount(stTrain, tTimeWindow, strLevel);
 else
    vBinnedCounts = STProfileCount(stTrain, tTimeWindow);
@@ -60,3 +47,11 @@ end
 vInstFrequency = [vBinnedCounts(:, 1), vBinnedCounts(:, 2) ./ tTimeWindow];
 
 % --- END of STProfileFrequency.m ---
+
+% $Log: STProfileFrequency.m,v $
+% Revision 1.1  2004/06/04 09:35:48  dylan
+% Reimported (nonote)
+%
+% Revision 1.3  2004/05/04 09:40:07  dylan
+% Added ID tags and logs to all version managed files
+%

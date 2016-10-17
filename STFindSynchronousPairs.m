@@ -1,7 +1,6 @@
 function [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2, tWindowSize, strLevel)
 
-% STFindSynchronousPairs - FUNCTION Identify synchronous spikes in spike trains
-% $Id: STFindSynchronousPairs.m 3987 2006-05-09 13:38:38Z dylan $
+% FUNCTION STFindSyncrhonousPairs
 %
 % Usage: [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2)
 %        [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2, tWindowSize)
@@ -13,8 +12,8 @@ function [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2, tWindowSize, str
 % 'stPairs' will contain a spike train instance, each spike of which
 % represents a spike in 'stTrain1' that had a corresponding spike in
 % 'stTrain2' that falls within the specified time window.  If 'tWindowSize' is
-% not supplied, the toolbox option DefaultWindowSize will be used.  To
-% change this setting, see STOptions.
+% not supplied, the global default DEFAULT_WINDOW_SIZE will be used.  To
+% change this setting, see STAccessDefaults.
 %
 % 'strLevel' can optionally be provided to specify a spike train level to
 % match, and should be one of {'instance', 'mapping'}.
@@ -27,16 +26,18 @@ function [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2, tWindowSize, str
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 28th April, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
-% -- Get options
+% $Id: STFindSynchronousPairs.m,v 1.1 2004/06/04 09:35:47 dylan Exp $
 
-stOptions = STOptions;
+% -- Define globals
+
+global   DEFAULT_WINDOW_SIZE;
+STCreateDefaults;
 
 
 % -- Check arguments
 
-if ((nargin > 1) && iscell(stTrain1))
+if ((nargin > 1) & iscell(stTrain1))
    % - The user has supplied a cell array of spike trains
    if (nargin > 3)
       disp('--- STFindSynchronousPairs: Extra arguments ignored');
@@ -51,7 +52,7 @@ if ((nargin > 1) && iscell(stTrain1))
    if (nargin > 1)
       tWindowSize = stTrain2;
    else
-      tWindowSize = stOptions.DefaultSynchWindowSize;
+      tWindowSize = DEFAULT_WINDOW_SIZE;
       disp(sprintf('--- STFindSynchronousPairs: Using default window size [%.2f] msec', tWindowSize / 1e-3));
    end
    
@@ -60,8 +61,8 @@ else  % The user hasn't supplied a cell array or spike trains
       disp('--- STFindSynchronousPairs: Extra arguments ignored');
    end
 
-   if (~exist('tWindowSize', 'var'))
-      tWindowSize = stOptions.DefaultSynchWindowSize;
+   if (~exist('tWindowSize'))
+      tWindowSize = DEFAULT_WINDOW_SIZE;
       disp(sprintf('--- STFindSynchronousPairs: Using default window size [%.2f] msec', tWindowSize / 1e-3));
    end
 end
@@ -76,28 +77,28 @@ if (iscell(stTrain1))
       return;
    end
    
-   % - Show some progress
-   STProgress('Spike train [%02d/%02d]', 2, length(stTrain1));
+   % - Show some status
+   fprintf(1, 'Spike train [%02d/%02d]', 2, length(stTrain1));
    
    % - Get the first set of pairs
-   if (exist('strLevel', 'var') == 1)
-      stPairs = STFindSynchronousPairs(stTrain1{1}, stTrain1{2}, tWindowSize, strLevel);
+   if (exist('strLevel') == 1)
+      stPairs = STFindSynchronousPairs(stTrain1{1}, stTrain2{2}, tWindowSize, strLevel);
    else
-      stPairs = STFindSynchronousPairs(stTrain1{1}, stTrain1{2}, tWindowSize);
+      stPairs = STFindSynchronousPairs(stTrain1{1}, stTrain2{2}, tWindowSize);
    end
    
    % - Loop over the remaining trains (won't get executed if length(stTrain1) < 3
    for (nTrainIndex = 3:length(stTrain1))
-      if (exist('strLevel', 'var') == 1)
-         stPairs = STFindSynchronousPairs(stPairs, stTrain1{nTrainIndex}, strLevel);
+      if (exist('strLevel') == 1)
+         stPairs = STFindSynchronousPairs(stPairs, stTrain{nTrainIndex}, strLevel);
       else
-         stPairs = STFindSynchronousPairs(stPairs, stTrain1{nTrainIndex});
+         stPairs = STFindSynchronousPairs(stPairs, stTrain{nTrainIndex});
       end
       
-      STProgress('\b\b\b\b\b\%02d/%02d]', nTrainIndex, length(stTrain1));         
+      fprintf(1, '\b\b\b\b\b\%02d/%02d]', nTrainIndex, length(stTrain1));         
    end
    
-   STProgress('\n');
+   fprintf(1, '\n');
    
    return;
 end
@@ -107,7 +108,7 @@ end
 
 % -- Which spike train level should we try to match?
 
-if (exist('strLevel', 'var') == 1)
+if (exist('strLevel') == 1)
    % - The user supplied a spike train level, so verify it
    [strLevel, bNotExisting, bInvalidLevel] = STFindMatchingLevel(stTrain1, stTrain2, strLevel);
    
@@ -117,7 +118,7 @@ if (exist('strLevel', 'var') == 1)
       return;
    end
    
-   if (bInvalidLevel || strcmp(strLevel, 'definition'))
+   if (bInvalidLevel | strcmp(strLevel, 'definition'))
       % - The user supplied an invalid spike train level
       SingleLinePrintf('*** STFindSynchronousPairs: Invalid spike train level [%s].', strLevel);
       disp('       strLevel must be one of {instance, mapping}');
@@ -212,7 +213,7 @@ for (nChunkIndex1 = 1:length(spikeList1))
          
          % - Match the times with spike train 1
          chunkMatches = [chunkMatches;...
-                         spikeTime1((spikeSearch2 >= minTime) & (spikeSearch2 <= maxTime))];
+                         spikeTime1(find((spikeSearch2 >= minTime) & (spikeSearch2 <= maxTime)))];
       end
    end
    
@@ -225,3 +226,11 @@ end
 stPairs.instance = nodeMatch;
 
 % --- END of STFindSynchronousPairs.m ---
+
+% $Log: STFindSynchronousPairs.m,v $
+% Revision 1.1  2004/06/04 09:35:47  dylan
+% Reimported (nonote)
+%
+% Revision 1.5  2004/05/04 09:40:07  dylan
+% Added ID tags and logs to all version managed files
+%

@@ -1,17 +1,14 @@
 function [stNormTrain] = STNormalise(stTrain)
 
-% STNormalise - FUNCTION Shift a spike train to time zero and fix its duration
-% $Id: STNormalise.m 2411 2005-11-07 16:48:24Z dylan $
+% FUNCTION STNormalise -- Shift a spike train to time zero and fix its duration
 %
 % Usage: [stNormTrain] = STNormalise(stTrain)
 %
-% This function will shift the first spike in a spike train to time zero, and
-% correct the duration fields of the spike train object to reflect the true
-% duration of the train.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Date: 14th May, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
+
+% $Id: STNormalise.m,v 1.1 2004/06/04 09:35:48 dylan Exp $
 
 % -- Check arguments
 
@@ -54,7 +51,6 @@ if (nodeNorm.bChunkedMode)
    nNumChunks = node.nNumChunks;
 else
    spikeList = {node.spikeList};
-   nNumChunks = 1;
 end
 
 tOldFirstSpikeTime = spikeList{1}(1, 1);
@@ -75,3 +71,23 @@ else
 end
 
 % --- END of STNormalise.m ---
+
+% $Log: STNormalise.m,v $
+% Revision 1.1  2004/06/04 09:35:48  dylan
+% Reimported (nonote)
+%
+% Revision 1.1  2004/05/14 15:37:19  dylan
+% * Created utilities/CellFlatten.m -- CellFlatten coverts a list of items
+% into a cell array containing a single cell for each item.  CellFlatten will
+% also flatten the heirarchy of a nested cell array, returning all cell
+% elements on a single dimension
+% * Created utiltites/CellForEach.m -- CellForEach executes a specified
+% function for each top-level element of a cell array, and returns a matrix of
+% the results.
+% * Converted spike_tb/STFindMatchingLevel to natively process cell arrays of trains
+% * Converted spike_tb/STMultiplex to natively process cell arrays of trains
+% * Created spike_tb/STCrop.m -- STCrop will crop a spike train to a specified
+% time extent
+% * Created spike_tb/STNormalise.m -- STNormalise will shift a spike train to
+% begin at zero (first spike is at zero) and correct the duration
+%

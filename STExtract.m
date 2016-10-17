@@ -1,45 +1,26 @@
-function [stExtTrain] = STExtract(stTrain, varargin)
+function [stExtTrain] = STExtract(stTrain, nNeuron, nSynapse)
 
-% STExtract - FUNCTION Extract a single spike train from a multiplexed mapping
-% $Id: STExtract.m 3987 2006-05-09 13:38:38Z dylan $
+% FUNCTION STExtract - Extract a single spike train from a multiplexed mapping
 %
-% Usage: [stExtTrain] = STExtract(stTrain, nAddr1, nAddr2, ...)
-%        [stExtTrain] = STExtract(stTrain, [nAddr1Min  nAddr1Max], [nAddr2Min  nAddr2Max], ...)
+% Usage: [stExtTrain] = STExtract(stTrain, nNeuron)
+%        [stExtTrain] = STExtract(stTrain, nNeuron, nSynapse)
 %
-% 'stTrain' must contain a mapped spike train.  'nAddr...' specify neuron
-% and synapse addresses to extract from 'stTrain'.  The spikes from this
-% address will be returned in a new mapped spike train 'stExtTrain'.
-%
-% Under the second usage mode, an address range can be specified.  In this
-% case, all spikes with addresses falling within the address range will be
-% extracted and returned in 'stExtTrain'.  For each addressing field, a
-% minimum and maximum should be supplied.  If these are the same value, only
-% one is required.
-%
-% For example, the command
-%    STExtract(stTrain, [0 5], 4)
-% will extract spikes from 'stTrain', using {0 4} as the minimum address and
-% {5 4} as the maximum address.
-%
-%    STExtract(stTrain, [0 5], [2 4])
-% will extract spikes from 'stTrain', using {0 2} as the minimum address and
-% {5 4} as the maximum address.
-%
-% Note that the addressing range applies to the logical addresses, and the
-% range for each field does not apply specifically to that field.  In the
-% second example above, the address {7 3} may fall with the addressing range,
-% if the second field is major and the first minor.  This becomes clear when
-% one considers that the minimum address may translate to '2.0' and the
-% maximum to '4.8' in logical addresses.
-%
-% Note that the addressing specification will be taken from 'stTrain' and can
-% not be overridden.
+% 'stTrain' must contain a mapped spike train.  'nNeuron' (and optionally
+% 'nSynapse') specify IDs to filter from the multiplexed train 'stTrain'.
+% 'stExtTrain' will contain a mapped spike train extracted from 'stTrain',
+% with the IDs specified by 'nNeuon' and 'nSynapse'.  If 'nSynapse' is not
+% specified, all trains sent to a particular neuron will be extracted.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 9th May, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
+
+% $Id: STExtract.m,v 1.1 2004/06/04 09:35:47 dylan Exp $
 
 % -- Check arguments
+
+if (nargin > 3)
+   disp('--- STExtract: Extra arguments ignored');
+end
 
 if (nargin < 2)
    disp('*** STExtract: Incorrect usage');
@@ -51,35 +32,16 @@ if (~isfield(stTrain, 'mapping'))
    return;
 end
 
-% - Check for a zero-duration spike train
-if (STIsZeroDuration(stTrain))
-   disp('--- STExtract: Warning: Zero-duration spike train');
-   stExtTrain = stTrain;
-   return;
-end
-
-% - Check addresses supplied
-vAddressLengths = CellForEach(@length, varargin);
-vbArrayAddresses = (vAddressLengths > 1);
-
-% - Get addressing specification
-stasSpecification = stTrain.mapping.stasSpecification;
-
 
 % -- Get address range to search for
 
-if (any(vbArrayAddresses))
-   % - Use 'min' and 'max' to add a bit of leniency
-   cellMinAddresses = CellForEachCell(@min, varargin);
-   cellMaxAddresses = CellForEachCell(@max, varargin);
-   
-   % - Get the address range end points
-   addrLogMin = STAddrLogicalConstruct(stasSpecification, cellMinAddresses{:});
-   addrLogMax = STAddrLogicalConstruct(stasSpecification, cellMaxAddresses{:});
-   
+if (nargin < 3)
+   % - We want to extract for all synapses on a given neuron
+   addrLogMin = STConstructLogicalAddress(nNeuron, 0);
+   addrLogMax = addrLogMin + 1;
 else
    % - We want to extract for a specific synapse
-   addrLogMin = STAddrLogicalConstruct(stasSpecification, varargin{:});
+   addrLogMin = STConstructLogicalAddress(nNeuron, nSynapse);
    addrLogMax = addrLogMin;
 end
 
@@ -94,13 +56,12 @@ if (mapping.bChunkedMode)
    mapping.nNumChunks = stTrain.mapping.nNumChunks;
 end
 
-% - Copy the addressing information
-mapping.stasSpecification = stasSpecification;
+mapping.nNeuron = nNeuron;
 
-if (~any(vbArrayAddresses))
+if (nargin > 2)
    % - Assign a specific synapse logical address to the mapping
-   mapping.addrFields = varargin;
-   mapping.addrSynapse = addrLogMin;
+   mapping.nSynapse = nSynapse;
+   mapping.addrSynapse = STConstructLogicalAddress(nNeuron, nSynapse);
 end
 
 % - Extract the spike list
@@ -115,8 +76,8 @@ end
 % - Filter the spike list
 for (nChunkIndex = 1:nNumChunks)
    rawSpikeList = spikeList{nChunkIndex};
-   vbMatchingSpikes = (rawSpikeList(:, 2) >= addrLogMin) & (rawSpikeList(:, 2) <= addrLogMax);
-   spikeList{nChunkIndex} = rawSpikeList(vbMatchingSpikes, :);
+   matchingSpikes = (rawSpikeList(:, 2) >= addrLogMin) & (rawSpikeList(:, 2) <= addrLogMax);
+   spikeList{nChunkIndex} = rawSpikeList(find(matchingSpikes), :);
 end
 
 % - Reassign the spike list
@@ -130,3 +91,33 @@ end
 stExtTrain.mapping = mapping;
 
 % --- END of STExtract.m ---
+
+% $Log: STExtract.m,v $
+% Revision 1.1  2004/06/04 09:35:47  dylan
+% Reimported (nonote)
+%
+% Revision 1.1  2004/05/09 17:55:15  dylan
+% * Created STFlatten function to convert a spike train mapping back into an
+% instance.
+% * Created STExtract function to extract a train(s) from a multiplexed
+% mapped spike train
+% * Renamed STConstructAddress to STConstructPhysicalAddress
+% * Modified the address format for spike train mappings such that the
+% integer component of an address specifies the neuron.  This makes raster
+% plots much easier to read.  The format is now
+% |NEURON_BITS|.|SYNAPSE_BITS|  This is now referred to as a logical
+% address.  The format required by the PCIAER board is referred to as a
+% physical address.
+% * Created STConstructLogicalAddress and STExtractLogicalAddress to
+% convert neuron and synapse IDs to and from logical addresses
+% * Created STExtractPhysicalAddress to convert a physical address back to
+% neuron and synapse IDs
+% * Modified STConstructPhysicalAddress so that it accepts vectorised input
+% * Modified STConcat so that it accepts cell arrays of spike trains to
+% concatenate
+% * Modified STExport, STImport so that they handle logical / physical
+% addresses
+% * Fixed a bug in STMultiplex and STConcat where spike event addresses were
+% modified when temporal resolutions were different across spike trains
+% * Modified STFormats to reflect addresss format changes
+%

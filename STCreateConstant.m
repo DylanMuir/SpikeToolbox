@@ -1,22 +1,17 @@
-function [cstTrain] = STCreateConstant(fFreq)
+function [stTrain] = STCreateConstant(fFreq)
 
-% STCreateConstant - FUNCTION Create a constant frequency spike train definition
-% $Id: STCreateConstant.m 2411 2005-11-07 16:48:24Z dylan $
+% FUNCTION STCreateConstant - Create a constant frequency spike train definition
 %
-% Usage: [stTrain] = STCreateConstant(fFrequency)
-%        [cstTrain] = STCreateConstant(vfFreqyency)
+% Usage: [stTrain] = STCreateConstant(fFreq)
 %
 % STCreateConstant will create a spike train definition where the spiking
-% frequency is constant.  'fFrequency' specifies the spiking frequency.  'stTrain'
+% frequency is constant.  'fFreq' specifies the spiking frequency.  'stTrain'
 % will comprise of a field 'definition' containing the spike train definition.
-%
-% 'vfFrequency' can optionally be provided as an array of frequencies.  In
-% this case, 'cstTrain' will be a cell array of spike trains, each one
-% corresponding to a frequncy taken in order from 'vfFrequency'.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 26th March, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
+
+% $Id: STCreateConstant.m,v 1.1 2004/06/04 09:35:47 dylan Exp $
 
 % -- Check arguments
 
@@ -26,22 +21,19 @@ if (nargin < 1)
     return;
 end
 
+% -- Create definition
 
-% -- Create definitions
-
-nNumTrains = numel(fFreq);
-cstTrain = cell(nNumTrains, 1);
-
-for (nTrainIndex = 1:nNumTrains)
-    cstTrain{nTrainIndex}.definition.strType = 'constant';
-    cstTrain{nTrainIndex}.definition.fFreq = fFreq(nTrainIndex);
-    cstTrain{nTrainIndex}.definition.fhInstFreq = @STInstantaneousFrequencyConstant;
-    cstTrain{nTrainIndex}.definition.fhPlotFunction = @STPlotDefConstant;
-end
-
-% - Fix output variables for only a single spike train
-if (nNumTrains == 1)
-    cstTrain = cstTrain{1};
-end
+stTrain = [];
+stTrain.definition.strType = 'constant';
+stTrain.definition.fFreq = fFreq;
+stTrain.definition.fhInstFreq = @STInstantaneousFrequencyConstant;
 
 % --- END of STCreateConstant.m ---
+
+% $Log: STCreateConstant.m,v $
+% Revision 1.1  2004/06/04 09:35:47  dylan
+% Reimported (nonote)
+%
+% Revision 1.3  2004/05/04 09:40:06  dylan
+% Added ID tags and logs to all version managed files
+%

@@ -1,14 +1,12 @@
-function [stTrain] = STMap(stTrain, varargin)
+function [stTrain] = STMap(stTrain, nNeuron, nSynapse)
 
-% STMap - FUNCTION Map a spike train to a specific neuron and synapse
-% $Id: STMap.m 8204 2008-01-09 14:29:44Z giacomo $
+% FUNCTION STMap - Map a spike train to a specific neuron and synapse
 %
-% Usage: [stTrain] = STMap(stInstantiatedTrain, nAddr1, nAddr2, ...)
-%        [stTrain] = STMap(stInstantiatedTrain, stasAddressingSpecifcation, nAddr1, nAddr2, ...)
-%
+% Usage: [stTrain] = STMap(stInstantiatedTrain, nNeuron, nSynapse)
 % Where: 'stInstantiatedTrain' is an instantiated spike train, as created by
-% STInstantiate.  'nAddr1', 'nAddr2', etc. are addresses corresponding to
-% the (used) fields in the current addressing specification.  
+% STInstantiate.  'nNeuron' is the index of the neuron to map the train to.
+% 'nSynapse' is the index of the synapse to map the train to.  'stTrain' will
+% have a field 'mapping' added to it, containing the mapped train.
 %
 % STMap can accept arrays for any of its arguments.  In this case, the
 % output will be a cell array of the same size as the cellular input.  This
@@ -19,103 +17,91 @@ function [stTrain] = STMap(stTrain, varargin)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 29th March, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
-% -- Get options
+% $Id: STMap.m,v 1.1 2004/06/04 09:35:48 dylan Exp $
 
-stOptions = STOptions;
-MappingTemporalResolution = stOptions.MappingTemporalResolution;
+% -- Define globals
+
+global MAPPING_TEMPORAL_RESOLUTION;
 
 
 % -- Check arguments
 
-if (nargin < 2)
+if (nargin > 3)
+   disp('--- STMap: Extra arguments ignored');
+end
+
+if (nargin < 3)
    disp('*** STMap: Incorrect number of argumnets');
    help STMap;
    return;
 end
 
-% -- Extract addressing information
-[stasSpecification, varargin] = STAddrFilterArgs(varargin{:});
-
-% - Is it a valid addressing specification?
-if (~STIsValidAddrSpec(stasSpecification))
-   disp('*** STMap: Invalid addressing specification supplied');
-   return;
-end
-
-% - Determine whether address fields are arrays or not
-vAddressArraySizes = CellForEach(@numel, varargin);
-vbIsArrayAddress = vAddressArraySizes > 1;
-
-% - Should we 'cellify' the output?
-bArrayTrain = iscell(stTrain);
-bArrayOutput = any(vbIsArrayAddress) | bArrayTrain;
-
 
 % -- Handle cell arrays of spike trains
 
-if (bArrayOutput)
-   % - What size should the output be?
+bArrayTrain = iscell(stTrain);
+bArrayNeuron = (max(size(nNeuron)) > 1);
+bArraySynapse = (max(size(nSynapse)) > 1);
+
+if (bArrayTrain | bArrayNeuron | bArraySynapse)
+   % - At least one of these arguments is an array so we should 'cellify'
+   % - the output
+   
+   % -- Determine what size the output array should be
    if (bArrayTrain)
       % - If the spike train was supplied as a cell array, this should define
       % - the size of the output array
       vOutputSize = size(stTrain);
       
-   else
-      % - The first array addressing field will specify the size of the output
-      % array
-      nFirstArrayIndex = find(vAddressArraySizes > 1, 1 );
-      vOutputSize = size(varargin{nFirstArrayIndex});
+   elseif (bArrayNeuron)
+      vOutputSize = size(nNeuron);
+      
+   else % nSynapse must be an array
+      vOutputSize = size(nSynapse);
    end
    
-   % - Convert non-array elements to arrays
+   % -- Convert non-array arguments to array format
    if (~bArrayTrain)
-      % - Convert spike train to cell
       stTrainCell = cell(vOutputSize);
       stTrainCell(:) = deal({stTrain});
       stTrain = stTrainCell;
    end
-  
-   for nAddressIndex = find(~vbIsArrayAddress)         % Only iterate over non-array fields
-      % - Convert address fields to arrays
-      varargin{nAddressIndex} = ones(vOutputSize) .* varargin{nAddressIndex};
-   end
-
-   % - Check that all arrays are the same size
-   % - NOTE: We never need to check the spike train size
-   for nAddressIndex = 1:length(varargin)
-      if (numel(varargin{nAddressIndex}) ~= prod(vOutputSize))
-         disp('*** STMap: When arrays are supplied for input, they must all be');
-         disp('       the same size');
-         return;
-      end
+   
+   if (~bArrayNeuron)
+      nNeuron = ones(vOutputSize) .* nNeuron;
    end
    
-   % - Display some progress
-   % STProgress('Mapping: Spike train [%04d/%04d]', 0, numel(stTrain));
+   if (~bArraySynapse)
+      nSynapse = ones(vOutputSize) .* nSynapse;
+   end
+   
+   % -- Check that all arguments are the same size
+   if ((prod(size(stTrain)) ~= prod(size(nNeuron))) | ...
+         (prod(size(stTrain)) ~= prod(size(nSynapse))))
+      disp('*** STMap: All cell array inputs must be of the same size');
+      return;
+   end
+   
+   fprintf(1, 'Spike train [%02d/%02d]', 0, prod(size(stTrain)));
    
    % -- Map the cell array spike trains
    % - Call STMap for each spike train
-   for nCellIndex = 1:prod(vOutputSize)
-      % - Get the current address
-      cAddress = num2cell(CellForEach(@Index, varargin, nCellIndex));
-      
-      % - Map the individually addressed train
-      stTrain{nCellIndex} = STMap(stTrain{nCellIndex}, stasSpecification, cAddress{:});
-      %STProgress('\b\b\b\b\b\b\b\b\b\b%04d/%04d]', nCellIndex, numel(stTrain));
+   for (nCellIndex = 1:prod(size(stTrain)))
+      stTrain{nCellIndex} = STMap(stTrain{nCellIndex}, nNeuron(nCellIndex), nSynapse(nCellIndex));
+      fprintf(1, '\b\b\b\b\b\b%02d/%02d]', nCellIndex, prod(size(stTrain)));
    end
-   %STProgress('\n');
+   
+   fprintf(1, '\n');
    
    % - Finished!
    return;
 end
 
 
-
 % --- Handle simple (non-cell) arguments
 
-% - Check that the spike train has been instantiated
+% -- Check that the spike train has been instantiated
 if (~isfield(stTrain, 'instance'))
    disp('*** STMap: The spike train must be instantiated with STInstantiate before');
    disp('       calling STMap');
@@ -123,12 +109,17 @@ if (~isfield(stTrain, 'instance'))
    return;
 end
 
-% - Check if the address is valid
-if (~STIsValidAddress(stasSpecification, varargin{:}))
-   disp('*** STMap: Invalid address supplied');
+% -- Check that the spike train is not of zero duration
+if (stTrain.instance.tDuration == 0)
+   disp('*** STMap: Cannot map a zero-duration spike train');
    return;
 end
-   
+
+
+% -- Check that defaults exist
+STCreateDefaults;
+
+
 % -- Map the train
 
 % - Check if the train has already been mapped
@@ -139,19 +130,11 @@ end
 % - Create the mapping
 mapping = [];
 mapping.tDuration = stTrain.instance.tDuration;
-mapping.fTemporalResolution = MappingTemporalResolution;
+mapping.fTemporalResolution = MAPPING_TEMPORAL_RESOLUTION;
 mapping.bChunkedMode = stTrain.instance.bChunkedMode;
-mapping.stasSpecification = stasSpecification;
-mapping.addrFields = varargin;
-mapping.addrSynapse = STAddrLogicalConstruct(stasSpecification, varargin{:});
-
-% - Check that the spike train is not of zero duration
-if (STIsZeroDuration(stTrain))
-   warning('SpikeToolbox:ZeroDuration', 'STMap: Zero-duration spike train');
-   mapping.spikeList = [];
-   stTrain.mapping = mapping;
-   return;
-end
+mapping.nNeuron = nNeuron;
+mapping.nSynapse = nSynapse;
+mapping.addrSynapse = STConstructLogicalAddress(nNeuron, nSynapse);
 
 % - Are we using chunked mode?
 if (stTrain.instance.bChunkedMode)
@@ -166,8 +149,8 @@ else
 end
 
 % - Map the spike lists
-for nChunkIndex = 1:nNumChunks
-   mappedSpikeList{nChunkIndex}(:, 1) = floor(spikeList{nChunkIndex} ./ MappingTemporalResolution);
+for (nChunkIndex = 1:nNumChunks)
+   mappedSpikeList{nChunkIndex}(:, 1) = floor(spikeList{nChunkIndex} ./ MAPPING_TEMPORAL_RESOLUTION);
    mappedSpikeList{nChunkIndex}(:, 2) = ones(length(spikeList{nChunkIndex}), 1) .* mapping.addrSynapse;
 end
 
@@ -181,15 +164,40 @@ end
 % - Assign mapping to spike train
 stTrain.mapping = mapping;
 
-% --- END of STMap FUNCTION ---
-
-
-% Index - FUNCTION Index into a matrix argument
-
-function [nElement] = Index(matrix, nIndex)
-
-nElement = matrix(nIndex);
-
-% --- END of Index FUNCTION ---
-
 % --- END of STMap.m ---
+
+% $Log: STMap.m,v $
+% Revision 1.1  2004/06/04 09:35:48  dylan
+% Reimported (nonote)
+%
+% Revision 1.12  2004/05/09 17:55:15  dylan
+% * Created STFlatten function to convert a spike train mapping back into an
+% instance.
+% * Created STExtract function to extract a train(s) from a multiplexed
+% mapped spike train
+% * Renamed STConstructAddress to STConstructPhysicalAddress
+% * Modified the address format for spike train mappings such that the
+% integer component of an address specifies the neuron.  This makes raster
+% plots much easier to read.  The format is now
+% |NEURON_BITS|.|SYNAPSE_BITS|  This is now referred to as a logical
+% address.  The format required by the PCIAER board is referred to as a
+% physical address.
+% * Created STConstructLogicalAddress and STExtractLogicalAddress to
+% convert neuron and synapse IDs to and from logical addresses
+% * Created STExtractPhysicalAddress to convert a physical address back to
+% neuron and synapse IDs
+% * Modified STConstructPhysicalAddress so that it accepts vectorised input
+% * Modified STConcat so that it accepts cell arrays of spike trains to
+% concatenate
+% * Modified STExport, STImport so that they handle logical / physical
+% addresses
+% * Fixed a bug in STMultiplex and STConcat where spike event addresses were
+% modified when temporal resolutions were different across spike trains
+% * Modified STFormats to reflect addresss format changes
+%
+% Revision 1.11  2004/05/05 16:15:17  dylan
+% Added handling for zero-length spike trains to various toolbox functions
+%
+% Revision 1.10  2004/05/04 09:40:07  dylan
+% Added ID tags and logs to all version managed files
+%

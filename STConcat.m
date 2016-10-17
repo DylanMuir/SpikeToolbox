@@ -1,7 +1,6 @@
 function [stCatTrain] = STConcat(stTrain1, stTrain2, strLevel)
 
-% STConcat - FUNCTION Concatenate two spike trains
-% $Id: STConcat.m 3987 2006-05-09 13:38:38Z dylan $
+% FUNCTION STConcat - Concatenate two spike trains
 %
 % Usage: [stTrain] = STConcat(stTrain1, stTrain2)
 %        [stTrain] = STConcat(stTrain1, stTrain2, strLevel)
@@ -20,11 +19,13 @@ function [stCatTrain] = STConcat(stTrain1, stTrain2, strLevel)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 2nd April, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
+
+% $Id: STConcat.m,v 1.1 2004/06/04 09:35:46 dylan Exp $
 
 % -- Check arguments
 
-if ((nargin > 0) && iscell(stTrain1))
+
+if ((nargin > 0) & iscell(stTrain1))
    % - The first argument is a cell array
    if (nargin > 2)
       disp('--- STConcat: Extra arguments ignored');
@@ -56,8 +57,8 @@ if (iscell(stTrain1))
    
    % - This loop won't be executed if there are less than two spike trains
    % in the array
-   for (nTrainIndex = 2:numel(stTrain1))
-      if (exist('strLevel', 'var') == 1)
+   for (nTrainIndex = 2:prod(size(stTrain1)))
+      if (exist('strLevel') == 1)
          stCatTrain = STConcat(stCatTrain, stTrain1{nTrainIndex}, strLevel);
       else
          stCatTrain = STConcat(stCatTrain, stTrain1{nTrainIndex});
@@ -69,23 +70,10 @@ end
 
 % -- Non-cell array mode
 
-% - Handle zero-duration spike trains
-if (STIsZeroDuration(stTrain1))
-   disp('--- STConcat: Warning: Zero-duration spike train');
-   stCatTrain = stTrain2;
-   return;
-end
-
-if (STIsZeroDuration(stTrain2))
-   disp('--- STConcat: Warning: Zero-duration spike train');
-   stCatTrain = stTrain1;
-   return;
-end
-
 % -- Should we use mappings or instances?
 % -- Which spike train level should we try to concatenate?
 
-if (exist('strLevel', 'var') == 1)
+if (exist('strLevel') == 1)
    % - The user supplied a spike train level, so verify it
    [strLevel, bNotExisting, bInvalidLevel] = STFindMatchingLevel(stTrain1, stTrain2, strLevel);
    
@@ -95,7 +83,7 @@ if (exist('strLevel', 'var') == 1)
       return;
    end
    
-   if (bInvalidLevel || strcmp(strLevel, 'definition'))
+   if (bInvalidLevel | strcmp(strLevel, 'definition'))
       % - The user supplied an invalid spike train level
       SingleLinePrintf('*** STConcat: Invalid spike train level [%s].', strLevel);
       disp('       strLevel must be one of {instance, mapping}');
@@ -116,18 +104,7 @@ end
 % - Concatenate nodes
 switch lower(strLevel)   
    case {'mapping', 'm'}
-      % - Do both spike trains share a common addressing specification?
-      if (~STAddrSpecCompare(stTrain1.mapping.stasSpecification, stTrain2.mapping.stasSpecification))
-         disp('*** STConcat: Only mapped spike trains sharing a common addressing');
-         disp('       specification can be concatenated');
-         return;
-      end
-      
-      % - Concatenate the nodes
       stCatTrain.mapping = STConcatNodes(stTrain1.mapping, stTrain2.mapping, true);
-      
-      % - Copy the addressing specification
-      stCatTrain.mapping.stasSpecification = stTrain1.mapping.stasSpecification;
       
    case {'instance', 'i'}
       stCatTrain.instance = STConcatNodes(stTrain1.instance, stTrain2.instance, false);
@@ -136,14 +113,26 @@ switch lower(strLevel)
       disp('*** STConcat: This error should never occur!');
 end
 
-% --- END STConcat FUNCTION ---
 
 
-% --- STConcatNodes - FUNCTION
+% --- FUNCTION STConcatNodes
 function [nodeCat] = STConcatNodes(node1, node2, bFixTempRes)
 % Both nodes are either instance nodes or mapping nodes
 
-% - Create a new spike train node in which to place the concatenation
+% - Handle a zero-length spiketrain
+if (node1.tDuration == 0)
+   disp('--- STConcat: Warning: Zero-length spiketrain');
+   nodeCat = node2;
+   return;
+end
+
+if (node2.tDuration == 0)
+   disp('-- STConcat: Warning: Zero-length spiketrain');
+   nodeCat = node1;
+   return;
+end
+
+% - Else create a new spiketrain in which to place the concatenation
 nodeCat.bChunkedMode = true;  % It's easier this way
 nodeCat.tDuration = node1.tDuration + node2.tDuration;
 
@@ -175,20 +164,47 @@ end
 nodeCat.nNumChunks = length(spikeList1) + length(spikeList2);
 
 % -- Offset the second spike list in time
-if (bFixTempRes)
-   for (nChunkIndex = 1:length(spikeList2))
-      % - For mappings, spike time signatures are in temporal resolution
-      % counts, therefore we need to adjust for this
-      spikeList2{nChunkIndex}(:, 1) = spikeList2{nChunkIndex}(:, 1) + (node1.tDuration / node1.fTemporalResolution);
-   end
-else
-   for (nChunkIndex = 1:length(spikeList2))
-      % - For instances, spike time signatures are in seconds
-      spikeList2{nChunkIndex}(:, 1) = spikeList2{nChunkIndex}(:, 1) + node1.tDuration;
-   end
-end   
-   
+for (nChunkIndex = 1:length(spikeList2))
+   spikeList2{nChunkIndex}(:, 1) = spikeList2{nChunkIndex}(:, 1) + (node1.tDuration / node1.fTemporalResolution);
+end
+
 nodeCat.spikeList = {spikeList1{:} spikeList2{:}};
 return;
 
 % --- END of STConcat.m ---
+
+% $Log: STConcat.m,v $
+% Revision 1.1  2004/06/04 09:35:46  dylan
+% Reimported (nonote)
+%
+% Revision 1.8  2004/05/09 17:55:14  dylan
+% * Created STFlatten function to convert a spike train mapping back into an
+% instance.
+% * Created STExtract function to extract a train(s) from a multiplexed
+% mapped spike train
+% * Renamed STConstructAddress to STConstructPhysicalAddress
+% * Modified the address format for spike train mappings such that the
+% integer component of an address specifies the neuron.  This makes raster
+% plots much easier to read.  The format is now
+% |NEURON_BITS|.|SYNAPSE_BITS|  This is now referred to as a logical
+% address.  The format required by the PCIAER board is referred to as a
+% physical address.
+% * Created STConstructLogicalAddress and STExtractLogicalAddress to
+% convert neuron and synapse IDs to and from logical addresses
+% * Created STExtractPhysicalAddress to convert a physical address back to
+% neuron and synapse IDs
+% * Modified STConstructPhysicalAddress so that it accepts vectorised input
+% * Modified STConcat so that it accepts cell arrays of spike trains to
+% concatenate
+% * Modified STExport, STImport so that they handle logical / physical
+% addresses
+% * Fixed a bug in STMultiplex and STConcat where spike event addresses were
+% modified when temporal resolutions were different across spike trains
+% * Modified STFormats to reflect addresss format changes
+%
+% Revision 1.7  2004/05/05 16:15:17  dylan
+% Added handling for zero-length spike trains to various toolbox functions
+%
+% Revision 1.6  2004/05/04 09:40:06  dylan
+% Added ID tags and logs to all version managed files
+%

@@ -1,19 +1,18 @@
-function STDescribe(var)
+function STDescribe(stTrain)
 
-% STDescribe - FUNCTION Print a description of a spike train toolbox variable
-% $Id: STDescribe.m 2411 2005-11-07 16:48:24Z dylan $
+% FUNCTION STDescribe - Print a description of a spike train
 %
-% Usage: STDescribe(var)
-%
-% STDescribe will print as much information as is available about 'var'.
+% Usage: STDescribe(stTrain)
+% STDescribe will print as much information as is available about 'stTrain'.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 29th March, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
-% -- Get options
+% $Id: STDescribe.m,v 1.1 2004/06/04 09:35:47 dylan Exp $
 
-stOptions = STOptions;
+% -- Declare globals
+
+global SPIKE_TOOLBOX_VERSION;
 
 
 % -- Check arguments
@@ -29,33 +28,108 @@ if (nargin < 1)
 end
 
 
-% -- Print some info
+% -- Check that defaults exist
+STCreateDefaults;
 
-SameLinePrintf('--- Spike toolbox version [%.2f]\n', stOptions.ToolboxVersion);
 
-% - Is is a spike train?
-if (STIsValidSpikeTrain(var))
-   % - Show some info
-   STTrainDescribe(var);
-   return;
+% -- Describe spike train
+
+
+SameLinePrintf('--- Spike toolbox version [%.2f]\n', SPIKE_TOOLBOX_VERSION);
+SameLinePrintf('This is ');
+
+if (isfield(stTrain, 'mapping'))
+   if (isfield(stTrain.mapping, 'nNeuron'))
+      SameLinePrintf('a mapped spike train:\n');
+      SameLinePrintf('   Neuron [%d] Synapse [%d] (Address [%x])\n', ...
+                     stTrain.mapping.nNeuron, stTrain.mapping.nSynapse, stTrain.mapping.addrSynapse);
+   
+   else     % must be a multiplexed spike train
+      SameLinePrintf('a multiplexed mapped spike train:\n');
+   end
+                  
+   PrintChunkedMode(stTrain.mapping);  
+   PrintDuration(stTrain);
+   PrintDefinition(stTrain);
+
+elseif (isfield(stTrain, 'instance'))
+   SameLinePrintf('an instantiated spike train:\n')
+   PrintChunkedMode(stTrain.instance);
+   PrintDuration(stTrain);
+   PrintDefinition(stTrain);
+
+elseif (isfield(stTrain, 'definition'))
+   SameLinePrintf('a simple spike train definition:\n');
+   PrintDefinition(stTrain);
+   
+else
+   SameLinePrintf('a variable of unknown type\n');
 end
 
-% - Is it an addressing specification?
-if (STIsValidAddrSpec(var))
-   disp('This is an addressing specification:');
-   fprintf(1, '   ');
-   STAddrSpecDescribe(var);
-   return;
+SameLinePrintf('\n');
+
+return;
+
+
+% --- FUNCTION PrintChunkedMode
+function PrintChunkedMode(stNode)
+if (stNode.bChunkedMode)
+   SameLinePrintf('   Using chunked mode encoding\n');
 end
 
-% - Is it an options structre?
-if (STIsValidOptionsStruct(var))
-   disp('This is a spike toolbox options structure:');
-   STOptionsDescribe(var);
-   return;
+return;
+
+
+
+% --- FUNCTION PrintDuration
+function PrintDuration(stTrain)
+if (isfield(stTrain, 'instance'))
+   tDuration = stTrain.instance.tDuration;
+else
+   tDuration = stTrain.mapping.tDuration;
 end
 
-% - I don't know!
-disp('This is not a spike toolbox variable!');
+SameLinePrintf('   Duration [%.2f] seconds\n', tDuration);
+
+return;
+
+
+% --- FUNCTION PrintDefintion
+function PrintDefinition(stTrain)
+if (isfield(stTrain, 'definition'))
+   SameLinePrintf('   This train contains a definition:\n');
+   
+   switch (stTrain.definition.strType)
+      case {'constant'}
+         SameLinePrintf('      Constant frequency spike train\n');
+         SameLinePrintf('      Frequency [%.2f] Hz\n', stTrain.definition.fFreq);
+         
+      case {'linear'}
+         SameLinePrintf('      Linear frequency change spike train\n');
+         SameLinePrintf('      Start freq [%.2f] Hz ==> End freq [%.2f] Hz\n', ...
+                        stTrain.definition.fStartFreq, stTrain.definition.fEndFreq);
+         
+      case {'sinusoid'}
+         SameLinePrintf('      Sinusoidal frequency change spike train\n');
+         SameLinePrintf('      Min freq [%.2f] Hz | Max freq [%.2f] Hz\n', ...
+                        stTrain.definition.fMinFreq, stTrain.definition.fMaxFreq);
+         SameLinePrintf('      Sinusoid period [%.2f] seconds\n', stTrain.definition.tPeriod);
+         
+      otherwise
+         SameLinePrintf('      (Unknown definition type)\n');
+   end
+end
+
+return;
+
+
 
 % --- END of STDescribe.m ---
+
+% $Log: STDescribe.m,v $
+% Revision 1.1  2004/06/04 09:35:47  dylan
+% Reimported (nonote)
+%
+% Revision 1.4  2004/05/04 09:40:06  dylan
+% Added ID tags and logs to all version managed files
+%

@@ -1,117 +1,92 @@
-function [hFigure] = STPlotRaster(stTrain, varargin)
+function STPlotRaster(stTrain, strLevel, strPlotOptions)
 
-% STPlotRaster - FUNCTION Make a raster plot of the spike train
-% $Id: STPlotRaster.m 3987 2006-05-09 13:38:38Z dylan $
+% FUNCTION STPlotRaster - Make a raster plot of the spike train
 %
-% Usage: <[hFigure]> = STPlotRaster(stTrain)
-%        <[hFigure]> = STPlotRaster(stTrain, <PlotOptions ...>)
-%        <[hFigure]> = STPlotRaster(stTrain, strLevel)
-%        <[hFigure]> = STPlotRaster(stTrain, strLevel, <PlotOptions ...>)
+% Usage: STPlotRaster(stTrain)
+%        STPlotRaster(stTrain, strLevel)
+%        STPlotRaster(stTrain, strPlotOptions)
+%        STPlotRaster(stTrain, strLevel, strPlotOptions)
 %
 % Where: 'stTrain' is either an instantiated or mapped spike train.  A raster
-% plot will be created in the current figure (or a new figure created) showing
+% plot will be created in the current axes (or a new figure created) showing
 % the spike train.  'strLevel' can be used to specify the spike train level to
 % plot, and must be one of {'instance', 'mapping'}.  Plotting spike train
 % definitions is not yet supported.
 %
-% The optional return argument 'hFigure' will return the handle of the new
-% figure created.
-%
-% If variable argument list 'PlotOptions' is supplied, these will be passed
-% to the matlab plot function.  These arguments take the same format described
-% in the documentation for plot.
+% If 'strPlotOptions' is supplied, this will be passed as a format string to
+% the matlab plot function.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 2nd April, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
+
+% $Id: STPlotRaster.m,v 1.1 2004/06/04 09:35:48 dylan Exp $
 
 % -- Check arguments
+
+if (nargin > 3)
+   disp('--- STPlotRaster: Extra arguments ignored');
+end
 
 if (nargin < 1)
    disp('*** STPlotRaster: Would you like help?');
    help STPlotRaster;
-   return;
 end
-
-% - We should keep the figure handle if the user has requested it
-bKeepHandle = (nargout > 0);
 
 
 % -- Handle cell arrays of spike trains
 
 if (iscell(stTrain))
-   % - Prepare a figure and axis for plotting
-   hFigure = newplot;
-   bHold = ishold;
-
-   % - Set "CellPlot" property
-   set(hFigure, 'UserData', 'CellPlot');
-   
-   % - Plot each cell in a subplot
+   clf;
    for (nRowIndex = 1:size(stTrain, 1))
       for (nColIndex = 1:size(stTrain, 2))
-         % - Make a subplot, and plot the train
          subplot(size(stTrain, 1), size(stTrain, 2), ((nColIndex-1) * size(stTrain, 1)) + nRowIndex);
-         STPlotRaster(stTrain{nRowIndex, nColIndex}, varargin{:});
+         
+         if (exist('strLevel') == 1)
+            if (exist('strPlotOptions') == 1)
+               STPlotRaster(stTrain{nRowIndex, nColIndex}, strLevel, strPlotOptions);
+            else
+               STPlotRaster(stTrain{nRowIndex, nColIndex}, strLevel);
+            end
+            
+         elseif (exist('strPlotOptions') == 1)
+            STPlotRaster(stTrain{nRowIndex, nColIndex}, strPlotOptions);
+            
+         else
+            STPlotRaster(stTrain{nRowIndex, nColIndex});
+         end
+         
+         %axis([0 6 0 2]);
       end
    end
    
-   % - Make the current figure behave sensibly
-   if (~bHold)
-      hold off;
-   end
-   
-   % - Should we return the handle?
-   if (~bKeepHandle)
-      clear hFigure;
-   end
-   
    return;
 end
 
-
-% -- Handle zero-duration spike trains
-
-if (STIsZeroDuration(stTrain))
-   disp('*** STPlotRaster: Cannot plot a zero-duration spike train');
-   return;
+% -- Extract arguments
+if (nargin > 1 & ~(strcmp(lower(strLevel), 'instance') == 1 | strcmp(lower(strLevel), 'mapping') == 1))
+   if (nargin > 2)
+      SameLinePrintf('*** STPlotRaster: Unknown spike train level [%s].\n', lower(strLevel));
+      disp('       strLevel must be one of {instance, mapping}');
+      return;
+   else
+      strPlotOptions = strLevel;
+      clear strLevel;
+   end
+   
+elseif (nargin < 3)
+   strPlotOptions = 'k.';
 end
-
-
-% -- Set up figure and axis for plotting
-
-% - Get figure and axis information
-hFigure = newplot;
-bHold = ishold;
-
-
-% -- Extract variable arguments
-
-% - Has the user supplied a spike train level?
-if ((length(varargin) > 0) && STIsValidSpikeTrainLevel(varargin{1}))
-   strLevel = varargin{1};
-      
-   % - Strip off the first argument
-   varargin = varargin(2:end);
-end
-
-PlotOptions = varargin;
-
-% - Provide default plot options
-if (isempty(PlotOptions))
-   PlotOptions = {'k.'};
-end
-
-
+   
 % -- Which spike train level should we plot?
 
-if (exist('strLevel', 'var'))             % The user wants to tell us which to use
+if (exist('strLevel') == 1)            % The user wants to tell us which to use
    switch lower(strLevel)
       case {'instance', 'i'}
          % - Test to see if the train contains an instance
          if (isfield(stTrain, 'instance'))
             % - Plot the instances
-            STPlotRasterNode(stTrain.instance, PlotOptions);
+            STPlotRasterNode(stTrain.instance, strPlotOptions);
+            return;
             
          else
             % - The train didn't contain an instance, so we can't plot it
@@ -124,7 +99,8 @@ if (exist('strLevel', 'var'))             % The user wants to tell us which to u
          % - Test to see if the train contains a mapping
          if (isfield(stTrain, 'mapping'))
             % - Plot the napping
-            STPlotRasterNode(stTrain.mapping, PlotOptions);
+            STPlotRasterNode(stTrain.mapping, strPlotOptions);
+            return;
             
          else
             % - The train didn't contain an mapping, so we can't plot it
@@ -139,10 +115,10 @@ if (exist('strLevel', 'var'))             % The user wants to tell us which to u
    
 else     % Try to work out ourselves which level to plot
    if (isfield(stTrain, 'mapping'))        % First try mappings
-      STPlotRasterNode(stTrain.mapping, PlotOptions);
+      STPlotRasterNode(stTrain.mapping, strPlotOptions);
       
    elseif (isfield(stTrain, 'instance'))  % Then try instances
-      STPlotRasterNode(stTrain.instance, PlotOptions);
+      STPlotRasterNode(stTrain.instance, strPlotOptions);
 
    else
       % - The spike train doesn't have either an instance or a mapping
@@ -152,21 +128,15 @@ else     % Try to work out ourselves which level to plot
    end
 end
 
-% - Make sure the 'hold' property is set properly
-if (bHold)
-   hold on;
-else
-   hold off;
-end
-
-% - Should we return the figure handle?
-if (~bKeepHandle)
-   clear hFigure;
-end
-
 
 % --- FUNCTION STPlotRasterNode
-function STPlotRasterNode(node, PlotOptions)
+function STPlotRasterNode(node, strPlotOptions)
+
+% -- Handle zero-duration spiketrains
+if (node.tDuration == 0)
+   disp('*** STPlotRaster: Cannot plot a zero-duration spike train');
+   return;
+end
 
 % -- Are we using chunked mode?
 if (node.bChunkedMode)
@@ -179,36 +149,43 @@ end
 hold on;
 
 for (nChunkIndex = 1:length(spikeList))
-   tSpikeTimes = spikeList{nChunkIndex}(:, 1);
-   
    if (size(spikeList{nChunkIndex}, 2) == 1)
       % - Instance
-      plot(tSpikeTimes, 1, PlotOptions{:});
-      
-      % - Define min and max neurons
-      minNeuron = 1;
-      maxNeuron = 1;
+      plot(spikeList{nChunkIndex}(:, 1), ones(length(spikeList{nChunkIndex})), strPlotOptions);
    else
       % - Mapping
-      vfAddresses = spikeList{nChunkIndex}(:, 2);
-      
-      plot(tSpikeTimes .* node.fTemporalResolution, vfAddresses, PlotOptions{:});
-      
-      % - Find min and max neurons
-      minNeuron = floor(spikeList{nChunkIndex}(:, 2))';
-      maxNeuron = ceil(spikeList{nChunkIndex}(:, 2))';   
+      plot(spikeList{nChunkIndex}(:, 1) .* node.fTemporalResolution, spikeList{nChunkIndex}(:, 2), strPlotOptions);
    end
 end
 
 hold off;
-
-% - Fix axes
-vAxes = axis;
-minRange = min([minNeuron-1  vAxes(3)]);
-maxRange = max([maxNeuron+1  vAxes(4)]);
-axis([0 node.tDuration minRange maxRange]);
-
 return;
 
 
 % --- END of STPlotRaster.m ---
+
+% $Log: STPlotRaster.m,v $
+% Revision 1.1  2004/06/04 09:35:48  dylan
+% Reimported (nonote)
+%
+% Revision 1.7  2004/05/14 15:37:19  dylan
+% * Created utilities/CellFlatten.m -- CellFlatten coverts a list of items
+% into a cell array containing a single cell for each item.  CellFlatten will
+% also flatten the heirarchy of a nested cell array, returning all cell
+% elements on a single dimension
+% * Created utiltites/CellForEach.m -- CellForEach executes a specified
+% function for each top-level element of a cell array, and returns a matrix of
+% the results.
+% * Converted spike_tb/STFindMatchingLevel to natively process cell arrays of trains
+% * Converted spike_tb/STMultiplex to natively process cell arrays of trains
+% * Created spike_tb/STCrop.m -- STCrop will crop a spike train to a specified
+% time extent
+% * Created spike_tb/STNormalise.m -- STNormalise will shift a spike train to
+% begin at zero (first spike is at zero) and correct the duration
+%
+% Revision 1.6  2004/05/05 16:15:17  dylan
+% Added handling for zero-length spike trains to various toolbox functions
+%
+% Revision 1.5  2004/05/04 09:40:07  dylan
+% Added ID tags and logs to all version managed files
+%

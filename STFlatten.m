@@ -1,7 +1,6 @@
 function [stFlatTrain] = STFlatten(stTrain)
 
-% STFlatten - FUNCTION Convert a mapped spike train back to an instance
-% $Id: STFlatten.m 2411 2005-11-07 16:48:24Z dylan $
+% FUNCTION STFlatten - Convert a mapped spike train back to an instance
 %
 % Usage: [stFlatTrain] = STFlatten(stTrain)
 %
@@ -14,7 +13,8 @@ function [stFlatTrain] = STFlatten(stTrain)
 
 % Author: Dylan Muir <sylan@ini.phys.ethz.ch>
 % Created: 9th May, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
+
+% $Id: STFlatten.m,v 1.1 2004/06/04 09:35:47 dylan Exp $
 
 % -- Check arguments
 
@@ -29,18 +29,18 @@ if (nargin < 1)
 end
 
 % - Check that a mapping exists
-if (~FieldExists(stTrain, 'mapping'))
+if (~isfield(stTrain, 'mapping'))
    disp('*** STFlatten: The spike train to flatten must contain a mapping');
    return;
 end
 
-% -- Handle a zero-duration spike train
-if (STIsZeroDuration(stTrain))
+% -- Handle a zero-duration spiketrain
+if (stTrain.mapping.tDuration == 0)
 	disp('--- STFlatten: Warning: zero-duration spiketrain');
 	instance.tDuration = 0;
 	instance.bChunkedMode = false;
 	instance.fTemporalResolution = stTrain.mapping.fTemporalResolution;
-	instance.spikeList = [];
+	instance.spikeTrain = [];
    stFlatTrain.instance = instance;
 	return;
 end
@@ -79,3 +79,39 @@ stFlatTrain.instance = instance;
 
 
 % --- END of STFlatten.m ---
+
+% $Log: STFlatten.m,v $
+% Revision 1.1  2004/06/04 09:35:47  dylan
+% Reimported (nonote)
+%
+% Revision 1.3  2004/05/10 08:37:17  dylan
+% Bug fixes
+%
+% Revision 1.2  2004/05/10 08:26:44  dylan
+% Bug fixes
+%
+% Revision 1.1  2004/05/09 17:55:15  dylan
+% * Created STFlatten function to convert a spike train mapping back into an
+% instance.
+% * Created STExtract function to extract a train(s) from a multiplexed
+% mapped spike train
+% * Renamed STConstructAddress to STConstructPhysicalAddress
+% * Modified the address format for spike train mappings such that the
+% integer component of an address specifies the neuron.  This makes raster
+% plots much easier to read.  The format is now
+% |NEURON_BITS|.|SYNAPSE_BITS|  This is now referred to as a logical
+% address.  The format required by the PCIAER board is referred to as a
+% physical address.
+% * Created STConstructLogicalAddress and STExtractLogicalAddress to
+% convert neuron and synapse IDs to and from logical addresses
+% * Created STExtractPhysicalAddress to convert a physical address back to
+% neuron and synapse IDs
+% * Modified STConstructPhysicalAddress so that it accepts vectorised input
+% * Modified STConcat so that it accepts cell arrays of spike trains to
+% concatenate
+% * Modified STExport, STImport so that they handle logical / physical
+% addresses
+% * Fixed a bug in STMultiplex and STConcat where spike event addresses were
+% modified when temporal resolutions were different across spike trains
+% * Modified STFormats to reflect addresss format changes
+%
