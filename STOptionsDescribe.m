@@ -1,7 +1,7 @@
 function STOptionsDescribe(stOptions)
 
 % STOptionsDescribe - FUNCTION Display info about an options structure
-% $Id: STOptionsDescribe.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STOptionsDescribe.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: STOptionsDescribe(stOptions)
 %        STOptionsDescribe
@@ -13,7 +13,6 @@ function STOptionsDescribe(stOptions)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 18th July, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Check arguments
 
@@ -34,14 +33,6 @@ end
 
 disp('--- Spike toolbox options:');
 fprintf(1, '   Toolbox version [%.2f]\n', stOptions.ToolboxVersion);
-
-fprintf(1, '   Operation progress display is ');
-if (stOptions.bDisplayProgress)
-   fprintf(1, '[on]\n');
-else
-   fprintf(1, '[off]\n');
-end
-
 fprintf(1, '   Default temporal resolution for spike trains:\n');
 fprintf(1, '      Instances [%.2f] usec\n', stOptions.InstanceTemporalResolution / 1e-6);
 fprintf(1, '      Mappings [%.2f] usec\n', stOptions.MappingTemporalResolution / 1e-6);
@@ -68,3 +59,5 @@ end
 fprintf(1, '\n');
 
 % --- END of STOptionsDescribe.m ---
+
+% $log$

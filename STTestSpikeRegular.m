@@ -1,55 +1,38 @@
-function STOptionsSave(stOptions, filename)
+function [nSpikeIndices] = STTestSpikeRegular(tTimeCurr, fInstFreq)
 
-% STOptionsSave - FUNCTION Save Spike Toolbox options to a file
-% $Id: STOptionsSave.m 124 2005-02-22 16:34:38Z dylan $
+% STTestSpikeRegular - FUNCTION Internal spike creation test function
+% $Id: STTestSpikeRegular.m 124 2005-02-22 16:34:38Z dylan $
 %
-% Usage: STOptionsSave
-%        STOptionsSave(stOptions)
-%        STOptionsSave(stOptions, filename)
-%
-% The first usage will save the current options as the default for the
-% toolbox.  The second usage will save the specified options as the toolbox
-% defaults.  The third usage will save the specified options to a particular
-% file.  This file can then be loaded with STOptionsLoad.
-%
-% 'stOptions' muct be a valid Spike Toolbox options structure.  Use STOptions
-% to retrieve a current valid options structure.
+% NOT for command-line use
+
+% Usage: [nSpikeIndices] = STTestSpikeRegular(tTimeCurr, fInstFreq)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
-% Created: 13th July, 2004
+% Created: 26th March, 2004
 
-% -- Declare globals
-global ST_OPTIONS_STRUCTURE_SIGNATURE ST_OPTIONS_FILE;
-STCreateGlobals;
+% -- Get options
+
+stOptions = STOptions;
+InstanceTemporalResolution = stOptions.InstanceTemporalResolution;
 
 
 % -- Check arguments
 
-if (nargin > 2)
-   disp('--- STOptionsSave: Extra arguments ignored');
-end
-
 if (nargin < 2)
-   filename = ST_OPTIONS_FILE;
-end
-
-if (nargin < 1)
-   stOptions = STOptions;
-end
-
-% -- Check the options structure
-if (~STIsValidOptionsStruct(stOptions))
-   disp('*** STOptionsSave: Invalid options structure.');
-   disp('*** Type "help STOptions" for help on retrieving a valid structure');
+   disp('*** STTestSpikeRegular: Incorrect usage.');
+   disp('       This is an internal spike creation test function');
+   help STTestSpikeRegular;
+   help STSpikeCreationTestDescription;
    return;
 end
 
-% -- Save the options to file
-save(filename, 'stOptions');
+% -- Determine the spike indices
 
-% --- END of STOptionsSave.m ---
+nSpikeIndices = find(rem(tTimeCurr, 1 ./ fInstFreq) < InstanceTemporalResolution);    % Test for spikes
 
-% $Log: STOptionsSave.m,v $
+% --- END of STTestSpikeRegular.m ---
+
+% $Log: STTestSpikeRegular.m,v $
 % Revision 2.2  2004/09/16 11:45:23  dylan
 % Updated help text layout for all functions
 %
@@ -102,4 +85,16 @@ save(filename, 'stOptions');
 %
 % * Added an info.xml file, added a welcome HTML file (spike_tb_welcome.html)
 % and associated images (an_spike-big.jpg, an_spike.gif)
+%
+% Revision 2.0  2004/07/13 12:56:32  dylan
+% Moving to version 0.02 (nonote)
+%
+% Revision 1.2  2004/07/13 12:55:20  dylan
+% (nonote)
+%
+% Revision 1.1  2004/06/04 09:35:49  dylan
+% Reimported (nonote)
+%
+% Revision 1.4  2004/05/04 09:40:07  dylan
+% Added ID tags and logs to all version managed files
 %

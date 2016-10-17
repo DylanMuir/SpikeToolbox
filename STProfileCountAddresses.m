@@ -1,7 +1,7 @@
 function [vBinnedCounts, vKey] = STProfileCountAddresses(stMappedTrain, tTimeWindow)
 
 % STProfileCountAddresses - FUNCTION Bin mapped spikes by a time window, and return the counts for each address
-% $Id: STProfileCountAddresses.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STProfileCountAddresses.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [vBinnedCounts, vKey] = STProfileCountAddresses(stMappedTrain, tTimeWindow)
 %
@@ -16,13 +16,12 @@ function [vBinnedCounts, vKey] = STProfileCountAddresses(stMappedTrain, tTimeWin
 % 'vKey' will give the addresses corresponding to each count column in
 % 'vBinnedCounts'.
 %
-% See STProfileFrequencyAddresses for calculating frequency profiles from
-% multiplexed mapped spike trains.
+% See STProfileFrequency for calculating frequency profiles from multiplexed
+% mapped spike trains.
 % See STProfileCount for binning spike train instances.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 15th September, 2004 (from STProfileCount)
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Check arguments
 
@@ -89,3 +88,17 @@ end
 
 
 % --- END of STProfileCountAddresses ---
+
+% $Log: STProfileCountAddresses.m,v $
+% Revision 2.2  2004/09/16 11:45:23  dylan
+% Updated help text layout for all functions
+%
+% Revision 2.1  2004/09/16 10:22:13  dylan
+% * Added two new functions, STProfileCountAddresses and
+% STProfileFrequencyAddresses.  These functions handle multiplexed spike trains
+% nicely, by performing separate counts for each mapped spike address.
+%
+% * Added help text to STProfileCount and STProfileFrequency to indicate their
+% suitability only for spike train instances, and to point users to the new
+% functions.
+%

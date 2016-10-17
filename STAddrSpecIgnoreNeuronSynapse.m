@@ -1,15 +1,14 @@
 function [stasSpecification] = STAddrSpecIgnoreNeuronSynapse(nIgnoreBits, nNeuronBits, nSynapseBits, ...
                                                                 nNeuronMax, nSynapseMax, ...
-                                                                bInvertNeuron, bInvertSynapse, ...
-                                                                bReverseNeuron, bReverseSynapse)
+                                                                bInvertNeuron, bInvertSynapse)
 
 % STAddrSpecIgnoreNeuronSynapse - FUNCTION Address specification utility function
-% $Id: STAddrSpecIgnoreNeuronSynapse.m 6114 2007-02-08 09:14:02Z dylan $
+% $Id: STAddrSpecIgnoreNeuronSynapse.m 124 2005-02-22 16:34:38Z dylan $
 %
-% Usage: [stasSpecification] = STAddrSpecIgnoreNeuronSynapse(nIgnoreBits, nNeuronBits, nSynapseBits, ...
-%                                                               < nSynapseMax, nNeuronMax, ...
-%                                                               bInvertNeuron, bInvertSynapse, ...
-%                                                               bReverseNeuron, bReverseSynapse >)
+% Usage: [stasSpecification] = STAddrSpecIgnoreNeuronSynapse(nIgnoreBits, nNeuronBits, nSynapseBits)
+%        [stasSpecification] = STAddrSpecIgnoreNeuronSynapse(nIgnoreBits, nNeuronBits, nSynapseBits, ...
+%                                                               nNeuronMax, nSynapseMax, ...
+%                                                               bInvertNeuron, bInvertSynapse)
 %
 % This function returns an address specification structure for use with the
 % Spike Toolbox.  This specification will contain a single ignored address
@@ -21,16 +20,14 @@ function [stasSpecification] = STAddrSpecIgnoreNeuronSynapse(nIgnoreBits, nNeuro
 % specified for any field, this field will not be included in the
 % specification.
 %
-% See the toolbox documentation for information about address
-% specifications.
+% Type 'help STAddrSpecInfo' for information about specifying address formats.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 25th January, 2005 (modified from STAddrSpecIgnoreSynapseNeuron)
-% Copyright (c) 2005 Dylan Richard Muir
 
 % -- Check arguments
 
-if (nargin > 9)
+if (nargin > 7)
    disp('--- STAddrSpecIgnoreNeuronSynapse: Extra arguments ignored');
 end
 
@@ -43,30 +40,22 @@ end
 bRangeCheckSynapse = true;
 bRangeCheckNeuron = true;
 
-if (~exist('nSynapseMax', 'var') || isempty(nSynapseMax))
+if (nargin < 4)
    bRangeCheckSynapse = false;
    nSynapseMax = [];
 end
 
-if (~exist('nNeuronMax', 'var') || isempty(nNeuronMax))
+if (nargin < 5)
    bRangeCheckNeuron = false;
    nNeuronMax = [];
 end
 
-if (~exist('bInvertSynapse', 'var') || isempty(bInvertSynapse))
+if (nargin < 6)
    bInvertSynapse = false;
 end
 
-if (~exist('bInvertNeuron', 'var') || isempty(bInvertNeuron))
+if (nargin < 7)
    bInvertNeuron = false;
-end
-
-if (~exist('bReverseSynapse', 'var') || isempty(bReverseSynapse))
-   bReverseSynapse = false;
-end
-
-if (~exist('bReverseNeuron', 'var') || isempty(bReverseNeuron))
-   bReverseNeuron = false;
 end
 
 
@@ -82,7 +71,7 @@ if (nIgnoreBits > 0)
    field.bInvert = false;
    field.bMajorField = false;
    field.bRangeCheck = false;
-   if (bRangeCheckSynapse || bRangeCheckNeuron)
+   if (bRangeCheckSynapse | bRangeCheckNeuron)
       field.nMax = [];
    end
    field.bIgnore = true;
@@ -96,11 +85,11 @@ if (nNeuronBits > 0)
    clear field;
    field.Description = 'Neuron address';
    field.nWidth = nNeuronBits;
-   field.bReverse = bReverseNeuron;
+   field.bReverse = false;
    field.bInvert = bInvertNeuron;
    field.bMajorField = true;
    field.bRangeCheck = bRangeCheckNeuron;
-   if (bRangeCheckNeuron || bRangeCheckSynapse)
+   if (bRangeCheckNeuron | bRangeCheckSynapse)
       field.nMax = nNeuronMax;
    end
    field.bIgnore = false;
@@ -114,17 +103,17 @@ if (nSynapseBits > 0)
    clear field;
    field.Description = 'Synapse address';
    field.nWidth = nSynapseBits;
-   field.bReverse = bReverseSynapse;
+   field.bReverse = false;
    field.bInvert = bInvertSynapse;
    field.bMajorField = false;
    field.bRangeCheck = bRangeCheckSynapse;
-   if (bRangeCheckSynapse || bRangeCheckNeuron)
+   if (bRangeCheckSynapse | bRangeCheckNeuron)
       field.nMax = nSynapseMax;
    end
    field.bIgnore = false;
    
    stasSpecification(nFieldIndex) = field;
-   % nFieldIndex = nFieldIndex + 1;
+   nFieldIndex = nFieldIndex + 1;
 end
 
 
@@ -136,3 +125,14 @@ if (~STIsValidAddrSpec(stasSpecification))
 end
 
 % --- END of STAddrSpecIgnoreNeuronSynapse.m ---
+
+% $Log: STAddrSpecIgnoreNeuronSynapse.m,v $
+% Revision 2.1  2005/01/25 16:29:27  dylan
+% * Created STAddrSpecIgnoreNeuronSynapse.m -- This function constructs an
+% addressing specification in the field order required for Giacomo's new chip.
+% The syntax is identical to STAddrSpecIgnoreSynapseNeuron.
+%
+% * Fixed a bug in STAddrSpecIgnoreSynapseNeuron.  The function broke in Matlab
+% 7.0.1, when creating an addressing structure with an ignore field and at least
+% one other field.  The 'bInvert' field had been swapped with the 'bIgnore' field.
+%

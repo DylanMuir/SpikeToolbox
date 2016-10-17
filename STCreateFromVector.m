@@ -1,7 +1,7 @@
 function [stInstTrain] = STCreateFromVector(vSpikes, bUseISI)
 
-% STCreateFromVector - FUNCTION Package a vector of spike data as a spike train instance
-% $Id: STCreateFromVector.m 2411 2005-11-07 16:48:24Z dylan $
+% STCreateFromVector - FUNCTION Package a vector of spike data as spike train
+% $Id: STCreateFromVector.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [stInstTrain] = STCreateFromVector(vSpikes)
 %        [stInstTrain] = STCreateFromVector(vSpikes, bUseISI)
@@ -17,7 +17,6 @@ function [stInstTrain] = STCreateFromVector(vSpikes, bUseISI)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 11th August, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Get options
 stO = STOptions;
@@ -86,3 +85,20 @@ stInstTrain.instance = instance;
 
 
 % --- END of STCreateFromMatrix ---
+
+% $Log: STCreateFromVector.m,v $
+% Revision 1.5  2005/02/17 12:40:49  dylan
+% * Fixed a couple of niceties in STCreateFromVector (nonote).
+%
+% Revision 1.4  2005/02/11 11:46:01  dylan
+% * Fixed a help bug in STCreateFromVector, and changed its description. (nonote)
+%
+% Revision 1.3  2004/09/16 11:45:22  dylan
+% Updated help text layout for all functions
+%
+% Revision 1.2  2004/08/11 15:31:29  dylan
+% Added help for STCreateFromVector (nonote)
+%
+% Revision 1.1  2004/08/11 15:23:37  dylan
+% Added STCreateFromVector -- this function converts a vector of spike times into a spike train instance
+%

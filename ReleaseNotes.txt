@@ -1,0 +1,8 @@
+ReleaseNotes.txt - Release notes for the spike toolbox
+$Id: ReleaseNotes.txt 124 2005-02-22 16:34:38Z dylan $
+
+This is release version 0.2a for the matlab Spike Toolbox.  To use the toolbox,
+add the 'spike_tb/' and 'utilities/' direcotries to your matlab path.
+
+--- END of ReleaseNotes.txt ---
+

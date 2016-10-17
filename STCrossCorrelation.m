@@ -1,7 +1,7 @@
 function [vCorrSmoothed, vCorrRaw, vtCorrTime] = STCrossCorrelation(stTrain1, stTrain2, tWindow, strKernel, tSmoothing)
 
 % STCrossCorrelation - FUNCTION Calcualte cross-correlation for instantiated spike trains
-% $Id: STCrossCorrelation.m 3987 2006-05-09 13:38:38Z dylan $
+% $Id: STCrossCorrelation.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [vCorrSmoothed, vCorrRaw, vtCorrTime] = STCrossCorrelation(stTrain1, stTrain2
 %                                                   <, tWindow, strKernel, tSmoothing>)
@@ -36,7 +36,6 @@ function [vCorrSmoothed, vCorrRaw, vtCorrTime] = STCrossCorrelation(stTrain1, st
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 20th January, 2005
-% Copyright (c) 2005 Dylan Richard Muir
 
 % -- Get options
 
@@ -87,37 +86,19 @@ if (nargin < 2)
    return;
 end
 
-% - Check that we have valid spike trains
 if (~STIsValidSpikeTrain(stTrain1) || ~STIsValidSpikeTrain(stTrain2))
    disp('*** STCrossCorrelation: Invalid spike train supplied');
    return;
 end
-
-% - Check that we have at least an instance or a mapping
-cTrains = {stTrain1, stTrain2};
-if (~all(CellForEach(@isfield, cTrains, 'instance') | CellForEach(@isfield, cTrains, 'mapping')))
-   disp('*** STCrossCorrelation: Spike trains must contain either an instance or a mapping');
-   return;
-end
-
 
 % -- Extract spike times from trains
 
 [vtSpikeTimes1, fSampRate1] = STGetSpikeTimes(stTrain1);
 [vtSpikeTimes2, fSampRate2] = STGetSpikeTimes(stTrain2);
 
-% - Check that the correlation window size is reasonable
-vtDurations = [max(vtSpikeTimes1)  max(vtSpikeTimes2)];
-if (any(vtDurations <= tWindow))
-   disp('*** STCrossCorrelation: The correlation window seems unreasonably large.  Try');
-   disp('       a window at least shorter than both spike trains');
-   return;
-end
-
 % - Are we actually doing an autocorrelation?
 bAutoCorr = false;
-if (  (length(vtSpikeTimes1) == length(vtSpikeTimes2)) && ...
-      (all(vtSpikeTimes1 == vtSpikeTimes2)))
+if (all(vtSpikeTimes1 == vtSpikeTimes2))
    bAutoCorr = true;
 end
 
@@ -149,13 +130,13 @@ for (nBinDifference = 2:length(mSpikes))
    mDiffSpikes = mSpikes(nBinDifference:end, :) - mSpikes(1:end+1-nBinDifference, :);
    
    % - Only keep ISIs where we've shifted from one train to the other
-   vFilteredSpikes = [mDiffSpikes(mDiffSpikes(:, 2) == 1, 1); -mDiffSpikes(mDiffSpikes(:, 2) == -1, 1)];
+   vFilteredSpikes = [mDiffSpikes(find(mDiffSpikes(:, 2) == 1), 1); -mDiffSpikes(find(mDiffSpikes(:, 2) == -1), 1)];
    
    % - Only keep ISIs inside the time window
-   vFilteredSpikes = vFilteredSpikes(abs(vFilteredSpikes) <= nWindowSize);
+   vFilteredSpikes = vFilteredSpikes(find(abs(vFilteredSpikes) <= nWindowSize));
 
    % - Should we break?
-   if ((size(vFilteredSpikes, 1) == 0) && (rem(nBinDifference, 2) == 0))
+   if ((size(vFilteredSpikes, 1) == 0) & (rem(nBinDifference, 2) == 0))
       break;
    end
    
@@ -176,9 +157,12 @@ end
 % - Should we do smoothing?
 if (bSmoothing)
    % - Display some progress
-   STProgress('Smoothing...');
-   drawnow;
-
+   fprintf(1, 'Smoothing: %3.0f%%', 0);
+      
+   % - Make sure the smoothing window length is even
+   nHalfWindow = fix((nSmoothingSize+1)/2);
+   nSmoothingSize = 2 * nHalfWindow;
+   
    % - Make the kernel for smoothing
    if (strcmp(strKernel, 'gaussian'))
       vKern = gauss_pdf(1:nSmoothingSize, nSmoothingSize/2, nSmoothingSize/2);
@@ -191,18 +175,30 @@ if (bSmoothing)
       disp('*** STCrossCorrelation: Unexpected error recognising kernel string');
    end
    
-   % - Normalise kernel
-   vKern = vKern ./ sum(vKern);
+   % - Pad vCorr
+   vPadCorr = [zeros(1, nHalfWindow) vCorrRaw zeros(1, nHalfWindow)];
+   vCorrSmoothed = zeros(1, nHalfWindow*2 + length(vCorrRaw));
    
-   % - Zero NaN points for smoothing
-   vCorrSmoothed = vCorrRaw;
-   vCorrSmoothed(isnan(vCorrSmoothed)) = 0;
+   % - Find non-zero correlation points and smooth
+   vBinIndices = find((vPadCorr ~= 0) & ~isnan(vPadCorr));
+   nNumWindows = length(vBinIndices);
    
-   % - Perform smoothing with convolution
-   vCorrSmoothed = conv2(vCorrSmoothed, vKern, 'same');
+   for (nBinIndex = 1:nNumWindows)
+      % - Find the window extent for this point
+      vCorrWindow = vBinIndices(nBinIndex) + (-nHalfWindow+1:nHalfWindow);
+      vCorrSmoothed(vCorrWindow) = vCorrSmoothed(vCorrWindow) + vKern * vPadCorr(vBinIndices(nBinIndex));
+      
+      % - Display some progress
+      if (mod(nBinIndex, fix(nNumWindows / 10)) == 0)
+         fprintf('\b\b\b\b%3.0f%%', nBinIndex / nNumWindows * 100);
+      end
+   end
+   
+   % - Normalise smoothed correlation, crop to proper extents
+   vCorrSmoothed = vCorrSmoothed(nHalfWindow:length(vPadCorr)-nHalfWindow-1) ./ sum(vKern);
    
    % - Tidy up the display
-   STProgress('\b\b\b\b\b\b\b\b\b\b\b\b            \b\b\b\b\b\b\b\b\b\b\b\b');
+   fprintf(1, '\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b               \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b');
 
 else
    vCorrSmoothed = vCorrRaw;
@@ -217,31 +213,34 @@ vtCorrTime = (-nWindowSize:nWindowSize) ./ fSampRate;
 
 if (nargout == 0)
    % - Clear or make a figure
-   newplot;
-   bHold = ishold;
-   hAxis = gca;
-
+   clf;
+   hAxis = axes;
+   
    % - Plot the correlation
    plot(vtCorrTime, vCorrSmoothed);
 
-   % - Determine and fix the axis extents
+   % - Fix the axis extents
    vAxis = axis;
-   if (bHold)
-      tMin = min([vAxis(1) -tWindow]);
-      tMax = max([vAxis(2) tWindow]);
-   else
-      tMin = -tWindow;
-      tMax = tWindow;
-   end
-   axis([tMin tMax vAxis(3) vAxis(4)]);
+   axis([-tWindow tWindow vAxis(3) vAxis(4)]);
    
    % - Remove the y axis labels
-   if (~bHold)
-      set(hAxis, 'YTick', []);
-   end
+   set(hAxis, 'YTick', []);
    
    % - Clear the outputs
    clear vCorrSmoothed vCorrRaw;
 end
 
 % --- END of STCrossCorrelation.m ---
+
+% $Log: STCrossCorrelation.m,v $
+% Revision 1.2  2005/02/11 15:47:14  dylan
+% * STCrossCorrelation now uses a more efficient smoothign algorithm.  It also now
+% works properly. (nonote)
+%
+% Revision 1.1  2005/02/10 13:46:06  dylan
+% * Created a new function STCrossCorrelation to perform cross-correlation
+% analysis of a spike train.
+%
+% * Created a new function STGetSpikeTimes to extract spike times from a spike
+% train object.
+%

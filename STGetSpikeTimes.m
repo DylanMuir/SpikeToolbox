@@ -1,7 +1,7 @@
 function [vtSpikeTimes, fSamplingRate] = STGetSpikeTimes(stTrain, strLevel)
 
-% STGetSpikeTimes - FUNCTION Extract spike times from a spike train
-% $Id: STGetSpikeTimes.m 3987 2006-05-09 13:38:38Z dylan $
+% - STGetSpikeTimes - FUNCTION Extract spike times from a spike train
+% $Id: STGetSpikeTimes.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [vtSpikeTimes, fSamplingRate] = STGetSpikeTimes(stTrain <, strLevel>)
 %
@@ -18,7 +18,6 @@ function [vtSpikeTimes, fSamplingRate] = STGetSpikeTimes(stTrain, strLevel)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 10th February, 2005
-% Copyright (c) 2005 Dylan Richard Muir
 
 % -- Check arguments
 
@@ -33,7 +32,7 @@ if (nargin < 1)
 end
 
 % - Did the user supply a spike train level?
-if (exist('strLevel', 'var'))
+if (exist('strLevel'))
    % - Yes, so is it valid?
    [bValidLevel, strLevel] = STIsValidSpikeTrainLevel(strLevel);
    
@@ -57,7 +56,7 @@ end
 
 % - The user hasn't supplied a spike train level to use, so we need to work it
 % out ourselves
-if (~exist('strLevel', 'var'))
+if (~exist('strLevel'))
    % - Try an instance first
    [nodeInstance, bValid] = GetNodeAsInstance(stTrain, 'instance');
    
@@ -118,13 +117,24 @@ end
 
 bExists = true;
 
-if (strcmp(strLevel, 'instance'))
+if (strLevel == 'instance')
    nodeInstance = stTrain.instance;
 
-elseif (strcmp(strLevel, 'mapping'))
+elseif (strLevel == 'mapping')
    stStrippedTrain = STStripTo(stTrain, 'mapping');
-   stFlatTrain = STFlatten(stStrippedTrain);
+   stFlatTrain = stFlatten(stStrippedTrain);
    nodeInstance = stFlatTrain.instance;
 end
 
 % --- END of GetNodeAsInstance FUNCTION ---
+
+% --- END of STGetSpikeTimes.m ---
+
+% $Log: STGetSpikeTimes.m,v $
+% Revision 1.1  2005/02/10 13:46:06  dylan
+% * Created a new function STCrossCorrelation to perform cross-correlation
+% analysis of a spike train.
+%
+% * Created a new function STGetSpikeTimes to extract spike times from a spike
+% train object.
+%

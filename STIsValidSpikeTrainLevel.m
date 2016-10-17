@@ -1,7 +1,7 @@
 function [bValidLevel, strLevelCanonical] = STIsValidSpikeTrainLevel(strLevel)
 
 % STIsValidSpikeTrainLevel - FUNCTION Test for a valid spike train level description
-% $Id: STIsValidSpikeTrainLevel.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STIsValidSpikeTrainLevel.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [bValidLevel] = STIsValidSpikeTrainLevel(strLevel)
 %        [bValidLevel, strLevelCanonical] = STIsValidSpikeTrainLevel(strLevel)
@@ -17,7 +17,6 @@ function [bValidLevel, strLevelCanonical] = STIsValidSpikeTrainLevel(strLevel)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 27th August, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Check arguments
 
@@ -57,3 +56,25 @@ switch lower(strLevel)
 end
 
 % --- END of STIsValidSpikeTrainLevel.m ---
+
+% $Log: STIsValidSpikeTrainLevel.m,v $
+% Revision 2.2  2004/09/16 11:45:23  dylan
+% Updated help text layout for all functions
+%
+% Revision 2.1  2004/08/27 12:35:57  dylan
+% * STMap is now forgiving of arrays of addresses that have the same number of
+% elements, but a different shape.
+%
+% * Created a new function STIsValidSpiketrainLevel.  This function tests the
+% validity of a spike train level description.
+%
+% * STFindMatchingLevel now uses STIsValidSpiketrainLevel.
+%
+% * Created a new function STStripTo.  This function strips off undesired
+% spiketrain levels, leaving only the specified levels remaining.
+%
+% * Created a new function STStrip.  This function strips off specified
+% spiketrain levels from a train.
+%
+% * Modified an error message within STMap.
+%

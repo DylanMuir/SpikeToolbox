@@ -1,102 +1,104 @@
-function [cstTrain] = STCreateSinusoid(fMinFreq, fMaxFreq, tPeriod)
+function [stTrain] = STCreateSinusoid(fMinFreq, fMaxFreq, tPeriod)
 
 % STCreateSinusoid - FUNCTION Create a sinusoidally changing frequency spike train definition
-% $Id: STCreateSinusoid.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STCreateSinusoid.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [stTrain] = STCreateSinusoid(fMinFreq, fMaxFreq, tPeriod)
-%        [cstTrain] = STCreateSinusoid(vfMinFreq, vfMaxFreq, vtPeriod)
 %
 % STSinuoid will create a spike train definition, in which the spiking
 % frequency changes sinusoidally with time.  'fMinFreq' and 'fMaxFreq'
 % specify the minimum and maximum frequencies to use in the spike train.
 % 'tPeriod' specifies the period of the frequency profile sinusoid.  'stTrain'
 % will comprise of a field 'definition' containing the spike train definition.
-%
-% One or more of the input arguments may optionally be supplied as an
-% array.  In this case, 'cstTrain' will be a cell array of spike trains,
-% with the parameters for each taken element-wise from the input array
-% arguments.  Any scalar arguments will be duplicated for all elements in
-% the cell array of spike train definitions.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 26th March, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Check arguments
 
-if (nargin < 3)
+if (nargin < 1)
     disp ('*** STCreateSinusoid: Incorrect number of arguments');
     help STCreateSinusoid;
     return;
 end
 
-
-% -- Check array sizes for input arguments
-
-% - Get array argument sizes
-nMinFreqElems = numel(fMinFreq);
-nMaxFreqElems = numel(fMaxFreq);
-nPeriodElems = numel(tPeriod);
-vArgSizes = [nMinFreqElems  nMaxFreqElems  nPeriodElems];
-nNumTrains = max(vArgSizes);
-
-% - Boolean tests for argument sizes
-bArrayOutput = any(vArgSizes > 1);
-bArrayMinFreq = (nMinFreqElems > 1);
-bArrayMaxFreq = (nMaxFreqElems > 1);
-bArrayPeriod = (nPeriodElems > 1);
-
-% - Should we make a cellular output?
-if (bArrayOutput)
-    % - Is 'fMinFreq' not yet an array?
-    if (~bArrayMinFreq)
-        fMinFreq = repmat(fMinFreq, nNumTrains, 1);
-        nMinFreqElems = nNumTrains;
-    end
-
-    % - Is 'fMaxFreq' not yet an array?
-    if (~bArrayMaxFreq)
-        fMaxFreq = repmat(fMaxFreq, nNumTrains, 1);
-        nMaxFreqElems = nNumTrains;
-    end
-    
-    % - Is 'tPeriod' not yet an array?
-    if (~bArrayPeriod)
-        tPeriod = repmat(tPeriod, nNumTrains, 1);
-        nPeriodElems = nNumTrains;
-    end
-    
-    % - Check that all arguments are the same size
-    vArgSizes = [nMinFreqElems  nMaxFreqElems  nPeriodElems];
-    
-    if (any(vArgSizes ~= nNumTrains))
-        disp('*** STCreateSinusoid: When arguments are supplied as arrays, all array');
-        disp('       arguments must have the same number of elements.');
-        return;
-    end
-end
-
-
 % -- Create definition
 
-cstTrain = cell(nNumTrains, 1);
+stTrain = [];
+stTrain.definition.strType = 'sinusoid';
 
-for (nTrainIndex = 1:nNumTrains)
-    cstTrain{nTrainIndex}.definition.strType = 'sinusoid';
-    
-    % - Ensure minimum and maximum frequencies are properly ordered
-    [fFreqs] = sort([fMinFreq(nTrainIndex) fMaxFreq(nTrainIndex)]);
+[fFreqs] = sort([fMinFreq fMaxFreq]);
 
-    cstTrain{nTrainIndex}.definition.fMinFreq = fFreqs(1);
-    cstTrain{nTrainIndex}.definition.fMaxFreq = fFreqs(2);
-    cstTrain{nTrainIndex}.definition.tPeriod = tPeriod(nNumTrains);
-    cstTrain{nTrainIndex}.definition.fhInstFreq = @STInstantaneousFrequencySinusoid;
-    cstTrain{nTrainIndex}.definition.fhPlotFunction = @STPlotDefSinusoid;
-end
-
-% - Fix output argument for a single spike train
-if (nNumTrains == 1)
-    cstTrain = cstTrain{1};
-end
+stTrain.definition.fMinFreq = fFreqs(1);
+stTrain.definition.fMaxFreq = fFreqs(2);
+stTrain.definition.tPeriod = tPeriod;
+stTrain.definition.fhInstFreq = @STInstantaneousFrequencySinusoid;
 
 % --- END of STCreateSinusoid.m ---
+
+% $Log: STCreateSinusoid.m,v $
+% Revision 2.2  2004/09/16 11:45:22  dylan
+% Updated help text layout for all functions
+%
+% Revision 2.1  2004/07/19 16:21:02  dylan
+% * Major update of the spike toolbox (moving to v0.02)
+%
+% * Modified the procedure for retrieving and setting toolbox options.  The new
+% suite of functions comprises of STOptions, STOptionsLoad, STOptionsSave,
+% STOptionsDescribe, STCreateGlobals and STIsValidOptionsStruct.  Spike Toolbox
+% 'factory default' options are defined in STToolboxDefaults.  Options can be
+% saved as user defaults using STOptionsSave, and will be loaded automatically
+% for each session.
+%
+% * Removed STAccessDefaults and STCreateDefaults.
+%
+% * Renamed STLogicalAddressConstruct, STLogicalAddressExtract,
+% STPhysicalAddressContstruct and STPhysicalAddressExtract to
+% STAddr<type><verb>
+%
+% * Drastically modified the way synapse addresses are specified for the
+% toolbox.  A more generic approach is now taken, where addressing modes are
+% defined by structures that outline the meaning of each bit-field in a
+% physical address.  Fields can have their bits reversed, can be ignored, can
+% have a description attached, and can be marked as major or minor fields.
+% Any type of neuron/synapse topology can be addressed in this way, including
+% 2D neuron arrays and chips with no separate synapse addresses.
+%
+% The following functions were created to handle this new addressing mode:
+% STAddrDescribe, STAddrFilterArgs, STAddrSpecChannel, STAddrSpecCompare,
+% STAddrSpecDescribe, STAddrSpecFill, STAddrSpecIgnoreSynapseNeuron,
+% STAddrSpecInfo, STAddrSpecSynapse2DNeuron, STIsValidAddress, STIsValidAddrSpec,
+% STIsValidChannelAddrSpec and STIsValidMonitorChannelsSpecification.
+%
+% This modification required changes to STAddrLogicalConstruct and Extract,
+% STAddrPhysicalConstruct and Extract, STCreate, STExport, STImport,
+% STStimulate, STMap, STCrop, STConcat and STMultiplex.
+%
+% * Removed the channel filter functions.
+%
+% * Modified STDescribe to handle the majority of toolbox variable types.
+% This function will now describe spike trains, addressing specifications and
+% spike toolbox options.  Added STAddrDescribe, STOptionsDescribe and
+% STTrainDescribe.
+%
+% * Added an STIsValidSpikeTrain function to test the validity of a spike
+% train structure.  Modified many spike train manipulation functions to use
+% this feature.
+%
+% * Added features to Todo.txt, updated Readme.txt
+%
+% * Added an info.xml file, added a welcome HTML file (spike_tb_welcome.html)
+% and associated images (an_spike-big.jpg, an_spike.gif)
+%
+% Revision 2.0  2004/07/13 12:56:31  dylan
+% Moving to version 0.02 (nonote)
+%
+% Revision 1.2  2004/07/13 12:55:19  dylan
+% (nonote)
+%
+% Revision 1.1  2004/06/04 09:35:47  dylan
+% Reimported (nonote)
+%
+% Revision 1.3  2004/05/04 09:40:06  dylan
+% Added ID tags and logs to all version managed files
+%

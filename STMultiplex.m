@@ -1,7 +1,7 @@
 function [stMuxTrain] = STMultiplex(varargin)
 
 % STMultiplex - FUNCTION Multiplex spike trains
-% $Id: STMultiplex.m 3987 2006-05-09 13:38:38Z dylan $
+% $Id: STMultiplex.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [stMuxTrain] = STMultiplex(stTrain1, stTrain2, ...)
 %        [stMuxTrain] = STMultiplex(strLevel, stTrain1, stTrain2, ...)
@@ -25,11 +25,10 @@ function [stMuxTrain] = STMultiplex(varargin)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 1st April, 2004 (no, really)
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Check arguments
 
-if ((nargin < 1) || (ischar(varargin{1}) && (nargin < 2)))
+if ((nargin < 1) | (ischar(varargin{1}) & (nargin < 2)))
    disp('*** STMultiplex: Incorrect usage');
    help STMultiplex;
    return;
@@ -55,7 +54,7 @@ end
 
 % -- Which spike train level should we try to multiplex?
 
-if (exist('strLevel', 'var') == 1)
+if (exist('strLevel') == 1)
    % - The user supplied a spike train level, so verify it
    [strLevel, bNotExisting, bInvalidLevel] = STFindMatchingLevel(strLevel, stTrain);
    
@@ -65,7 +64,7 @@ if (exist('strLevel', 'var') == 1)
       return;
    end
    
-   if (bInvalidLevel || strcmp(strLevel, 'definition'))
+   if (bInvalidLevel | strcmp(strLevel, 'definition'))
       % - The user supplied an invalid spike train level
       SingleLinePrintf('*** STMultiplex: Invalid spike train level [%s].', strLevel);
       disp('       strLevel must be one of {instance, mapping}');
@@ -114,7 +113,7 @@ if (sum(~vbZeroDuration) < 2)
 end
 
 % - Filter out zero-duration spike trains
-stTrain = stTrain(~vbZeroDuration);
+stTrain = stTrain(find(~vbZeroDuration));
 
 % - Strip all spike train levels except the relevant one
 sRef.type = '.';
@@ -143,8 +142,8 @@ switch (strLevel)
       stMuxTrain.instance = STMultiplexNodes(false, stNodes);
       
    otherwise
-      disp('*** STMultiplex: Only instantiated or mapped spike trains can be');
-      disp('                 multiplexed.');
+      disp('*** STMultiuplex: Only instantiated or mapped spike trains can be');
+      disp('                  multiplexed.');
 end
 
 % --- END of STMultiplex FUNCTION ---
@@ -177,7 +176,7 @@ vfTempResolutions = CellForEach(@subsref, nodeCellArray, sRef);
 vfTempResFactor = nodeMux.fTemporalResolution ./ vfTempResolutions;
 
 % - Fix the temporal resolution for each spike train node
-for (nNodeIndex = 1:numel(nodeCellArray))
+for (nNodeIndex = 1:prod(size(nodeCellArray)))
    if (nodeCellArray{nNodeIndex}.bChunkedMode)
       % - Fix the temporal resolution for each chunk of a chunked mode
       %   spike list
@@ -305,7 +304,7 @@ if (nodeMux.bChunkedMode)
       if (bMismatchedChunks)
          % - Find the point in the longer chunk that we should shift to the next
          % chunk
-         [nul, nIndices] = find(longList{nChunkIndex}(:, 1) > max(shortList{nChunkIndex}(:, 1)));
+         [null, nIndices] = find(longList{nChunkIndex}(:, 1) > max(shortList{nChunkIndex}(:, 1)));
       
          if (length(longList) == nChunkIndex)   % Does the next chunk exist?
             % - No, so make a new chunk
@@ -361,3 +360,165 @@ return;
 % --- END of SortCrossChunk FUNCTION ---
 
 % --- END of STMultiplex.m ---
+
+% $Log: STMultiplex.m,v $
+% Revision 2.11  2005/02/20 13:15:09  dylan
+% Modified STMap, STMultiplex, STProfileFrequency and STProfileCount to use the
+% MATLAB warning system when warning about zero-duration spike trains.  These
+% warnings can now be turned off using the built-in WARNING function.  The message
+% ID for these warnings (and for the rest of the toolbox as well) will be
+% 'SpikeToolbox:ZeroDuration'.
+%
+% Revision 2.10  2004/09/16 11:45:23  dylan
+% Updated help text layout for all functions
+%
+% Revision 2.9  2004/09/03 12:41:43  dylan
+% Typo in STMultiplex (nonote)
+%
+% Revision 2.8  2004/09/03 09:40:48  dylan
+% Fixed a bug in STMultiplex when only a single non-zero-duration train was
+% supplied.  STMultiplex now returns this train.
+%
+% Revision 2.7  2004/09/02 08:57:07  dylan
+% Bug in STMultiplex (nonote)
+%
+% Revision 2.6  2004/09/02 08:54:30  dylan
+% Bug in STMultiplex (nonote)
+%
+% Revision 2.5  2004/09/02 08:51:05  dylan
+% Bug in STMultiplex (nonote)
+%
+% Revision 2.4  2004/09/02 08:23:18  dylan
+% * Added a function STIsZeroDuration to test for zero duration spike trains.
+%
+% * Modified all functions to use this test rather than custom tests.
+%
+% Revision 2.3  2004/09/01 08:30:15  dylan
+% Fixed a bug in STMultiplex when only zero-length spike trains are supplied
+% to multiplex.  STMultiplex now handles this condition, and returns a zero-
+% length spike train.
+%
+% Revision 2.2  2004/08/25 12:49:22  dylan
+% * Fixed a bug in STMultiplex, where spike trains with different levels
+% could not be multiplexed, even if they shared a common level.
+% STMultiplex now requires CellForEachCell, in the utilities repository.
+%
+% * Added a feature request to Todo.txt
+%
+% Revision 2.1  2004/07/19 16:21:02  dylan
+% * Major update of the spike toolbox (moving to v0.02)
+%
+% * Modified the procedure for retrieving and setting toolbox options.  The new
+% suite of functions comprises of STOptions, STOptionsLoad, STOptionsSave,
+% STOptionsDescribe, STCreateGlobals and STIsValidOptionsStruct.  Spike Toolbox
+% 'factory default' options are defined in STToolboxDefaults.  Options can be
+% saved as user defaults using STOptionsSave, and will be loaded automatically
+% for each session.
+%
+% * Removed STAccessDefaults and STCreateDefaults.
+%
+% * Renamed STLogicalAddressConstruct, STLogicalAddressExtract,
+% STPhysicalAddressContstruct and STPhysicalAddressExtract to
+% STAddr<type><verb>
+%
+% * Drastically modified the way synapse addresses are specified for the
+% toolbox.  A more generic approach is now taken, where addressing modes are
+% defined by structures that outline the meaning of each bit-field in a
+% physical address.  Fields can have their bits reversed, can be ignored, can
+% have a description attached, and can be marked as major or minor fields.
+% Any type of neuron/synapse topology can be addressed in this way, including
+% 2D neuron arrays and chips with no separate synapse addresses.
+%
+% The following functions were created to handle this new addressing mode:
+% STAddrDescribe, STAddrFilterArgs, STAddrSpecChannel, STAddrSpecCompare,
+% STAddrSpecDescribe, STAddrSpecFill, STAddrSpecIgnoreSynapseNeuron,
+% STAddrSpecInfo, STAddrSpecSynapse2DNeuron, STIsValidAddress, STIsValidAddrSpec,
+% STIsValidChannelAddrSpec and STIsValidMonitorChannelsSpecification.
+%
+% This modification required changes to STAddrLogicalConstruct and Extract,
+% STAddrPhysicalConstruct and Extract, STCreate, STExport, STImport,
+% STStimulate, STMap, STCrop, STConcat and STMultiplex.
+%
+% * Removed the channel filter functions.
+%
+% * Modified STDescribe to handle the majority of toolbox variable types.
+% This function will now describe spike trains, addressing specifications and
+% spike toolbox options.  Added STAddrDescribe, STOptionsDescribe and
+% STTrainDescribe.
+%
+% * Added an STIsValidSpikeTrain function to test the validity of a spike
+% train structure.  Modified many spike train manipulation functions to use
+% this feature.
+%
+% * Added features to Todo.txt, updated Readme.txt
+%
+% * Added an info.xml file, added a welcome HTML file (spike_tb_welcome.html)
+% and associated images (an_spike-big.jpg, an_spike.gif)
+%
+% Revision 2.0  2004/07/13 12:56:32  dylan
+% Moving to version 0.02 (nonote)
+%
+% Revision 1.3  2004/07/13 12:55:19  dylan
+% (nonote)
+%
+% Revision 1.2  2004/06/04 10:12:05  dylan
+% Modified STMultiplex to handle single spike train inputs nicely by printing an error and then returning the supplied train. (nonote)
+%
+% Revision 1.1  2004/06/04 09:35:48  dylan
+% Reimported (nonote)
+%
+% Revision 1.16  2004/05/25 10:51:05  dylan
+% Bug fixes (nonote)
+%
+% Revision 1.15  2004/05/14 16:21:19  dylan
+% Bug fix (nonote)
+%
+% Revision 1.14  2004/05/14 16:17:50  dylan
+% Bug fix (nonote)
+%
+% Revision 1.13  2004/05/14 15:37:19  dylan
+% * Created utilities/CellFlatten.m -- CellFlatten coverts a list of items
+% into a cell array containing a single cell for each item.  CellFlatten will
+% also flatten the heirarchy of a nested cell array, returning all cell
+% elements on a single dimension
+% * Created utiltites/CellForEach.m -- CellForEach executes a specified
+% function for each top-level element of a cell array, and returns a matrix of
+% the results.
+% * Converted spike_tb/STFindMatchingLevel to natively process cell arrays of trains
+% * Converted spike_tb/STMultiplex to natively process cell arrays of trains
+% * Created spike_tb/STCrop.m -- STCrop will crop a spike train to a specified
+% time extent
+% * Created spike_tb/STNormalise.m -- STNormalise will shift a spike train to
+% begin at zero (first spike is at zero) and correct the duration
+%
+% Revision 1.12  2004/05/09 17:55:15  dylan
+% * Created STFlatten function to convert a spike train mapping back into an
+% instance.
+% * Created STExtract function to extract a train(s) from a multiplexed
+% mapped spike train
+% * Renamed STConstructAddress to STConstructPhysicalAddress
+% * Modified the address format for spike train mappings such that the
+% integer component of an address specifies the neuron.  This makes raster
+% plots much easier to read.  The format is now
+% |NEURON_BITS|.|SYNAPSE_BITS|  This is now referred to as a logical
+% address.  The format required by the PCIAER board is referred to as a
+% physical address.
+% * Created STConstructLogicalAddress and STExtractLogicalAddress to
+% convert neuron and synapse IDs to and from logical addresses
+% * Created STExtractPhysicalAddress to convert a physical address back to
+% neuron and synapse IDs
+% * Modified STConstructPhysicalAddress so that it accepts vectorised input
+% * Modified STConcat so that it accepts cell arrays of spike trains to
+% concatenate
+% * Modified STExport, STImport so that they handle logical / physical
+% addresses
+% * Fixed a bug in STMultiplex and STConcat where spike event addresses were
+% modified when temporal resolutions were different across spike trains
+% * Modified STFormats to reflect addresss format changes
+%
+% Revision 1.11  2004/05/05 16:15:17  dylan
+% Added handling for zero-length spike trains to various toolbox functions
+%
+% Revision 1.10  2004/05/04 09:40:07  dylan
+% Added ID tags and logs to all version managed files
+%

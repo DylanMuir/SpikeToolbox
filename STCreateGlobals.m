@@ -1,59 +1,58 @@
-function STOptionsSave(stOptions, filename)
+function STCreateGlobals
 
-% STOptionsSave - FUNCTION Save Spike Toolbox options to a file
-% $Id: STOptionsSave.m 124 2005-02-22 16:34:38Z dylan $
+% STCreateGlobals - FUNCTION (Internal) Creates Spike Toolbox global variables
+% $Id: STCreateGlobals.m 124 2005-02-22 16:34:38Z dylan $
 %
-% Usage: STOptionsSave
-%        STOptionsSave(stOptions)
-%        STOptionsSave(stOptions, filename)
-%
-% The first usage will save the current options as the default for the
-% toolbox.  The second usage will save the specified options as the toolbox
-% defaults.  The third usage will save the specified options to a particular
-% file.  This file can then be loaded with STOptionsLoad.
-%
-% 'stOptions' muct be a valid Spike Toolbox options structure.  Use STOptions
-% to retrieve a current valid options structure.
+% Usage: STCreateGlobals
+% NOT for console use
 
-% Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+% Auhtor: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 13th July, 2004
 
-% -- Declare globals
-global ST_OPTIONS_STRUCTURE_SIGNATURE ST_OPTIONS_FILE;
-STCreateGlobals;
+% - Create toolbox version string
+[null, bNew] = SetDefault('ST_TOOLBOX_VERSION', '0.02');
 
+% - Create options structure signature string
+[null, bNew] = SetDefault('ST_OPTIONS_STRUCTURE_SIGNATURE', '''ST_0-02a_OPT''');
 
-% -- Check arguments
+% - Create default options file name string
+[null, bNew] = SetDefault('ST_OPTIONS_FILE', sprintf('''%s''', fullfile(prefdir, 'st_options_defaults.mat')));
 
-if (nargin > 2)
-   disp('--- STOptionsSave: Extra arguments ignored');
+if (bNew)
+   % - Display a reminder about seeding
+   disp(' ');
+   disp('*******************************************************************');
+   disp('*** Spike Toolbox: REMEMBER TO SEED THE RANDOM NUMBER GENERATOR ***');
+   disp('*******************************************************************');
+   disp(' ');
 end
 
-if (nargin < 2)
-   filename = ST_OPTIONS_FILE;
-end
+% --- END of STCreateGlobals.m ---
 
-if (nargin < 1)
-   stOptions = STOptions;
-end
-
-% -- Check the options structure
-if (~STIsValidOptionsStruct(stOptions))
-   disp('*** STOptionsSave: Invalid options structure.');
-   disp('*** Type "help STOptions" for help on retrieving a valid structure');
-   return;
-end
-
-% -- Save the options to file
-save(filename, 'stOptions');
-
-% --- END of STOptionsSave.m ---
-
-% $Log: STOptionsSave.m,v $
-% Revision 2.2  2004/09/16 11:45:23  dylan
+% $Log: STCreateGlobals.m,v $
+% Revision 2.5  2005/02/10 13:44:38  dylan
+% * Modified STFindSynchronousPairs to use 'DefaultSynchWindowSize' for its
+% toolbox default instead of 'DefaultWindowSize'.
+%
+% * Modified STOptions, STOptionsDescribe, STOptionsLoad and STToolboxDefaults to
+% support the new DefaultSynchWindowSize option, as well as several new options
+% to support cross-correlation analysis of spike trains.
+%
+% * Modified STCreateGlobals to set a new options structure signature.  This means
+% that any saved options you have will need to be reset.
+%
+% Revision 2.4  2004/09/16 11:45:22  dylan
 % Updated help text layout for all functions
 %
-% Revision 2.1  2004/07/19 16:21:03  dylan
+% Revision 2.3  2004/08/11 15:35:58  dylan
+% (nonote)
+%
+% Revision 2.2  2004/08/05 09:38:03  dylan
+% Changed the default location of preference files to use the Matlab
+% preference directory.  You will have to rebuild any custom preferences.
+% This does not effect preference files saved in custom locations.
+%
+% Revision 2.1  2004/07/19 16:21:01  dylan
 % * Major update of the spike toolbox (moving to v0.02)
 %
 % * Modified the procedure for retrieving and setting toolbox options.  The new

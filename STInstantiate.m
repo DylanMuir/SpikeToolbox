@@ -1,11 +1,12 @@
-function [stTrain] = STInstantiate(stOldTrain, strTemporalType, tDuration, mCorrelation, fMemTau)
+function [stTrain] = STInstantiate(stOldTrain, strTemporalType, tDuration)
 
 % STInstantiate - FUNCTION Convert spike train definitions into concrete trains
-% $Id: STInstantiate.m 3987 2006-05-09 13:38:38Z dylan $
+% $Id: STInstantiate.m 124 2005-02-22 16:34:38Z dylan $
 %
-% Usage: [stTrain] = STInstantiate(stTrainDef, <'regular' / 'poisson'>, tDuration <, mCorrelation, fMemTau>)
+% Usage: [stTrain] = STInstantiate(stTrain, 'regular', tDuration)
+%        [stTrain] = STInstantiate(stTrain, 'poisson', tDuration)
 %
-% Where: 'stTrainDef' is a spike train containing a simple train
+% Where: 'stTrain' (input) is a spike train containing a simple train
 % definition created by STCreate.  'tDuration' is the desired duration of the
 % spike train in seconds.  The type of spike train is specified using either
 % 'regular' or 'poisson'.  A regular train has equal inter-spike intervals
@@ -13,69 +14,16 @@ function [stTrain] = STInstantiate(stOldTrain, strTemporalType, tDuration, mCorr
 % a probability based on the train frequency.  'stTrain' (output) will have a
 % 'instance' field added, containing the instantiated train.
 %
-% Note: Changing frequencies and regular spike trains don't play well
+% STInstantiate can also accept a cell array of spike trains for the 'stTrain'
+% input.  In this case, 'stTrain' (output) will be a cell array of the same
+% size as 'stTrain' (input).
+%
+% Note that changing frequencies and regular spike trains don't play well
 % together.  Perhaps a better algorithm for creating regular trains is
 % required.
-%
-% --- ARRAY ARGUMENTS
-%
-% STInstantiate can accept arrays for any and all input arguments.  In the
-% case of 'stTrainDef' and the temporal type, these must be cellular arrays.
-% In the case of 'tDuration', 'mCorrelation' and 'fMemTau', these should be
-% standard matrices.  If one or more arguments are passed as arrays, multiple
-% spike trains will be instantiated, each train with options taken from one
-% element of each array.  If only some arguments are passed as arrays, the
-% scalar arguments will be applied to all trains.  When arrays of arguments
-% are supplied, 'stTrain' will be a cellular array of instantiated spike
-% trains.
-%
-% Note: Although the calling syntax allows for an array of 'tDuration's
-% specifying a separate duration for each train, in practice this is not
-% supported.  Please use a common duration for all trains.
-%
-% Example: cellST = STInstantiate({stDef1 stDef2}, 'poisson', 5);
-%
-% 'stDef1' and 'stDef2' are two different spike train definitions.  'cellST'
-% will be a cell array with two elements, each containing a separate
-% instantiated spike train.  These trains will have frequency profiles
-% corresponding to 'stDef1' and 'stDef2', but will both be poissonian and of 5
-% seconds duration.
-%
-% --- CORRELATED SPIKE TRAINS
-%
-% The optional argument 'mCorrelation' can be used to generate correlated spike
-% trains.  'mCorrelation' should be a correlation matrix specifying the pairwise
-% correlations between each of a set of spike trains.  The matrix should be in
-% upper-diagonal form, with unit diagonal elements.  In this matrix, '1'
-% specifies the maximum possible correlation and '-1' specifies the maximum
-% possible anti-correlation.  Note that 'mCorrelation' must be positive
-% definite.  This means that if the matrix is made symmetric, it will have
-% only positive eigenvalues.
-%
-% Example: mCorr = [1.0 0.9 0.8;
-%                   0.0 1.0 0.7;
-%                   0.0 0.0 1.0];
-%
-% Executing STInstantiate with this correlation matrix will produce three
-% spike trains; the correlation coefficient between trains 'i' and 'j' (with
-% 'i' <= 'j') is given by 'mCorr(i, j)'.
-%
-% --- NON-ERGODIC SPIKE TRAINS
-%
-% The optional argument 'fMemTau' can be used to generate spike trains from a
-% non-ergodic process (ie a random process with memory).  'fMemTau' will be
-% the time constant for an exponential smoothing function.  'fMemTau' will be
-% the time for the memory effect to reduce to approximately 35%.
-%
-% When both 'mCorrelation' and 'fMemTau' are supplied, correlated random
-% sequences will be generated before being made non-ergodic.
-%
-% To impose non-erogidicy without correlations, provide an empty matrix for
-% 'mCorrelation'.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 26th March, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Get options
 
@@ -84,9 +32,9 @@ InstanceTemporalResolution = stOptions.InstanceTemporalResolution;
 SpikeChunkLength = stOptions.SpikeChunkLength;
 
 
-% -- Perform argument number and basic checks
+% -- Check arguments
 
-if (nargin > 5)
+if (nargin > 3)
     disp('--- STInstantiate: Extra arguments ignored');
 end
 
@@ -96,328 +44,206 @@ if (nargin < 3)
     return;
 end
 
-% - Should we correlate the output trains?
-bCorrelate = exist('mCorrelation', 'var') && ~isempty(mCorrelation);
-
-% - Check that 'mCorrelation' is square, at least
-if (bCorrelate && (size(mCorrelation, 1) ~= size(mCorrelation, 2)))
-   disp('*** STInstantiate: The cross-correlation matrix must be square');
+if (tDuration == 0)
+   disp('*** STInstantiate: Cannot instantiate a zero-duration spiketrain');
    return;
 end
 
-% - Should we make non-ergodic spike trains?
-bMemory = exist('fMemTau', 'var');
+stTrain = stOldTrain;
 
+% -- Handle a cell array of spike trains
 
-% -- Force cellular input, if necessary
-
-if (~iscell(stOldTrain))
-   stOldTrain = {stOldTrain};
-end
-bArrayTrain = numel(stOldTrain) > 1;
-
-if (~iscell(strTemporalType))
-   strTemporalType = {strTemporalType};
-end
-bArrayTempType = numel(strTemporalType) > 1;
-
-% -- Determine output sizes
-
-if (bCorrelate)
-   nCorrSize = size(mCorrelation, 1);
-else
-   nCorrSize = [];
-end
-
-if (bMemory)
-   nMemTauSize = numel(fMemTau);
-   bArrayMemTau = nMemTauSize > 1;
-else
-   nMemTauSize = [];
-   bArrayMemTau = false;
-end
-
-vArgSizes = [numel(stOldTrain) ...
-   numel(strTemporalType) ...
-   numel(tDuration) ...
-   nCorrSize ...
-   nMemTauSize];
-
-bArrayDuration = numel(tDuration) > 1;
-bArrayOutput = any(vArgSizes > 1);
-nNumTrains = max(vArgSizes);
-
-
-% -- Set up argument arrays nicely
-
-if (bArrayOutput)
-   % -- Convert non-array arguments into arrays
-   
-   if (~bArrayTrain)
-      % - Convert spike train
-      stTrain = cell(nNumTrains, 1);
-      stTrain(:) = deal(stOldTrain);
-   else
-      stTrain = stOldTrain;
+if (iscell(stTrain))
+   for (nCellIndex = 1:prod(size(stTrain)))
+      % - Send each cell individually to STInstantiate
+      fprintf(1, 'Instantiating: Spike train [%02d/%02d]\n', nCellIndex, prod(size(stTrain)));
+      stTrain{nCellIndex} = STInstantiate(stTrain{nCellIndex}, strTemporalType, tDuration);
    end
-   
-   if (~bArrayTempType)
-      % - Convert temporal type
-      strTempTypeCell = cell(nNumTrains, 1);
-      strTempTypeCell(:) = deal(strTemporalType);
-      strTemporalType = strTempTypeCell;
-      clear strTempTypeCell;
-   end
-   
-   if (~bArrayDuration)
-      % - Convert durations
-      tDuration = repmat(tDuration, nNumTrains, 1);
-   end
-   
-   if (bMemory && ~bArrayMemTau)
-      fMemTau = repmat(fMemTau, nNumTrains, 1);
-      nMemTauSize = numel(fMemTau);
-   end
-   
-   % - Get new argument sizes
-   vArgSizes = [numel(stTrain) ...
-      numel(strTemporalType) ...
-      numel(tDuration) ...
-      nCorrSize ...
-      nMemTauSize];
-
-
-   % -- Check that all arguments are the same size
-   if (any(vArgSizes ~= nNumTrains))
-      disp('*** STInstantiate: When arrays are supplied for input arguments, they');
-      disp('       must all be of the same size');
-      return;
-   end
-   
-else
-   stTrain = stOldTrain;
-end
-
-
-% -- Perform a detailed argument check
-
-% - Get cell array of definitions nodes
-sRef.type = '.';
-sRef.subs = 'definition';
-cDefinitions = CellForEachCell(@subsref, stTrain, sRef);
-clear sRef;
-
-if (bCorrelate)
-   % - Print a warning if we're trying to correlate 'regular' spike trains
-   if (any(CellForEach(@strcmp, strTemporalType, 'regular')))
-      disp('--- STInstantiate: Warning: Spike trains created with a temporal type of');
-      disp('       ''regular'' will not participate in the cross-correlation pattern.');
-      disp('       These affected instances will not be correlated.');
-   end
-
-   % - Print a warning if we're trying to correlate gamma ISI generated spike trains
-   sRef.type = '.';
-   sRef.subs = 'strType';
-   cDefTypes = CellForEachCell(@subsref, cDefinitions, sRef);
-   if (any(CellForEach(@strcmp, cDefTypes, 'gamma')))
-      disp('--- STInstantiate: Warning: Spike trains created with a gamma ISI distribution');
-      disp('       will not participate in the cross-correlation pattern.  These affected');
-      disp('       instances will not be correlated.');
-   end
-end
-
-% - Check durations for zeros
-if (any(tDuration == 0))
-   disp('*** STInstantiate: Cannot instantiate a zero-duration spiketrain.');
-   disp('       Use STNullTrain to create a zero-duration train.');
    return;
 end
 
-% - Check that the trains have definitions
-if (~all(CellForEach(@isfield, stTrain, 'definition')))
-    disp('*** STInstantiate: stTrainDef must contain a spike train defintion.');
-    disp('       This error may be caused by a multiplexed spike train.  Definitions');
+
+% -- Check that the train meets the criteria
+
+if (~isfield(stTrain, 'definition'))
+    disp('*** STInstantiate: stTrain must contain a simple spike train defintion.');
+    disp('       This error may be caused my a multiplexed spike train.  Definitions');
     disp('       are stripped when trains are multiplexed.');
     return;
-end
-
-% - Find which sort of instances we're creating
-for (nTrainIndex = 1:nNumTrains)
-   switch lower(strTemporalType{nTrainIndex})
-      case {'regular', 'r'}
-         fhTestSpike{nTrainIndex} = @STTestSpikeRegular;
-        
-      case {'poisson', 'p'}
-         fhTestSpike{nTrainIndex} = @STTestSpikePoisson;
-        
-      otherwise
-         % - Invalid temporal type specified, so bail
-         fprintf(1, '*** STInstantiate: Unknown temporal spike train type [%s].', strTemporalType{nTrainIndex});
-         disp('       Must be one of {''regular'', ''poisson''}');
-         return;
-   end
-end
-
-% - If we're correlating spike trains, the durations must all be identical
-tTestDuration = tDuration(1);
-if (any(tDuration ~= tTestDuration))
-   if (bCorrelate)
-      disp('*** STInstantiate: It doesn''t make much sense to try to correlate spike')
-      disp('       trains with different durations.  If you really want this, use')
-      disp('       STCrop afterwards.');
-      return;
-   else
-      disp('*** STInstantiate: Really, it''s so much easier for me to generate spike');
-      disp('       trains with identical durations.  Just do them separately, or use');
-      disp('       STCrop afterwards.');
-      return;
-   end
 end
 
 
 % -- Check to see if we're overwriting anything
 
-if (any(CellForEach(@isfield, stTrain, 'instance')))
+if (isfield(stTrain, 'instance'))
     disp('--- STInstantiate: Warning: overwriting a previously instantiated spike train');
 end
 
-vbHasMapping = reshape(CellForEach(@isfield, stTrain, 'mapping'), 1, nNumTrains);
-if (any(vbHasMapping))
-   disp('--- STInstantiate: Warning: re-instantiating a mapped spike train.  The');
-   disp('       previous mapping will be erased.');
-   
-   % - Remove mappings from the affected trains
-   for (nTrainIndex = find(vbHasMapping))
-      stTrain{nTrainIndex} = rmfield(stTrain{nTrainIndex}, 'mapping');
-   end
+if (isfield(stTrain, 'mapping'))
+   disp('--- STInstance: Warning: re-instantiating a mapped spike train.  The previous');
+   disp('       mapping will be erased.');
+   stTrain = rmfield(stTrain, 'mapping');
 end
 
 
-% -- Initialise algorithm for each spike train
+% -- Find which sort of instance we're creating
 
-for (nTrainIndex = 1:nNumTrains)
-   % - Create the instance nodes
-   instance{nTrainIndex} = [];
-   instance{nTrainIndex}.fTemporalResolution = InstanceTemporalResolution;
-   instance{nTrainIndex}.tDuration = tDuration(nNumTrains);
-   
-   % - Check if we need to use chunked mode
-   bChunkedMode = (tDuration(nNumTrains) / InstanceTemporalResolution) > SpikeChunkLength;
-   instance{nTrainIndex}.bChunkedMode = bChunkedMode;
-   vbChunkedMode(nTrainIndex) = bChunkedMode;
+switch lower(strTemporalType)
+   case {'regular', 'r'}
+      fhDoSpike = @STTestSpikeRegular;
+        
+   case {'poisson', 'p'}
+      fhDoSpike = @STTestSpikePoisson;
+        
+   otherwise
+      disp('*** STInstantiate: Unknown temporal spike train type.');
+      disp('                   Must be one of {regular, poisson}');
+      return;
+end
 
+
+% -- Create the instance
+
+instance = [];
+instance.fTemporalResolution = InstanceTemporalResolution;
+instance.tDuration = tDuration;
+
+% - Check if we need to use chunked mode
+bChunkedMode = (tDuration / InstanceTemporalResolution) > SpikeChunkLength;
+instance.bChunkedMode = bChunkedMode;
+
+nNumChunks = 1;
+
+if (bChunkedMode)
    % - Determine how many chunks are required
-   if (bChunkedMode)
-      nNumChunks = ceil((tDuration(nNumTrains) / InstanceTemporalResolution) / SpikeChunkLength);
-      instance{nTrainIndex}.nNumChunks = nNumChunks;
-      instance{nTrainIndex}.spikeList = cell(1, nNumChunks);
-      vnNumChunks(nNumTrains) = nNumChunks;
-   else
-      vnNumChunks(nNumTrains) = 1;
-   end
-end
-
-
-% -- Instantiate for each chunk
-
-% - Get list of definition InstFreq vectors
-sRef.type = '.';
-sRef.subs = 'fhInstFreq';
-vfhInstFreq = CellForEachCell(@subsref, cDefinitions, sRef);
-
-% - Get total number of chunks
-nNumChunks = max(vnNumChunks);
-
-% - Display some progress
-if (any(vbChunkedMode))
-   STProgress('Instantiating: Chunk [%02d/%02d]', 0, nNumChunks);
+   nNumChunks = ceil((tDuration / InstanceTemporalResolution) / SpikeChunkLength);
+   instance.nNumChunks = nNumChunks;
+   instance.spikeList = cell(1, nNumChunks);
+   
+   fprintf(1, 'Instantiating: Chunk [%02d/%02d]', 0, nNumChunks);
 end
 
 for (nChunkIndex = 1:nNumChunks)
-   % - Display some progress
-   if (any(vbChunkedMode))
-         STProgress('\b\b\b\b\b\b%02d/%02d]', nChunkIndex, nNumChunks);
-   end
-   
    % - Get start and end times for the current chunk
    tTimeStart = (nChunkIndex-1) * InstanceTemporalResolution * SpikeChunkLength;
    if (nChunkIndex == nNumChunks)
-      tTimeEnd = tDuration(1);      % For now, assume identical durations
+      tTimeEnd = tDuration;
    else
       tTimeEnd = (nChunkIndex) * InstanceTemporalResolution * (SpikeChunkLength-1);
    end
    
-   % - Create time step vector
    tTimeCurr = tTimeStart:InstanceTemporalResolution:tTimeEnd;
-   
-   % - Get instantaneous frequency vector
-   fInstFreq = cell(1, nNumTrains);
-   for (nTrainIndex = 1:nNumTrains)
-      fInstFreq{nTrainIndex} = feval(vfhInstFreq{nTrainIndex}, cDefinitions{nTrainIndex}, tTimeCurr);
+   fInstFreq = feval(stTrain.definition.fhInstFreq, stTrain.definition, tTimeCurr);
+    
+   if ((max(fInstFreq) * InstanceTemporalResolution) > 1.0)
+      disp('--- STInstantiateRegular: Spike frequency is greater than the temporal resolution.');
+      disp(sprintf('      Frequency [%.2f]MHz is clipped to [%.2f]MHz', ...
+                   max(fInstFreq) / 1e3, (1/InstanceTemporalResolution) / 1e3));
    end
 
-   % - Check that we're not under-sampling
-   fMaxFreq = max(CellForEach(@max, fInstFreq));
-   if ((fMaxFreq * InstanceTemporalResolution) > 1.0001)
-      disp('--- STInstantiate: Spike frequency is greater than the temporal resolution.');
-      disp(sprintf('       Frequency [%.2f]MHz is clipped to [%.2f]MHz', ...
-                   fMaxFreq / 1e3, (1/InstanceTemporalResolution) / 1e3));
-   end
+   % - Find indices of tTimeCurr that correspond to a spike
+   nSpikeIndices = feval(fhDoSpike, tTimeCurr, fInstFreq);
+   spikeList = tTimeCurr(nSpikeIndices);
 
-   % - If we're making correlated trains, generate some correlated random
-   %   sequences
-   if (bCorrelate)
-      STProgress(' Generating correlated sequence...');
-      mSeq = CorrUniRand(mCorrelation, length(tTimeCurr));
-      STProgress('\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b                                  \b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b');
-   end
-
-   % - Generate spikes
-   for (nTrainIndex = 1:nNumTrains)
-      if (bCorrelate)
-         % - Use the pre-generated correlated random sequence
-         vfCorrSeq = mSeq(:, nTrainIndex)';
-      else
-         % - Let the toolbox function generate its own random sequence
-         vfCorrSeq = [];
+   if (bChunkedMode)
+      % - Assign the chunk to the spike list
+      instance.spikeList{nChunkIndex} = spikeList';
+      fprintf(1, '\b\b\b\b\b\b%02d/%02d]', nChunkIndex, nNumChunks);
+      
+      % - Print a line feed if we're displaying staus
+      if (nChunkIndex == nNumChunks)
+         fprintf(1, '\n');
       end
       
-      if (bMemory)
-         % - Force non-ergodic filtering of the random sequence
-         fMemTauItem = fMemTau(nTrainIndex);
-      else
-         % - Don't perform filering
-         fMemTauItem = [];
-      end
-      
-      % - Generate the spike train
-      nSpikeIndices = feval(fhTestSpike{nTrainIndex}, tTimeCurr, fInstFreq{nTrainIndex}, vfCorrSeq, fMemTauItem);
-      spikeList = tTimeCurr(nSpikeIndices);
-
-      % - Assign the spike list
-      if (vbChunkedMode(nTrainIndex))
-         % - Assign the chunk to the spike list
-         instance{nTrainIndex}.spikeList{nChunkIndex} = spikeList';
-      else
-         % - Just assign the spike list (non-chunked)
-         instance{nTrainIndex}.spikeList = spikeList';
-      end
-   end
-
-   % - Print a line feed if we're displaying staus
-   if (any(vbChunkedMode) && (nChunkIndex == nNumChunks))
-      STProgress('\n');
+   else
+      % - Just assign the spike list (non-chunked)
+      instance.spikeList = spikeList';
    end
 end
 
-% - Assign instances to spike trains
-for (nTrainIndex = 1:nNumTrains)
-   stTrain{nTrainIndex}.instance = instance{nTrainIndex};
-end
+% - Assign instance to spike train
+stTrain.instance = instance;
 
-% - If we only have one output, strip the cell wrapper
-if (~bArrayOutput)
-   stTrain = stTrain{1};
-end
 
 % --- END of STInstantiate.m ---
+
+% $Log: STInstantiate.m,v $
+% Revision 2.5  2004/09/16 11:45:23  dylan
+% Updated help text layout for all functions
+%
+% Revision 2.4  2004/09/02 08:23:18  dylan
+% * Added a function STIsZeroDuration to test for zero duration spike trains.
+%
+% * Modified all functions to use this test rather than custom tests.
+%
+% Revision 2.3  2004/08/28 11:10:25  dylan
+% STInstantiate now has prettier status output (nonote)
+%
+% Revision 2.2  2004/08/27 12:49:15  dylan
+% Added more descriptive progress indicators to STMap and STInstantiate (nonote)
+%
+% Revision 2.1  2004/07/19 16:21:02  dylan
+% * Major update of the spike toolbox (moving to v0.02)
+%
+% * Modified the procedure for retrieving and setting toolbox options.  The new
+% suite of functions comprises of STOptions, STOptionsLoad, STOptionsSave,
+% STOptionsDescribe, STCreateGlobals and STIsValidOptionsStruct.  Spike Toolbox
+% 'factory default' options are defined in STToolboxDefaults.  Options can be
+% saved as user defaults using STOptionsSave, and will be loaded automatically
+% for each session.
+%
+% * Removed STAccessDefaults and STCreateDefaults.
+%
+% * Renamed STLogicalAddressConstruct, STLogicalAddressExtract,
+% STPhysicalAddressContstruct and STPhysicalAddressExtract to
+% STAddr<type><verb>
+%
+% * Drastically modified the way synapse addresses are specified for the
+% toolbox.  A more generic approach is now taken, where addressing modes are
+% defined by structures that outline the meaning of each bit-field in a
+% physical address.  Fields can have their bits reversed, can be ignored, can
+% have a description attached, and can be marked as major or minor fields.
+% Any type of neuron/synapse topology can be addressed in this way, including
+% 2D neuron arrays and chips with no separate synapse addresses.
+%
+% The following functions were created to handle this new addressing mode:
+% STAddrDescribe, STAddrFilterArgs, STAddrSpecChannel, STAddrSpecCompare,
+% STAddrSpecDescribe, STAddrSpecFill, STAddrSpecIgnoreSynapseNeuron,
+% STAddrSpecInfo, STAddrSpecSynapse2DNeuron, STIsValidAddress, STIsValidAddrSpec,
+% STIsValidChannelAddrSpec and STIsValidMonitorChannelsSpecification.
+%
+% This modification required changes to STAddrLogicalConstruct and Extract,
+% STAddrPhysicalConstruct and Extract, STCreate, STExport, STImport,
+% STStimulate, STMap, STCrop, STConcat and STMultiplex.
+%
+% * Removed the channel filter functions.
+%
+% * Modified STDescribe to handle the majority of toolbox variable types.
+% This function will now describe spike trains, addressing specifications and
+% spike toolbox options.  Added STAddrDescribe, STOptionsDescribe and
+% STTrainDescribe.
+%
+% * Added an STIsValidSpikeTrain function to test the validity of a spike
+% train structure.  Modified many spike train manipulation functions to use
+% this feature.
+%
+% * Added features to Todo.txt, updated Readme.txt
+%
+% * Added an info.xml file, added a welcome HTML file (spike_tb_welcome.html)
+% and associated images (an_spike-big.jpg, an_spike.gif)
+%
+% Revision 2.0  2004/07/13 12:56:32  dylan
+% Moving to version 0.02 (nonote)
+%
+% Revision 1.2  2004/07/13 12:55:19  dylan
+% (nonote)
+%
+% Revision 1.1  2004/06/04 09:35:47  dylan
+% Reimported (nonote)
+%
+% Revision 1.9  2004/05/05 16:15:17  dylan
+% Added handling for zero-length spike trains to various toolbox functions
+%
+% Revision 1.8  2004/05/04 09:40:07  dylan
+% Added ID tags and logs to all version managed files
+%

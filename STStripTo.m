@@ -1,7 +1,7 @@
 function [stStrippedTrain] = STStripTo(stTrain, varargin)
 
 % STStripTo - FUNCTION Strip undesired spike train levels from spike trains
-% $Id: STStripTo.m 3987 2006-05-09 13:38:38Z dylan $
+% $Id: STStripTo.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [stStrippedTrain] = STStripTo(stTrain, strLevel, strLevel, ...)
 % Usage: [stCellStrippedTrain] = STStripTo(stCellTrain, strLevel, strLevel, ...)
@@ -18,7 +18,6 @@ function [stStrippedTrain] = STStripTo(stTrain, varargin)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 27th August, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Check arguments
 
@@ -58,7 +57,7 @@ stStrippedTrain = [];
 
 for (nLevelIndex = 1:length(varargin))
    % - Get the canonical name for a spike train level
-   [nul, strLevel] = STIsValidSpikeTrainLevel(varargin{nLevelIndex});
+   [bValidLevel, strLevel] = STIsValidSpikeTrainLevel(varargin{nLevelIndex});
    
    % - Does the specified level exist in the source train?
    if (isfield(stTrain, strLevel))
@@ -69,3 +68,28 @@ end
 
 
 % --- END of STStripTo.m ---
+
+% $Log: STStripTo.m,v $
+% Revision 2.3  2004/09/16 11:45:23  dylan
+% Updated help text layout for all functions
+%
+% Revision 2.2  2004/09/01 12:15:28  dylan
+% Updated several functions to use if (any(... instead of if (max(...
+%
+% Revision 2.1  2004/08/27 12:35:58  dylan
+% * STMap is now forgiving of arrays of addresses that have the same number of
+% elements, but a different shape.
+%
+% * Created a new function STIsValidSpiketrainLevel.  This function tests the
+% validity of a spike train level description.
+%
+% * STFindMatchingLevel now uses STIsValidSpiketrainLevel.
+%
+% * Created a new function STStripTo.  This function strips off undesired
+% spiketrain levels, leaving only the specified levels remaining.
+%
+% * Created a new function STStrip.  This function strips off specified
+% spiketrain levels from a train.
+%
+% * Modified an error message within STMap.
+%

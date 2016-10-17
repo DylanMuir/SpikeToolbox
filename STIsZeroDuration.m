@@ -1,7 +1,7 @@
 function [bZero] = STIsZeroDuration(stTrain)
 
 % STIsZeroDuration - FUNCTION Tests for a zero duration spike train
-% $Id: STIsZeroDuration.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STIsZeroDuration.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [bZero] = STIsZeroDuration(stTrain)
 %
@@ -12,7 +12,6 @@ function [bZero] = STIsZeroDuration(stTrain)
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 2nd September, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Check arguments
 
@@ -55,3 +54,16 @@ bZero = (node.tDuration == 0) | (isempty(node.spikeList));
 
 
 % --- END of STIsZeroDuration.m ---
+
+% $Log: STIsZeroDuration.m,v $
+% Revision 1.3  2005/02/18 16:09:55  dylan
+% STIsZeroDuration now does a test for zero spikes as well as zero time duration. (nonote)
+%
+% Revision 1.2  2004/09/16 11:45:23  dylan
+% Updated help text layout for all functions
+%
+% Revision 1.1  2004/09/02 08:36:20  dylan
+% * Added a function STIsZeroDuration to test for zero duration spike trains.
+%
+% * Modified all functions to use this test rather than custom tests.
+%

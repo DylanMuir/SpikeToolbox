@@ -1,10 +1,9 @@
-function [cstTrain] = STCreateLinear(fStartFreq, fEndFreq)
+function [stTrain] = STCreateLinear(fStartFreq, fEndFreq)
 
 % STCreateLinear - FUNCTION Create a linearly changing frequency spike train definition
-% $Id: STCreateLinear.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STCreateLinear.m 124 2005-02-22 16:34:38Z dylan $
 %
 % Usage: [stTrain] = STCreateLinear(fStartFreq, fEndFreq)
-%        [cstTrain] = STCreateLinear(vfStartFreq, vfEndFreq)
 %
 % STCreateLinear will create a spike train definition where the spiking
 % frequency increases linearly with time.  'fStartFreq' and 'fEndFreq' specify
@@ -12,78 +11,91 @@ function [cstTrain] = STCreateLinear(fStartFreq, fEndFreq)
 % spike train (and thus the rate of chance of frequency) is specified when the
 % train is instantiated with STInstantiate.  'stTrain' will comprise of a
 % field 'definition' containing the spike train definition.
-%
-% Either (or both) of 'vfStartFreq' and 'vfEndFreq' can optionally be
-% provided as arrays.  In this case, 'cstTrain' will be a cell array of
-% spike trains, with the arguments for each definition taken element-wise
-% from the input array arguments.  In the case when only a single argument
-% is an array, that scalar value will be used to create the definition for
-% all values of the array argument.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 26th March, 2004
-% Copyright (c) 2004, 2005 Dylan Richard Muir
 
 % -- Check arguments
 
-if (nargin < 2)
+if (nargin < 1)
     disp ('*** STCreateLinear: Incorrect number of arguments');
     help STCreateLinear;
     return;
 end
 
+% -- Create definition
 
-% -- Check number of elements for input arguments
-
-% - Determine argument number of elements
-nStartElems = numel(fStartFreq);
-nEndElems = numel(fEndFreq);
-vArgElems = [nStartElems nEndElems];
-nNumTrains = max(vArgElems);
-
-% - Boolean tests for argument sizes
-bArrayOutput = any(vArgElems > 1);
-bArrayStart = (nStartElems > 1);
-bArrayEnd = (nEndElems > 1);
-
-% - Should we make a cellular output?
-if (bArrayOutput)
-    % - Is the start frequency not yet an array?
-    if (~bArrayStart)
-        % - Use the same start frequenxy for all trains
-        nNumTrains = nEndElems;
-        fStartFreq = repmat(fStartFreq, nNumTrains, 1);
-    
-    % - Is the end frequency not yet an array?
-    elseif (~bArrayEnd)
-        % - Use the same end frequency for all trains
-        nNumTrains = nStartElems;
-        fEndFreq = repmat(fEndFreq, nNumTrains, 1);
-        
-    % - Check that all arguments have the same number of elements
-    elseif (nStartElems ~= nEndElems)
-        disp('*** STCreateLinear: When arguments are supplied as arrays, the same number');
-        disp('       of elements must be in each.');
-        return;
-    end
-end
-
-
-% -- Create definitions
-
-cstTrain = cell(nNumTrains, 1);
-
-for (nTrainIndex = 1:nNumTrains)
-    cstTrain{nTrainIndex}.definition.strType = 'linear';
-    cstTrain{nTrainIndex}.definition.fStartFreq = fStartFreq(nTrainIndex);
-    cstTrain{nTrainIndex}.definition.fEndFreq = fEndFreq(nTrainIndex);
-    cstTrain{nTrainIndex}.definition.fhInstFreq = @STInstantaneousFrequencyLinear;
-    cstTrain{nTrainIndex}.definition.fhPlotFunction = @STPlotDefLinear;
-end
-
-% - Fix output variable for only a single spike train
-if (nNumTrains == 1)
-    cstTrain = cstTrain{1};
-end
+stTrain = [];
+stTrain.definition.strType = 'linear';
+stTrain.definition.fStartFreq = fStartFreq;
+stTrain.definition.fEndFreq = fEndFreq;
+stTrain.definition.fhInstFreq = @STInstantaneousFrequencyLinear;
 
 % --- END of STCreateLinear.m ---
+
+% $Log: STCreateLinear.m,v $
+% Revision 2.2  2004/09/16 11:45:22  dylan
+% Updated help text layout for all functions
+%
+% Revision 2.1  2004/07/19 16:21:01  dylan
+% * Major update of the spike toolbox (moving to v0.02)
+%
+% * Modified the procedure for retrieving and setting toolbox options.  The new
+% suite of functions comprises of STOptions, STOptionsLoad, STOptionsSave,
+% STOptionsDescribe, STCreateGlobals and STIsValidOptionsStruct.  Spike Toolbox
+% 'factory default' options are defined in STToolboxDefaults.  Options can be
+% saved as user defaults using STOptionsSave, and will be loaded automatically
+% for each session.
+%
+% * Removed STAccessDefaults and STCreateDefaults.
+%
+% * Renamed STLogicalAddressConstruct, STLogicalAddressExtract,
+% STPhysicalAddressContstruct and STPhysicalAddressExtract to
+% STAddr<type><verb>
+%
+% * Drastically modified the way synapse addresses are specified for the
+% toolbox.  A more generic approach is now taken, where addressing modes are
+% defined by structures that outline the meaning of each bit-field in a
+% physical address.  Fields can have their bits reversed, can be ignored, can
+% have a description attached, and can be marked as major or minor fields.
+% Any type of neuron/synapse topology can be addressed in this way, including
+% 2D neuron arrays and chips with no separate synapse addresses.
+%
+% The following functions were created to handle this new addressing mode:
+% STAddrDescribe, STAddrFilterArgs, STAddrSpecChannel, STAddrSpecCompare,
+% STAddrSpecDescribe, STAddrSpecFill, STAddrSpecIgnoreSynapseNeuron,
+% STAddrSpecInfo, STAddrSpecSynapse2DNeuron, STIsValidAddress, STIsValidAddrSpec,
+% STIsValidChannelAddrSpec and STIsValidMonitorChannelsSpecification.
+%
+% This modification required changes to STAddrLogicalConstruct and Extract,
+% STAddrPhysicalConstruct and Extract, STCreate, STExport, STImport,
+% STStimulate, STMap, STCrop, STConcat and STMultiplex.
+%
+% * Removed the channel filter functions.
+%
+% * Modified STDescribe to handle the majority of toolbox variable types.
+% This function will now describe spike trains, addressing specifications and
+% spike toolbox options.  Added STAddrDescribe, STOptionsDescribe and
+% STTrainDescribe.
+%
+% * Added an STIsValidSpikeTrain function to test the validity of a spike
+% train structure.  Modified many spike train manipulation functions to use
+% this feature.
+%
+% * Added features to Todo.txt, updated Readme.txt
+%
+% * Added an info.xml file, added a welcome HTML file (spike_tb_welcome.html)
+% and associated images (an_spike-big.jpg, an_spike.gif)
+%
+% Revision 2.0  2004/07/13 12:56:31  dylan
+% Moving to version 0.02 (nonote)
+%
+% Revision 1.2  2004/07/13 12:55:19  dylan
+% (nonote)
+%
+% Revision 1.1  2004/06/04 09:35:47  dylan
+% Reimported (nonote)
+%
+% Revision 1.3  2004/05/04 09:40:06  dylan
+% Added ID tags and logs to all version managed files
+%

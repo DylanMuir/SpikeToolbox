@@ -4,41 +4,28 @@
 <?xml-stylesheet type="text/xsl" href="http://www.mathworks.com/namespace/info/v1/info.xsl"?>
 
 <matlabrelease>13</matlabrelease>
-<name>Spike</name>
+<name>Spike Toolbox</name>
 <type>toolbox</type>
 <icon>an_spike.gif</icon>
-<help_contents_icon>$toolbox/matlab/icons/book_mat.gif</help_contents_icon>
-<help_location>./spike</help_location>
+<help_location>help/</help_location>
 
 <list>
 
-<!--listitem>
+<listitem>
 <label>Basic Function Help</label>
-<callback>doc fileparts(which('STCreate'))</callback>
-<icon>$toolbox/matlab/icons/book_mat.gif</icon>
-</listitem-->
-
-<listitem>
-<label>Documentation</label>
-<callback>STWelcome('documentation');</callback>
+<callback>doc spike_tb/</callback>
 <icon>$toolbox/matlab/icons/book_mat.gif</icon>
 </listitem>
 
 <listitem>
-<label>Getting started</label>
-<callback>STWelcome('get_started');</callback>
+<label>Welcome page</label>
+<callback>web(['file:///' which('spike_tb_welcome.html')])</callback>
 <icon>$toolbox/matlab/icons/book_mat.gif</icon>
-</listitem>
-
-<listitem>
-<label>Tutorial</label>
-<callback>STWelcome('tutorial');</callback>
-<icon>$toolbox/matlab/icons/demoicon.gif</icon>
 </listitem>
 
 <listitem>
 <label>Product Page (Web)</label>
-<callback>web('http://www.ini.uzh.ch/~dylan/spike_toolbox', '-browser')</callback>
+<callback>web http://www.ini.unizh.ch/~dylan; -browser</callback>
 <icon>$toolbox/matlab/icons/webicon.gif</icon>
 </listitem>
 

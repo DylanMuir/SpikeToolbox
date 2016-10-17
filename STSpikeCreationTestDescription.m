@@ -1,55 +1,16 @@
-function STOptionsSave(stOptions, filename)
-
-% STOptionsSave - FUNCTION Save Spike Toolbox options to a file
-% $Id: STOptionsSave.m 124 2005-02-22 16:34:38Z dylan $
+% STSpikeCreationTestDescription - HELP Internal Spike Toolbox help file
+% $Id: STSpikeCreationTestDescription.m 124 2005-02-22 16:34:38Z dylan $
 %
-% Usage: STOptionsSave
-%        STOptionsSave(stOptions)
-%        STOptionsSave(stOptions, filename)
-%
-% The first usage will save the current options as the default for the
-% toolbox.  The second usage will save the specified options as the toolbox
-% defaults.  The third usage will save the specified options to a particular
-% file.  This file can then be loaded with STOptionsLoad.
-%
-% 'stOptions' muct be a valid Spike Toolbox options structure.  Use STOptions
-% to retrieve a current valid options structure.
+% These functions should not be called from the command line.  They are
+% designed to be called from within STInstantiate to determine when to create
+% a spike.  See STInstantiate for calling syntax.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
-% Created: 13th July, 2004
+% Created: May 2004
 
-% -- Declare globals
-global ST_OPTIONS_STRUCTURE_SIGNATURE ST_OPTIONS_FILE;
-STCreateGlobals;
+% --- END of STSpikeCreationTestDescription ---
 
-
-% -- Check arguments
-
-if (nargin > 2)
-   disp('--- STOptionsSave: Extra arguments ignored');
-end
-
-if (nargin < 2)
-   filename = ST_OPTIONS_FILE;
-end
-
-if (nargin < 1)
-   stOptions = STOptions;
-end
-
-% -- Check the options structure
-if (~STIsValidOptionsStruct(stOptions))
-   disp('*** STOptionsSave: Invalid options structure.');
-   disp('*** Type "help STOptions" for help on retrieving a valid structure');
-   return;
-end
-
-% -- Save the options to file
-save(filename, 'stOptions');
-
-% --- END of STOptionsSave.m ---
-
-% $Log: STOptionsSave.m,v $
+% $Log: STSpikeCreationTestDescription.m,v $
 % Revision 2.2  2004/09/16 11:45:23  dylan
 % Updated help text layout for all functions
 %
@@ -102,4 +63,24 @@ save(filename, 'stOptions');
 %
 % * Added an info.xml file, added a welcome HTML file (spike_tb_welcome.html)
 % and associated images (an_spike-big.jpg, an_spike.gif)
+%
+% Revision 2.0  2004/07/13 12:56:32  dylan
+% Moving to version 0.02 (nonote)
+%
+% Revision 1.2  2004/07/13 12:55:19  dylan
+% (nonote)
+%
+% Revision 1.1  2004/06/04 09:35:49  dylan
+% Reimported (nonote)
+%
+% Revision 1.3  2004/05/19 07:56:50  dylan
+% * Modified the syntax of STImport -- STImport now uses an updated version
+% of stimmon, which acquires data from all four PCI-AER channels.  STImport
+% now imports to a cell array of spike trains, one per channel imported.
+% Which channels to import can be specified through the calling syntax.
+% * STImport uses channel filter functions to handle different addressing
+% formats on the AER bus.  Added two standard filter functions:
+% STChannelFilterNeuron and STChannelFilterNeuronSynapse.  Added help files
+% for this functionality: STChannelFiltersDescription,
+% STChannelFilterDevelop
 %

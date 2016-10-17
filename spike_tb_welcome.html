@@ -1,0 +1,144 @@
+<html>
+
+<head>
+<title>Welcome to the Spike Toolbox v0.02</title>
+<!--
+$Id: spike_tb_welcome.html 124 2005-02-22 16:34:38Z dylan $
+-->
+</head>
+
+<body>
+<p>
+<img src="an_spike-big.jpg" align="right">
+<font size="+3"><b>Readme - How to use the spike toolbox</b></font><br />
+<font size="+2"><b>(Spike Toolbox v0.02)</b></font><br />
+<font size="-2">CVS ID: $Id: spike_tb_welcome.html 124 2005-02-22 16:34:38Z dylan $</font><br />
+</p>
+
+<p>
+<font size="+1"><b>Installation</b></font>
+<ul>
+<li>Add the <code>spike_tb</code> directory to the matlab path</li>
+<li>The spike toolbox requires some utilitiy functions in <code>../utilities</code>.  Add this directory to the matlab path.</li>
+<li>The PCI-AER stimulation functions are developmental, but require a built copy of <code>stimmon</code> on the path.  The easiest option is to add a symbolic link to a built version.  <code>stimmon</code> is available in the alavlsi repository, under <code>SW/c/poisson</code>.</li>
+</ul>
+</p>
+
+<p>
+<font size="+1"><b>Help and basic usage guidelines</b></font>
+<ul>
+<li>The Spike Toolbox currently has no formal documentation.  However, each function has syntax and usage help available by typing <code>'help (function name)'</code> or <code>'helpwin (function name)'</code> at the matlab command line.</li>
+<li>Type <a href="matlab:helpwin spike_tb"><code>helpwin spike_tb</code></a> in matlab to get a list of toolbox functions with descriptions.</li>
+<li>Type <a href="matlab:helpwin STFormats"><code>helpwin STFormats</code></a> for some basic information on the spike train objects, their representation and usage.</li>
+<li>Type <a href="matlab:helpwin STAddrSpecInfo"><code>helpwin STAddrSpecInfo</code></a> for information on how to specify on-chip neuron addresses to the toolbox.</li>
+<li>Errors are reported on the command line with three asterisks and the name of the function raising the error prepended.  For example<br />
+<code>*** STAddrSpecCompare: Invalid specification</code><br />
+When a function raises an error, it does not guarantee to return valid output, or indeed any output at all.</li>
+<li>Warnings are reported on the command line with three dashes and the name of the function raising the warning prepended.  For example<br />
+<code>--- STIsValidAddress: Extra arguments ignored</code><br />
+When a function raises a warning, it guarantees to still return valid output as definied by the function's help text.</li>
+</ul>
+</p>
+
+<p>
+<font size="+1"><b>Getting started</b></font><br />
+<ul>
+<li>Use <a href="matlab:helpwin STCreate"><code>STCreate</code></a> to create a new spike train definition.</li>
+<li>Instantiate the definition with <a href="matlab:helpwin STInstantiate"><code>STInstantiate</code></a>.  (This converts an abstract definition into an actual train of spikes with some duration.)</li>
+<li>Map the spike train to a neuron and synapse address with <a href="matlab:helpwin STMap"><code>STMap</code></a>.</li>
+<li>Multiplex several spike trains together with <a href="matlab:helpwin STMultiplex"><code>STMultiplex</code></a>.</li>
+<li>Stimulate your neurons with <a href="matlab:helpwin STStimulate"><code>STStimulate</code></a>.</li>
+<li>View the results of your stimulus (or the stimulus itself) with <a href="matlab:helpwin STPlotRaster"><code>STPlotRaster</code></a>.
+<li>Use <a href="matlab:helpwin STOptions"><code>STOptions</code></a> to retrieve and change the spike toolbox options.</li>
+<li><a href="matlab:helpwin STDescribe"><code>STDescribe</code></a> will print a human-friendly summary of most Spike Toolbox variables.  This is useful particularly when defining addressing modes, and to easily verify the toolbox options.</li>
+</ul>
+
+
+</body>
+
+<!--
+$Log: spike_tb_welcome.html,v $
+Revision 2.3  2004/07/29 14:04:29  dylan
+* Fixed a bug in STAddrLogicalExtract where it would incorrectly handle
+addressing specifications with no minor address fields.
+
+* Updated the help for STOptions, making it more verbose.
+
+* Modified the help for STAddrSpecInfo: Added a reference to STDescribe.
+
+* Modifed readme.txt to point to the welcome HTML file.
+
+* Modified the spike_tb_welcome.html file: Added a reference to STDescribe.
+
+* Modified STAddrSpecSynapse2DNeuron: This function now accepts an argument
+'bXSecond' which can swap the order of the two neuron address fields.
+
+* Added a more explicit description of 'strPlotOptions' to STPlotRaster.
+
+* Updated STFormats to bring it up to date with the new toolbox variable
+formats.
+
+Revision 2.2  2004/07/22 11:17:33  dylan
+Modified documentation (nonote)
+
+Revision 2.1  2004/07/19 16:21:03  dylan
+* Major update of the spike toolbox (moving to v0.02)
+
+* Modified the procedure for retrieving and setting toolbox options.  The new
+suite of functions comprises of STOptions, STOptionsLoad, STOptionsSave,
+STOptionsDescribe, STCreateGlobals and STIsValidOptionsStruct.  Spike Toolbox
+'factory default' options are defined in STToolboxDefaults.  Options can be
+saved as user defaults using STOptionsSave, and will be loaded automatically
+for each session.
+
+* Removed STAccessDefaults and STCreateDefaults.
+
+* Renamed STLogicalAddressConstruct, STLogicalAddressExtract,
+STPhysicalAddressContstruct and STPhysicalAddressExtract to
+STAddr<type><verb>
+
+* Drastically modified the way synapse addresses are specified for the
+toolbox.  A more generic approach is now taken, where addressing modes are
+defined by structures that outline the meaning of each bit-field in a
+physical address.  Fields can have their bits reversed, can be ignored, can
+have a description attached, and can be marked as major or minor fields.
+Any type of neuron/synapse topology can be addressed in this way, including
+2D neuron arrays and chips with no separate synapse addresses.
+
+The following functions were created to handle this new addressing mode:
+STAddrDescribe, STAddrFilterArgs, STAddrSpecChannel, STAddrSpecCompare,
+STAddrSpecDescribe, STAddrSpecFill, STAddrSpecIgnoreSynapseNeuron,
+STAddrSpecInfo, STAddrSpecSynapse2DNeuron, STIsValidAddress, STIsValidAddrSpec,
+STIsValidChannelAddrSpec and STIsValidMonitorChannelsSpecification.
+
+This modification required changes to STAddrLogicalConstruct and Extract,
+STAddrPhysicalConstruct and Extract, STCreate, STExport, STImport,
+STStimulate, STMap, STCrop, STConcat and STMultiplex.
+
+* Removed the channel filter functions.
+
+* Modified STDescribe to handle the majority of toolbox variable types.
+This function will now describe spike trains, addressing specifications and
+spike toolbox options.  Added STAddrDescribe, STOptionsDescribe and
+STTrainDescribe.
+
+* Added an STIsValidSpikeTrain function to test the validity of a spike
+train structure.  Modified many spike train manipulation functions to use
+this feature.
+
+* Added features to Todo.txt, updated Readme.txt
+
+* Added an info.xml file, added a welcome HTML file (spike_tb_welcome.html)
+and associated images (an_spike-big.jpg, an_spike.gif)
+
+Revision 2.0  2004/07/13 12:56:30  dylan
+Moving to version 0.02 (nonote)
+
+Revision 1.2  2004/07/13 12:55:18  dylan
+(nonote)
+
+Revision 1.1  2004/06/22 12:28:08  dylan
+Addded a Readme.txt file to the spike toolbox
+-->
+
+</html>

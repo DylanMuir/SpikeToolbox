@@ -1,89 +1,70 @@
-function [addrLog] = STAddrLogicalConstruct(varargin)
-
-% STAddrLogicalConstruct - FUNCTION Build a logical address from a neuron and synapse ID
-% $Id: STAddrLogicalConstruct.m 124 2005-02-22 16:34:38Z dylan $
+% STFormats - HELP Describe spike train toolbox formats
+% $Id: STFormats.m 124 2005-02-22 16:34:38Z dylan $
 %
-% Usage: [addrLog] = STAddrLogicalConstruct(nAddr1, nAddr2, ...)
-%        [addrLog] = STAddrLogicalConstruct(stasSpecification, nAddr1, nAddr2, ...)
+% -- Spike train definitions
+% Describes a desired frequency profile for a spike train in an abstract way.
+% The spike toolbox can create trains with a variety of frequency profiles:
+% constant frequency, linearly changing between two frequencies or
+% sinusoidally changing over time.  See 'STCreate' for details of how to
+% specify these definitions.
 %
-% STAddrLogicalConstruct will return the logical address corresponding to a
-% synapse address provided by the addressing fields.  The returned address will
-% take the form defined by the addressing specification.  If a specification
-% is not supplied in the argument list, the default output address
-% specification will be taken from the toolbox options.
+% Note that complex spike trains can be created by concatenating simple trains
+% using 'STConcat'.
 %
-% Address fields marked as 'major' fields in the specification will be to the
-% left of the decimal point.  Fields marked as 'minor' fields will be to the
-% right of the decimal point.  Fields will be taken from the command line in
-% least to most significant order.  The most significant 'minor' field will be
-% closest to the decimal point.
 %
-% Note that logical addresses are intended to be in semi-human readable form,
-% and therefore addressing fields marked for reversal will not be reversed.
+% -- Spike train instances
+% These spike trains represent a series of spikes from some abstract source.
+% Each spike has a real valued time signature.  See 'STInstantiate' for
+% details of how to create these spike trains from an abstract definition.
+%
+%
+% -- Spike train mappings
+% These spike trains represent a series of spikes to be sent to a specific
+% (set of) neuron(s) and synapse(s).  Each spike has an integer 'time step'
+% style signature, as well as an address to send the spike to.  The time step
+% is specified by the MappingTemporalResolution toolbox option.  The address
+% format used by 'STMap' to create these trains is defined by the
+% stasDefaultOutputSpecification toolbox option, but a different specification
+% can be passed to STMap.  See 'STMap' for details of how to create these
+% spike trains from an instantiated train.  See 'STAddrSpecInfo' for details
+% of how to define and modify addressing specifications.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
-% Created: 9th May, 2004
+% Created: 29th April, 2004
 
-% -- Check arguments
+function STFormats
 
-if (nargin < 1)
-   disp('*** STAddrLogicalConstruct: Incorrect number of arguments');
-   help STAddrLogicalConstruct;
-   return;
-end
-
-% - Check for a valid address
-if (~STIsValidAddress(varargin{:}))
-   disp('*** STAddrLogicalConstruct: An invalid address was supplied for the given');
-   disp('       addressing specification');
-   return;
-end
+% - Just give help
+help STFormats;
 
 
-% -- Extract the addressing arguments
+% --- END of STFormats.m ---
 
-[stasSpecification, varargin] = STAddrFilterArgs(varargin{:});
-
-% - Fill empty fields in the specification
-stasSpecification = STAddrSpecFill(stasSpecification);
-
-% -- Construct the address
-
-nFieldIndex = 1;
-nIntegerBitsUsed = 0;
-nFractionalComponent = 0;
-nIntegerComponent = 0;
-for (nEntryIndex = 1:length(stasSpecification))
-   if (~stasSpecification(nEntryIndex).bIgnore)
-      % - Constrain to the width of the field
-      nComponent = bitshift(varargin{nFieldIndex}, 0, stasSpecification(nEntryIndex).nWidth);
-
-      if (stasSpecification(nEntryIndex).bMajorField)
-         % - Use as a integer component
-         % - Shift the field left
-         nComponent = nComponent .* 2^(nIntegerBitsUsed);
-         nIntegerComponent = nIntegerComponent + nComponent;
-         nIntegerBitsUsed = nIntegerBitsUsed + stasSpecification(nEntryIndex).nWidth;
-      else
-         % - Use as a fractional component
-         % - Shift the existing stuff right
-         nFractionalComponent = nFractionalComponent .* 2^(-stasSpecification(nEntryIndex).nWidth);
-         nFractionalComponent = nFractionalComponent + nComponent .* 2^(-stasSpecification(nEntryIndex).nWidth);
-      end
-      
-      nFieldIndex = nFieldIndex + 1;
-   end
-end
-
-addrLog = nIntegerComponent + nFractionalComponent;
-
-% --- END of STAddrLogicalConstruct.m ---
-
-% $Log: STAddrLogicalConstruct.m,v $
-% Revision 2.2  2004/09/16 11:45:22  dylan
+% $Log: STFormats.m,v $
+% Revision 2.3  2004/09/16 11:45:22  dylan
 % Updated help text layout for all functions
 %
-% Revision 2.1  2004/07/19 16:21:00  dylan
+% Revision 2.2  2004/07/29 14:04:29  dylan
+% * Fixed a bug in STAddrLogicalExtract where it would incorrectly handle
+% addressing specifications with no minor address fields.
+%
+% * Updated the help for STOptions, making it more verbose.
+%
+% * Modified the help for STAddrSpecInfo: Added a reference to STDescribe.
+%
+% * Modifed readme.txt to point to the welcome HTML file.
+%
+% * Modified the spike_tb_welcome.html file: Added a reference to STDescribe.
+%
+% * Modified STAddrSpecSynapse2DNeuron: This function now accepts an argument
+% 'bXSecond' which can swap the order of the two neuron address fields.
+%
+% * Added a more explicit description of 'strPlotOptions' to STPlotRaster.
+%
+% * Updated STFormats to bring it up to date with the new toolbox variable
+% formats.
+%
+% Revision 2.1  2004/07/19 16:21:02  dylan
 % * Major update of the spike toolbox (moving to v0.02)
 %
 % * Modified the procedure for retrieving and setting toolbox options.  The new
@@ -133,16 +114,16 @@ addrLog = nIntegerComponent + nFractionalComponent;
 % * Added an info.xml file, added a welcome HTML file (spike_tb_welcome.html)
 % and associated images (an_spike-big.jpg, an_spike.gif)
 %
-% Revision 2.0  2004/07/13 12:56:31  dylan
+% Revision 2.0  2004/07/13 12:56:32  dylan
 % Moving to version 0.02 (nonote)
 %
 % Revision 1.2  2004/07/13 12:55:19  dylan
 % (nonote)
 %
-% Revision 1.1  2004/06/04 09:35:46  dylan
+% Revision 1.1  2004/06/04 09:35:47  dylan
 % Reimported (nonote)
 %
-% Revision 1.1  2004/05/09 17:55:15  dylan
+% Revision 1.3  2004/05/09 17:55:15  dylan
 % * Created STFlatten function to convert a spike train mapping back into an
 % instance.
 % * Created STExtract function to extract a train(s) from a multiplexed
@@ -151,7 +132,7 @@ addrLog = nIntegerComponent + nFractionalComponent;
 % * Modified the address format for spike train mappings such that the
 % integer component of an address specifies the neuron.  This makes raster
 % plots much easier to read.  The format is now
-% |STDEF_NEURON_BITS|.|STDEF_SYNAPSE_BITS|  This is now referred to as a logical
+% |NEURON_BITS|.|SYNAPSE_BITS|  This is now referred to as a logical
 % address.  The format required by the PCIAER board is referred to as a
 % physical address.
 % * Created STConstructLogicalAddress and STExtractLogicalAddress to
@@ -166,4 +147,7 @@ addrLog = nIntegerComponent + nFractionalComponent;
 % * Fixed a bug in STMultiplex and STConcat where spike event addresses were
 % modified when temporal resolutions were different across spike trains
 % * Modified STFormats to reflect addresss format changes
+%
+% Revision 1.2  2004/05/04 09:40:07  dylan
+% Added ID tags and logs to all version managed files
 %

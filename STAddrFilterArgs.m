@@ -1,59 +1,64 @@
-function STOptionsSave(stOptions, filename)
+function [stasSpecification, cFiltered] = STAddrFilterArgs(varargin)
 
-% STOptionsSave - FUNCTION Save Spike Toolbox options to a file
-% $Id: STOptionsSave.m 124 2005-02-22 16:34:38Z dylan $
+% STAddrFilterArgs - FUNCTION (Internal) Filter address specifications and arguments
+% $Id: STAddrFilterArgs.m 124 2005-02-22 16:34:38Z dylan $
 %
-% Usage: STOptionsSave
-%        STOptionsSave(stOptions)
-%        STOptionsSave(stOptions, filename)
+% Usage: [stasSpecification, cFiltered] = STAddrFilterArgs(nAddr1, nAddr2, ...)
+%        [stasSpecification, cFiltered] = STAddrFilterArgs(stasSpecification, nAddr1, nAddr2, ...)
 %
-% The first usage will save the current options as the default for the
-% toolbox.  The second usage will save the specified options as the toolbox
-% defaults.  The third usage will save the specified options to a particular
-% file.  This file can then be loaded with STOptionsLoad.
+% If a specification was provided in the addressing arguments, it will be
+% filtered off and returned in 'stasSpecification'.  'cFiltered' will contain
+% a cell array of the remaining arguments, with any specifications removed.
+% If no specification was supplied in the argument list, the default output
+% addressing specification will be taken from the toolbox options.
 %
-% 'stOptions' muct be a valid Spike Toolbox options structure.  Use STOptions
-% to retrieve a current valid options structure.
+% This is an internal Spike Toolbox function and should not be used from the
+% command line.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
-% Created: 13th July, 2004
+% Created: 16th July, 2004
 
-% -- Declare globals
-global ST_OPTIONS_STRUCTURE_SIGNATURE ST_OPTIONS_FILE;
-STCreateGlobals;
+% -- Get options
 
+stOptions = STOptions;
 
-% -- Check arguments
+% -- Check arguements
 
-if (nargin > 2)
-   disp('--- STOptionsSave: Extra arguments ignored');
-end
-
-if (nargin < 2)
-   filename = ST_OPTIONS_FILE;
-end
-
-if (nargin < 1)
-   stOptions = STOptions;
-end
-
-% -- Check the options structure
-if (~STIsValidOptionsStruct(stOptions))
-   disp('*** STOptionsSave: Invalid options structure.');
-   disp('*** Type "help STOptions" for help on retrieving a valid structure');
+if (nargin == 0)
+   disp('*** STAddrFilterArgs: Incorrect usage');
+   help STAddrFilterArgs;
    return;
 end
 
-% -- Save the options to file
-save(filename, 'stOptions');
 
-% --- END of STOptionsSave.m ---
+% -- Extract a specification from the command line
 
-% $Log: STOptionsSave.m,v $
-% Revision 2.2  2004/09/16 11:45:23  dylan
+vbIsSpecification = CellForEach(@STIsValidAddrSpec, varargin);
+
+if (any(vbIsSpecification))
+   % - At least one entry is a valid specification
+   %   so use the first one given
+   nSpecIndex = min(find(vbIsSpecification));
+   stasSpecification = varargin{nSpecIndex};
+else
+   stasSpecification = stOptions.stasDefaultOutputSpecification;
+end
+
+
+% -- Filter the remaining arguments
+
+cFiltered = varargin(find(~vbIsSpecification));
+
+% --- END of STAddrFilterArgs.m ---
+
+% $Log: STAddrFilterArgs.m,v $
+% Revision 2.3  2004/09/16 11:45:22  dylan
 % Updated help text layout for all functions
 %
-% Revision 2.1  2004/07/19 16:21:03  dylan
+% Revision 2.2  2004/09/01 12:15:28  dylan
+% Updated several functions to use if (any(... instead of if (max(...
+%
+% Revision 2.1  2004/07/19 16:21:00  dylan
 % * Major update of the spike toolbox (moving to v0.02)
 %
 % * Modified the procedure for retrieving and setting toolbox options.  The new
