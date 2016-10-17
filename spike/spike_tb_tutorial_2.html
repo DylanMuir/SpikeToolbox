@@ -1,0 +1,108 @@
+<!-- spike_tb_tutorial_2.html - Spike toolbox tutorial (Looking at the trains)
+     $Id: spike_tb_tutorial_2.html 1481 2005-08-29 12:41:53Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 19th August, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>Spike Toolbox tutorial - looking at the trains</title>
+	<link rel="stylesheet" type="text/css" href="spike_tb_styles.css" title="Default">
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="spike_tb_tutorial_1.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="spike_tb_tutorial_3.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="h1">Spike Toolbox tutorial</span><br />
+<spna class="h2">Looking at the trains</span><br />
+</p>
+
+<span class="h4">
+<img src="bullet_orange.gif" class="bullet" /><a href="#Raster">Raster plots</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="ISIHistograms">Inter-Spike Interval histograms</a><br />
+</span>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Raster" id="Raster" />Raster plots</span><br />
+<a href="function/STPlotRaster.html" class="function">STPlotRaster</a> produces raster plots of one or more spike train objects.
+</p>
+
+<p class="funcdef">
+&lt;[hFigure]&gt; = <a href="function/STPlotRaster.html">STPlotRaster</a>(stTrain)<br />
+&lt;[hFigure]&gt; = <a href="function/STPlotRaster.html">STPlotRaster</a>(stTrain, &lt;PlotOptions ...&gt;)<br />
+&lt;[hFigure]&gt; = <a href="function/STPlotRaster.html">STPlotRaster</a>(stTrain, strLevel)<br />
+&lt;[hFigure]&gt; = <a href="function/STPlotRaster.html">STPlotRaster</a>(stTrain, strLevel, &lt;PlotOptions ...&gt;)<br />
+</p>
+
+<p>
+See the <a href="function/STPlotRaster.html"><span class="function">STPlotRaster</span> documentation</a> for a detailed description of the arguments.  Of course, raster plots require a spike train with either an instance or a mapping.  Lets have a look at our poisson-generated spike trains with different frequency profiles:
+</p>
+
+<p class="script">
+figure, STPlotRaster(stRising);<br />
+figure, STPlotRaster(stFalling);<br />
+</p>
+
+<p>
+<img src="raster_plot_1.png" />
+<img src="raster_plot_2.png" />
+</p>
+
+<p>
+Raster plots have time in seconds along the x-axis and the spike addresses along the y-axis.  Since our spike trains are not mapped to any address, they have an address of '1' by default.  The degree of randomness in the poisson spike trains is very evident.
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="ISIHistograms" id="ISIHisograms" />Inter-Spike Interval histograms</span><br />
+We can obtain an ISI histogram of our spike trains with the <a href="function/STISIHist.html" class="function">STISIHist</a> function.
+</p>
+
+<p class="funcdef">
+[vISIHist, tTimeBins] = <a href="function/STISIHist.html">STISIHist</a>(stTrain &lt;, bUseLog, nNumBins&gt;)<br />
+[vISIHist, tTimeBins] = <a href="function/STISIHist.html">STISIHist</a>(stTrain &lt;, bUseLog, tTimeBins&gt;)<br />
+[mISIHist, tTimeBins] = <a href="function/STISIHist.html">STISIHist</a>(cellstTrain, ...)<br />
+</p>
+
+<p class="script">
+figure, STISIHist(stRising);
+</p>
+
+<p>
+<img src="isi_hist_1.png" />
+</p>
+
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="spike_tb_tutorial_1.html" class="navigation"><img src="arrow_left.png" border="0" />
+Generating spike trains</a>
+</td>
+
+<td class="next">
+<a href="spike_tb_tutorial_3.html" class="navigation">Combining the trains <img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: spike_tb_tutorial_2.html 1481 2005-08-29 12:41:53Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of spike_tb_tutorial_2.html --->

@@ -1,0 +1,80 @@
+<!-- STIsValidSpikeTrainLevel.html
+     $Id: STIsValidSpikeTrainLevel.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STIsValidSpikeTrain.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STIsZeroDuration.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STIsValidSpikeTrainLevel</span><br />
+Test for a valid spike train level description
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[bValidLevel] = STIsValidSpikeTrainLevel(strLevel)
+[bValidLevel, strLevelCanonical] = STIsValidSpikeTrainLevel(strLevel)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code>strLevel</code> is a string (hopefully) specifying a spike train level.  If
+<code>strLevel</code> is one of <code>{definition, instance, mapping}</code> then <code>bValid</code>
+will be true.  Otherwise <code>bValid</code> will be false.
+</p>
+
+<p>
+STIsValidSpikeTrainLevel is insensitive to case.  If a valid (but
+non-standard) spike train level was supplied in <code>strLevel</code>, then the correct
+value will be returned in <code>strCanonical</code>.  For example 'DefInITion' -->
+'definition'.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_spiketrainlevels.html">Understanding spike trains</a>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STIsValidSpikeTrain.html" class="navigation"><img src="arrow_left.png" border="0" />
+STIsValidSpikeTrain</a>
+</td>
+
+<td class="next">
+<a href="STIsZeroDuration.html" class="navigation">STIsZeroDuration
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STIsValidSpikeTrainLevel.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STIsValidSpikeTrainLevel.html --->

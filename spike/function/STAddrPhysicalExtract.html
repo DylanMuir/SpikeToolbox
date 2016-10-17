@@ -1,0 +1,88 @@
+<!-- STAddrPhysicalExtract.html
+     $Id: STAddrPhysicalExtract.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STAddrPhysicalConstruct.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STAddrSpecChannel.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STAddrPhysicalExtract</span><br />
+Extract the neuron and synapse IDs from a physical address
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[nAddr1, nAddr2, ...] = STAddrPhysicalExtract(addrPhys)
+[nAddr1, nAddr2, ...] = STAddrPhysicalExtract(addrPhys, stasSpecification)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code>addrPhys</code> should be a physcial address as constructed by
+STAddrPhysicalConsstruct.  STAddrPhysicalExtract will extract the
+indices for each addressing field, as defined by the addressing
+specification.  If this specification is not supplied in the argument
+list, the default output addressing specification will be taken from
+the toolbox options.  The field indices will be returned in the variable
+length argument list.
+</p>
+
+<p>
+STAddrPhysicalExtract will respect the <code>bReverse</code> field in the addressing specification, and reverse the bits in the respective fields in the supplied address.  STAddrPhysicalExtract will also respect the <code>bInvert</code> field in the specification, and invert the bits in an addressing field.
+</p>
+
+<p>
+STAddrPhysicalExtract is vectorised.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_addressing.html">Understanding toolbox addressing</a>,
+<span class="func_ref">
+<a href="STAddrPhysicalConstruct.html">STAddrPhysicalConstruct</a>, <a href="STAddrLogicalConstruct.html">STAddrLogicalConstruct</a>, <a href="STAddrLogicalExtract.html">STAddrLogicalExtract</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STAddrPhysicalConstruct.html" class="navigation"><img src="arrow_left.png" border="0" />
+STAddrPhysicalConstruct</a>
+</td>
+
+<td class="next">
+<a href="STAddrSpecChannel.html" class="navigation">STAddrSpecChannel
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STAddrPhysicalExtract.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STAddrPhysicalExtract.html --->

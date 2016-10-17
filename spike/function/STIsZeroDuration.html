@@ -1,0 +1,76 @@
+<!-- STIsZeroDuration.html
+     $Id: STIsZeroDuration.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STIsValidSpikeTrainLevel.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STMap.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STIsZeroDuration</span><br />
+Tests for a zero duration spike train
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[bZero] = STIsZeroDuration(stTrain)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code>stTrain</code> is a valid spike train, as defined by <a href="STIsValidSpikeTrain.html" class="function">STIsValidSpikeTrain</a>.
+STIsZeroDuration test this train to see if it contains any spikes.  <code>bZero</code>
+will be true if <code>stTrain</code> contains no spikes (has a zero duration).  <code>bZero</code>
+will be false otherwise.  <code>bZero</code> will be true for a spike train definition.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<span class="func_ref">
+<a href="STNullTrain.html">STNullTrain</a>,
+<a href="STIsValidSpikeTrain.html">STIsValidSpikeTrain</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STIsValidSpikeTrainLevel.html" class="navigation"><img src="arrow_left.png" border="0" />
+STIsValidSpikeTrainLevel</a>
+</td>
+
+<td class="next">
+<a href="STMap.html" class="navigation">STMap
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STIsZeroDuration.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STIsZeroDuration.html --->

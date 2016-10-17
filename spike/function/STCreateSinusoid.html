@@ -1,0 +1,87 @@
+<!-- STCreateSinusoid.html
+     $Id: STCreateSinusoid.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STCreateLinear.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STCrop.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STCreateSinusoid</span><br />
+Create a sinusoidally changing frequency spike train definition
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stTrain] = STCreateSinusoid(fMinFreq, fMaxFreq, tPeriod)
+[cstTrain] = STCreateSinusoid(vfMinFreq, vfMaxFreq, vtPeriod) 
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+STSinuoid will create a spike train definition, in which the spiking
+frequency changes sinusoidally with time.  <code>fMinFreq</code> and <code>fMaxFreq</code>
+specify the minimum and maximum frequencies to use in the spike train.
+<code>tPeriod</code> specifies the period of the frequency profile sinusoid.  <code>stTrain</code>
+will comprise of a field <code>definition</code> containing the spike train definition.
+</p>
+
+<p>
+One or more of the input arguments may optionally be supplied as an
+array.  In this case, <code>cstTrain</code> will be a cell array of spike trains,
+with the parameters for each taken element-wise from the input array
+arguments.  Any scalar arguments will be duplicated for all elements in
+the cell array of spike train definitions.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_spiketrainlevels.html#Definitions">Spike train definitions</a>,
+<a href="../spike_tb_tutorial_1.html">Generating spike trains</a>,
+<span class="func_ref">
+<a href="STCreate.html">STCreate</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STCreateLinear.html" class="navigation"><img src="arrow_left.png" border="0" />
+STCreateLinear</a>
+</td>
+
+<td class="next">
+<a href="STCrop.html" class="navigation">STCrop
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STCreateSinusoid.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STCreateSinusoid.html --->

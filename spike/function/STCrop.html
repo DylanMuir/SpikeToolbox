@@ -1,0 +1,80 @@
+<!-- STCrop.html
+     $Id: STCrop.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STCreateSinusoid.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STCrossCorrelation.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STCrop</span><br />
+Crop a spike train to a specified time extent
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stCroppedTrain] = STCrop(stTrain, tMinTime, tMaxTime)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+STCrop will crop a spike train to the extents specified in <code>tMinTime</code> and
+<code>tMaxTime</code> (in seconds).  Any spikes outside these times will be removed.
+<code>stCroppedTrain</code> will be a new spike train containing spikes only in the
+time range specified.
+
+<p class="note">
+Note: STCrop will not shift the cropped spike train to zero -- see the
+<a href="STNormalise.html" class="function">STNormalise</a> function for help with this.  However, STCrop will correct the
+duration of the spike train to end at <code>tMaxTime</code>.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<span class="func_ref">
+<a href="STNormalise.html">STNormalise</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STCreateSinusoid.html" class="navigation"><img src="arrow_left.png" border="0" />
+STCreateSinusoid</a>
+</td>
+
+<td class="next">
+<a href="STCrossCorrelation.html" class="navigation">STCrossCorrelation
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STCrop.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STCrop.html --->

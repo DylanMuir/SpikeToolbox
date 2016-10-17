@@ -1,0 +1,159 @@
+<!-- spike_tb_tutorial_5.html - Spike toolbox tutorial (Analysing the received trains)
+     $Id: spike_tb_tutorial_5.html 1481 2005-08-29 12:41:53Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 20th August, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="spike_tb_styles.css" title="Default">
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="spike_tb_tutorial_4.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="spike_tb_options.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="h1">Spike Toolbox tutorial</span><br />
+<span class="h2">Analysing the received trains</span><br />
+</p>
+
+<hr />
+
+<span class="h4">
+<img src="bullet_orange.gif" class="bullet" /><a href="#Demultiplex">De-multiplexing spike trains</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#Analysis">Analysis of the spike train</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#PSTH">Peri-Stimulus Time Histogram</a><br />
+</span>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Demultiplex" id="Demultiplex" />De-multiplexing spike trains</span><br />
+<code>stMonitored</code> contains the spikes resulting from the stimulus we sent to the chip.  We stimulated three neurons, so the spikes in <code>stMonitored</code> come from those three neuron addresses.  Unfortunately they're all contained in a single spike train object.  (A raster plot of the multiplexed trains is in <a href="spike_tb_tutorial_4.html#StimMon">the previous section</a>.)  The <a href="function/STExtract.html" class="function">STExtract</a> function can de-multiplex a spike train by extracting spikes from a restricted set of addresses and returning them in a new spike train object.
+</p>
+
+<p class="funcdef">
+[stExtTrain] = <a href="function/STExtract.html">STExtract</a>(stTrain, nAddr1, nAddr2, ...)<br />
+[stExtTrain] = <a href="function/STExtract.html">STExtract</a>(stTrain, [nAddr1Min  nAddr1Max], [nAddr2Min  nAddr2Max], ...)<br />
+</p>
+
+<p>
+In this example we will extract the spikes from neuron <code>2</code> only.  See the <a href="function/STExtract.htm"><span class="function">STExtract</span> documentation</a> for information about extracting ranges of spike addresses.
+</p>
+
+<p class="script">
+stSingle = STExtract(stMonitored, 2);<br />
+STPlotRaster(stSingle);<br />
+</p>
+
+<p>
+<img src="raster_plot_6.png" />
+</p>
+
+
+<hr />
+
+<p>
+<span class="h3"><a name="Analysis" id="Analysis" />Analysis of the spike train</span><br />
+The toolbox provides many functions for spike train analysis.  A listing of these is available in the <a href="spike_tb_index_categorical.html#Analysis">categorical function index</a>.  In this example we'll look at the <abbr title="Inter-Spike Interval">ISI</abbr> structure of the train, then filter out bursts and look again.  <a href="function/STSieve" class="function">STSieve</a> performs filtering based on  <abbr title="Inter-Spike Interval">ISI</abbr>.
+</p>
+
+<p class="funcdef">
+[stFiltTrain, stRejectTrain] = <a href="function/STSieve">STSieve</a>(stTrain, fMinISI, fMaxISI)<br />
+</p>
+
+<p>
+<a href="function/STSieve" class="function">STSieve</a> splits a spike train into two parts: <code>stFiltTrain</code> will be a spike train containing all spikes with ISI falling between <code>fMinISI<code> and </code>fMaxISI</code> (exclusive).  <code>stRejectTrain</code> will contain all spikes falling outside these <abbr title="Inter-Spike Interval">ISI</abbr> limits.
+</p>
+
+<p class="script">
+STISIHist(stSingle, true, 25);<br />
+</p>
+
+<p>
+<img src="isi_hist_2.png" />
+</p>
+
+<p class="script">
+[stNonBursts, stBursts] = STSieve(stSingle, 10e-3, []);<br />
+STPlotRaster({stBursts; stNonBursts})<br />
+</p>
+
+<p>
+<img src="raster_plot_7.png" />
+</p>
+
+<p class="script">
+STISIHist(stBursts, true, 25);<br />
+figure;<br />
+STISIHist(stNonBursts, true, 25);<br />
+</p>
+
+<p>
+<img src="isi_hist_3.png" />
+<img src="isi_hist_4.png" />
+</p>
+
+<p>
+Note that the <abbr title="Inter-Spike Interval">ISI</abbr> histogram for the non-burst spikes exclusively contains <abbr title="Inter-Spike Interval">ISI</abbr>s greater than 10 us.  Since <code>stBursts</code> contains bursting pairs, but left at their original time, the <abbr title="Inter-Spike Interval">ISI</abbr> histogram for <code>stBursts</code> has some <abbr title="Inter-Spike Interval">ISI</abbr>s greater than 10 us.
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="PSTH" id="PSTH" />Peri-Stimulus Time Histogram</span><br />
+<a href="function/STPSTimeHistogram.html" class="function">STPSTimeHist</a> can calulate a Peri-Stimulus Time Histogram from a spike train and a vector of stimulus onset times.
+</p>
+
+<p class="funcdef">
+[vPSTHist, tBinCentres, vStdErr] = ...<br />
+&nbsp;&nbsp;&nbsp;<a href="function/STPSTimeHistogram.html">STPSTimeHist</a>(stTrain, vtStimOnset &lt;, vtWindow, nNumBins&gt;)
+</p>
+
+<p>
+This doesn't make a lot of sense with this particular spike train, since it wasn't generated from repeated stimulus presentations, but let's pretend we had a new stimulus every 250 ms.
+</p>
+
+<p class="script">
+STPSTimeHist(stSingle, 0:0.25:3.75)<br />
+--- STPSTimeHist: Warning: Stimulus-aligned time window begins before<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the start of the spike train<br />
+--- STShift: The time offset was negligible for shifting the mapped train<br />
+</p>
+
+<p>
+<img src="psth_1.png" />
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="spike_tb_tutorial_4.html" class="navigation"><img src="arrow_left.png" border="0" />
+Stimulating a chip</a>
+</td>
+
+<td class="next">
+<a href="spike_tb_options.html" class="navigation">
+Configuring the toolbox
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: spike_tb_tutorial_5.html 1481 2005-08-29 12:41:53Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of spike_tb_.html --->

@@ -1,0 +1,91 @@
+<!-- STPSTimeHist.html
+     $Id: STPSTimeHist.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STProfileFrequencyAddresses.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STShift.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STPSTimeHist</span><br />
+Construct an Peri-Stimulus Time Histogram for a spike train
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+&lt;[vPSTHist, tBinCentres, vStdErr]&gt = ...
+      STPSTimeHist(stTrain, vtStimOnset &lt;, vtWindow, nNumBins&gt;)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+STPSTimeHist will calculate a peri-stimulus time histogram for the spike train <code>stTrain</code>.  A <abbr title="Peri-Stimulus Time Histogram">PSTH</abbr> is formed from one or more spike trains recorded from multiple runs of an experiment, for example multiple presentations of a particular stimulus.  The stimulus onset times (or other synchronising signal) are supplied in a vector of timestamps <code>vtStimOnset</code>.  These time stamps must be supplied in seconds.
+</p>
+
+<p>
+The optional argument <code>vtWindow</code> should be a two element vector of the format <code>[tRelStart  tRelEnd]</code>, specifying the start and end times (in seconds) of a window over which to analyse each stimulus presentation, relative to the stimulus onset time.  If <code>vtWindow</code> is not supplied, the shortest inter-stimulus interval will be used.
+</p>
+
+<p>
+The optional argument <code>nNumBins</code> specifies the number of bins to use within the analysis time window.  If not supplied, <code>50</code> bins will be used.
+</p>
+
+<p>
+<code>vPSTHist</code> and <code>vStdErr</code> will be vectors containing the binned spike counts (and standard error) over the analysis time window.  The centre points of each time bin in the histogram are given in the vector <code>tBinCentres</code>, in seconds. 
+</p>
+
+<p>
+If no output arguments are specified, a plot of the <abbr title="Peri-Stimulus Time Histogram">PSTH</abbr> will be created.
+</p>
+
+
+<!--
+<p>
+<span class="h2">See Also</span><br />
+<span class="func_ref">
+Function references
+</span>
+</p>
+-->
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STProfileFrequencyAddresses.html" class="navigation"><img src="arrow_left.png" border="0" />
+STProfileFrequencyAddresses</a>
+</td>
+
+<td class="next">
+<a href="STShift.html" class="navigation">STShift
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STPSTimeHist.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STPSTimeHist.html --->

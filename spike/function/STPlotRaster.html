@@ -1,0 +1,87 @@
+<!-- STPlotRaster.html
+     $Id: STPlotRaster.html 2569 2005-11-22 14:04:02Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STPlotInstFreq.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STProfileCount.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STPlotRaster</span><br />
+Make a raster plot of the spike train
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+&lt;[hFigure]&gt; = STPlotRaster(stTrain)
+&lt;[hFigure]&gt; = STPlotRaster(stTrain, &lt;PlotOptions ...&gt;)
+&lt;[hFigure]&gt; = STPlotRaster(stTrain, strLevel)
+&lt;[hFigure]&gt; = STPlotRaster(stTrain, strLevel, &lt;PlotOptions ...&gt;)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code>stTrain</code> is either an instantiated or mapped spike train.  A raster
+plot will be created in the current figure (or a new figure created) showing
+the spike train.  <code>strLevel</code> can be used to specify the spike train level to
+plot, and must be one of <code>{instance, mapping}</code>.
+</p>
+
+<p>
+The optional return argument <code>hFigure</code> will return the handle of the new
+figure created.
+</p>
+
+<p>
+If variable argument list <code>PlotOptions</code> is supplied, these will be passed
+to the matlab plot function.  These arguments take the same format described
+in the documentation for <span class="function">plot</span>.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_index_categorical.html#Plotting">Plotting functions</a>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STPlotInstFreq.html" class="navigation"><img src="arrow_left.png" border="0" />
+STPlotInstFreq</a>
+</td>
+
+<td class="next">
+<a href="STProfileCount.html" class="navigation">STProfileCount
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STPlotRaster.html 2569 2005-11-22 14:04:02Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STPlotRaster.html --->

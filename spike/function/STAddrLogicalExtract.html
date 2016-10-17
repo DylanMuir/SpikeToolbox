@@ -1,0 +1,80 @@
+<!-- STAddrLogicalExtract.html
+     $Id: STAddrLogicalExtract.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STAddrLogicalConstruct.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STAddrPhysicalConstruct.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STAddrLogicalExtract</span><br />
+Extract the neuron and synapse IDs from a logical address
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[nAddr1, nAddr2, ...] = STAddrLogicalExtract(addrLog)
+[nAddr1, nAddr2, ...] = STAddrLogicalExtract(addrLog, stasSpecification)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+'addrLog' should be a logical address as constructed by
+STAddrLogicalConstruct.  STAddrLogicalExtract will extract the
+indices for each addressing field, as defined by the addressing
+specification.  If this specification is not supplied in the argument
+list, the default output addressing specification will be taken from
+the toolbox options.  The field indices will be returned in the variable
+length argument list.  STAddrLogicalExtract is vectorised.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_addressing.html">Understanding toolbox addressing</a>,
+<span class="func_ref">
+<a href="STAddrLogicalConstuct.html">STAddrLogicalConstruct</a>, <a href="STAddrPhysicalConstruct.html">STAddrPhysicalConstruct</a>, <a href="STAddrPhyscialExtract.html">STAddrPhysicalExtract</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STAddrLogicalConstruct.html" class="navigation"><img src="arrow_left.png" border="0" />
+STAddrLogicalConstruct</a>
+</td>
+
+<td class="next">
+<a href="STAddrPhysicalConstruct.html" class="navigation">STAddrPhysicalConstruct
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STAddrLogicalExtract.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STAddrLogicalExtract.html --->

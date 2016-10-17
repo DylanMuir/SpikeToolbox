@@ -1,0 +1,93 @@
+<!-- STProfileFrequency.html
+     $Id: STProfileFrequency.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STProfileCountAddresses.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STProfileFrequencyAddresses.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STProfileFrequency</span><br />
+Calculate a binned spiking frequency profile from a spike train
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[vInstFrequency] = STProfileFrequency(stTrain, tTimeWindow)
+[vInstFrequency] = STProfileFrequency(stTrain, tTimeWindow, strLevel) 
+
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code>stTrain</code> is a spike train with either an instance or a mapping.
+<code>tTimeWindow</code> specifies the duration in seconds of the time bins that spikes
+will be lumped into.  <code>strLevel</code> optionally specifies whether a spike train
+instance or mapping will be used, and must be one of <code>{instance, mapping}</code>.
+STProfileFrequency will calculate the spike train frequency for each bin.
+These frequencies will be returned in <code>vInstFrequency</code>.  The format will be
+<code>[time_stamp  frequency]</code>. <code>time_stamp</code> is a real value representing the median
+time of each bin.  <code>frequency</code> is the average frequency of the spike train
+during each time bin, in Hz.
+</p>
+
+<p>
+See <a href="STProfileCount.html" class="function">STProfileCount</a> for basic spike binning.
+See <a href="STProfileFrequencyAddresses.html" class="function">STProfileFrequencyAddresses</a> for profiling spikes from multiplexed mapped
+spike trains.
+</p>
+
+<p class="note">
+Note that STProfileFrequency will calculate frequencies using spikes
+irrespective of their source or target address.
+</p>
+
+<p>
+<span class="h2">See Also</span><br />
+<span class="func_ref">
+<a href="STProfileCount.html">STProfileCount</a>,
+<a href="STProfileFrequencyAddresses.html">STProfileFrequencyAddresses</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STProfileCountAddresses.html" class="navigation"><img src="arrow_left.png" border="0" />
+STProfileCountAddresses</a>
+</td>
+
+<td class="next">
+<a href="STProfileFrequencyAddresses.html" class="navigation">STProfileFrequencyAddresses
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STProfileFrequency.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STProfileFrequency.html --->

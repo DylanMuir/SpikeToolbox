@@ -1,0 +1,88 @@
+<!-- STSieve.html
+     $Id: STSieve.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STShift.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STStimServer.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STSieve</span><br />
+Filter a spike train by inter-spike interval
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stFiltTrain, stRejectTrain] = STSieve(stTrain, fMinISI, fMaxISI)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+STSieve will only pass spikes with <abbr title="Inter-Spike Interval">ISI</abbr>s falling between <code>fMinISI</code> and <code>fMaxISI</code>
+(inclusive, in seconds).  If either argument is supplied as an empty matrix, that
+argument will default to zero and infinity respectively.  <code>stTrain</code>
+should be either an instantiated or mapped spike train.
+</p>
+
+<p>
+<code>stFiltTrain</code> will be a new spike train containing all spikes matching
+the <abbr title="Inter-Spike Interval">ISI</abbr> criteria.  <code>stRejectTrain</code> will be a new spike train containing
+the non-matching spikes.
+</p>
+
+<p class="note">
+Note: When an <abbr title="Inter-Spike Interval">ISI</abbr> falls outside the sieve criteria, <strong>both</strong> spikes that
+caused the failing <abbr title="Inter-Spike Interval">ISI</abbr> will be removed.
+</p>
+
+
+<!--
+<p>
+<span class="h2">See Also</span><br />
+<span class="func_ref">
+Function references
+</span>
+</p>
+-->
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STShift.html" class="navigation"><img src="arrow_left.png" border="0" />
+STShift</a>
+</td>
+
+<td class="next">
+<a href="STStimServer.html" class="navigation">STStimServer
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STSieve.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STSieve.html --->

@@ -1,0 +1,160 @@
+<!-- STInstantiate.html
+     $Id: STInstantiate.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STImportServer.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STISIHist.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STInstantiate</span><br />
+Convert spike train definitions into concrete trains
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stTrain] = STInstantiate(stTrainDef, &lt;'regular' / 'poisson'&gt;, tDuration &lt;, mCorrelation, fMemTau&gt;)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code>stTrainDef</code> is a spike train containing a simple train
+definition created by <a href="STCreate.html" class="function">STCreate</a>.  <code>tDuration</code> is the desired duration of the
+spike train in seconds.  The type of spike train is specified using either
+<code>regular</code> or <code>poisson</code>.  A regular train has equal inter-spike intervals
+based on the train freqeuncy.  A poisson train generates spikes according to
+a probability based on the train frequency.  <code>stTrain</code> (output) will have a
+<code>instance</code> field added, containing the instantiated train.
+</p>
+
+<p class="note">
+Note: Changing frequencies and regular spike trains don't play well
+together.  Perhaps a better algorithm for creating regular trains is
+required.
+</p>
+
+<p>
+<span class="h3">Array arguments</span><br />
+STInstantiate can accept arrays for any and all input arguments.  In the
+case of <code>stTrainDef</code> and the temporal type, these must be cellular arrays.
+In the case of <code>tDuration</code>, <code>mCorrelation</code> and <code>fMemTau</code>, these should be
+standard matrices.  If one or more arguments are passed as arrays, multiple
+spike trains will be instantiated, each train with options taken from one
+element of each array.  If only some arguments are passed as arrays, the
+scalar arguments will be applied to all trains.  When arrays of arguments
+are supplied, <code>stTrain</code> will be a cellular array of instantiated spike
+trains.
+</p>
+
+<p>
+Note: Although the calling syntax allows for an array of <code>tDuration</code>s
+specifying a separate duration for each train, in practice this is not
+supported.  Please use a common duration for all trains.
+</p>
+
+<p>
+Example: <span class="script">cellST = STInstantiate({stDef1 stDef2}, 'poisson', 5);</span>
+</p>
+
+<p>
+<code>stDef1</code> and <code>stDef2</code> are two different spike train definitions.  <code>cellST</code>
+will be a cell array with two elements, each containing a separate
+instantiated spike train.  These trains will have frequency profiles
+corresponding to <code>stDef1</code> and <code>stDef2</code>, but will both be poissonian and of 5
+seconds duration.
+</p>
+
+<p>
+<span class="h3">Correlated spike trains</span><br />
+The optional argument <code>mCorrelation</code> can be used to generate correlated spike
+trains.  <code>mCorrelation</code> should be a correlation matrix specifying the pairwise
+correlations between each of a set of spike trains.  The matrix should be in
+upper-diagonal form, with unit diagonal elements.  In this matrix, <code>1</code>
+specifies the maximum possible correlation and <code>-1</code> specifies the maximum
+possible anti-correlation.  Note that <code>mCorrelation</code> must be positive
+definite.  This means that if the matrix is made symmetric, it will have
+only positive eigenvalues.
+</p>
+
+<p>
+Example:<br />
+<span class="script">
+mCorr = [1.0 0.9 0.8;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.0 1.0 0.7;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.0 0.0 1.0];<br />
+</p>
+
+<p>
+Executing STInstantiate with this correlation matrix will produce three
+spike trains; the correlation coefficient between trains <code>i</code> and <code>j</code> (with
+<code>i</code> &le; <code>j</code>) is given by <code>mCorr(i, j)</code>.
+</p>
+
+<p>
+<span class="h3">Non-ergodic spike trains</span><br />
+The optional argument <code>fMemTau</code> can be used to generate spike trains from a
+non-ergodic process (ie a random process with memory).  <code>fMemTau</code> will be
+the time constant for an exponential smoothing function.  <code>fMemTau</code> will be
+the time for the memory effect to reduce to approximately <code>35%</code>.
+</p>
+
+<p>
+When both <code>mCorrelation</code> and <code>fMemTau</code> are supplied, correlated random
+sequences will be generated before being made non-ergodic.
+</p>
+
+<p>
+To impose non-erogidicy without correlations, provide an empty matrix for
+<code>mCorrelation</code>.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_advanced_trains.html">Generating advanced spike trains</a>,
+<span class="func_ref">
+<a href="STCreate.html" class="function">STCreate</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STImportServer.html" class="navigation"><img src="arrow_left.png" border="0" />
+STImportServer</a>
+</td>
+
+<td class="next">
+<a href="STISIHist.html" class="navigation">STISIHist
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STInstantiate.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STInstantiate.html --->

@@ -1,0 +1,126 @@
+<!-- STCreate.html
+     $Id: STCreate.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STConcat.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STCreateConstant.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STCreate</span><br />
+Create a spike train
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stTrain] = STCreate(&lt;train definition type&gt;,
+                              &lt;definition arguments&gt;,
+                              &lt;instantiation arguments&gt;,
+                              &lt;mapping arguments&gt;)
+
+[stTrain] = STCreate('constant', fFreq, ...)
+[stTrain] = STCreate('linear', fStartFreq, fEndFreq, ...)
+[stTrain] = STCreate('sinusoid', fMinFreq, fMaxFreq, tPeriod, ...)
+[stTrain] = STCreate('gamma', fMeanISI, fVarISI, ...)
+[stTrain] = STCreate(..., strTemporalType, tDuration &lt;, nAddr1, nAddr2, ...&gt;)
+[stTrain] = STCreate(..., strTemporalType, tDuration &lt;, stasSpecification, nAddr1, nAddr2, ...&gt;) 
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+STCreate will create a spike train definition of various types.  The first
+argument specifies the type of spike train, and must be one of <code>{constant,
+linear, sinusoid, gamma}</code>.
+</p>
+
+<p>
+The second set of parameters is passed to the definition creation
+function (See <a href="STCreateConstant.html" class="function">STCreateConstant</a>, <a href="STCreateLinear.html" class ="function">STCreateLinear</a>, <a href="STCreateSinusoid.html" class="function">STCreateSinusoid</a> and
+<a href="STCreateGamma.html" class="function">STCreateGamma</a> for details of the parameters relating to the spike train
+types).  When called with only the train definition parameters, <code>stTrain</code>
+will comprise of a single field <code>defintion</code> containing the spike train
+definition.
+</p>
+
+<p>
+STCreate can also be used to instantiate and map the resulting spike train.
+By providing the instantiation arguments, the train will be instantiated
+and <code>stTrain</code> will contain a field <code>instance</code> containing the spike train
+instance.  See <a href="STInstantiate.html" class="function">STInstantiate</a> for details of these parameters.
+</p>
+
+<p>
+By providing the mapping arguments, the train will be mapped and
+<code>stTrain</code> will contain a field <code>mapping</code> containing the mapped spike
+train.  See <a href="STMap.html" class="function">STMap</a> for details of these arguments.
+</p>
+
+<p>
+Arrays can be supplied for one or more arguments, according to the
+calling syntax for the separate utility functions (ie <span class="function">STCreate...</span>,
+<a href="STInstantiate.html" class="function">STInstantiate</a> and <a href="STMap.html" class="function">STMap</a>).  In this case, <code>stTrain</code> will be a cell array
+of spike trains.  Note that the train(s) will be created in order: all
+definitions will be created, then all instances, then all mappings.  The
+train will be a <code>scalar</code> train until a step is encountered that specifies
+an array of arguments.  This means that if an array is passed to the
+mapping arguments but not the instantiation arguments, all mapped spike
+trains will have been created from a <em>single</em> spike train instance, and
+will have identical spike times for all spikes.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_tutorial_1.html">Generating spike trains</a>,
+<a href="../spike_tb_advanced_trains.html">Generating advanced spike trains</a>,
+<span class="func_ref">
+<a href="STCreateConstant.html">STCreateConstant</a>,
+<a href="STCreateLinear.html">STCreateLinear</a>,
+<a href="STCreateSinusoid.html">STCreateSinusoid</a>,
+<a href="STCreateGamma.html">STCreateGamma</a>,
+<a href="STInstantiate.html">STInstantiate</a>,
+<a href="STMap.html">STMap</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STConcat.html" class="navigation"><img src="arrow_left.png" border="0" />
+STConcat</a>
+</td>
+
+<td class="next">
+<a href="STCreateConstant.html" class="navigation">STCreateConstant
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STCreate.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STCreate.html --->

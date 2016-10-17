@@ -1,0 +1,87 @@
+<!-- spike_tb_tutorial_3.html - Spike toolbox tutorial (Combining the trains)
+     $Id: spike_tb_tutorial_3.html 1481 2005-08-29 12:41:53Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 19th August, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>Spike Toolbox tutorial - combining the trains</title>
+	<link rel="stylesheet" type="text/css" href="spike_tb_styles.css" title="Default">
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="spike_tb_tutorial_2.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="spike_tb_tutorial_4.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="h1">Spike Toolbox tutorial</span><br />
+<span class="h2">Combining the trains</span><br />
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Concatenating" id="Concatenating" />Concatenating the trains</span><br />
+<a href="function/STConcat.html" class="function">STConcat</a> is a function that takes two or more spike train obejcts and concatenates them in time.
+</p>
+
+<p class="funcdef">
+[stTrain] = <a href="function/STConcat.html">STConcat</a>(stTrain1, stTrain2)<br />
+[stTrain] = <a href="function/STConcat.html">STConcat</a>(stTrain1, stTrain2, strLevel)<br />
+[stTrain] = <a href="function/STConcat.html">STConcat</a>(stCellTrain)<br />
+[stTrain] = <a href="function/STConcat.html">STConcat</a>(stCellTrain, strLevel)<br />
+</p>
+
+<p>
+By default <a href="function/STConcat.html" class="function">STConcat</a> will operate on the most complex available spike train level (ie first mappings, then instances).  Concatenating our two spike trains will give us a train twice as long, but the definitions will be stripped away from the resulting train.
+</p>
+
+
+<p class="script">
+stLonger = STConcat(stRising, stFalling);<br />
+figure, STPlotRaster(stLonger);<br />
+</p>
+
+<img src="raster_plot_3.png" />
+
+<p>
+If we once again use <a href="function/STDescribe.html" class="function">STDescribe</a> to examine the resulting toolbox object, we can see that only a spike train instance remains.
+</p>
+
+<p class="script">
+STDescribe(stLonger)<br />
+--- Spike toolbox version [0.03]<br />
+This is an instantiated spike train:<br />
+&nbsp;&nbsp;&nbsp;Using chunked mode encoding<br />
+&nbsp;&nbsp;&nbsp;Duration [4.00] seconds<br />
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="spike_tb_tutorial_2.html" class="navigation"><img src="arrow_left.png" border="0" />
+Looking at the trains</a>
+</td>
+
+<td class="next">
+<a href="spike_tb_tutorial_4.html" class="navigation">Stimulating a chip <img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: spike_tb_tutorial_3.html 1481 2005-08-29 12:41:53Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of spike_tb_tutorial_3.html --->

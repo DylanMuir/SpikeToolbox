@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!-- helptoc.xml - MATLAB documentation TOC file
+     $Id: helptoc.xml 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<toc version="0.3">
+
+<tocitem target="spike_product_page.html" image="$toolbox/matlab/icons/book_mat.gif">Spike Toolbox
+
+<tocitem target="spike_tb_getstarted.html" image="$toolbox/matlab/icons/greencircleicon.gif">Getting started
+
+	<tocitem target="spike_tb_getstarted.html#Setup">Checking the toolbox setup</tocitem>
+	<tocitem target="spike_tb_getstarted.html#GenSpikeTrains">Generating spike trains</tocitem>
+	<tocitem target="spike_tb_getstarted.html#ToolboxModel">The toolbox Spike Train model</tocitem>
+	<tocitem target="spike_tb_getstarted.html#VisAnSpikeTrains">Visualising and analysing spike trains</tocitem>
+	<tocitem target="spike_tb_getstarted.html#Stimulation">Stimulation of physical devices</tocitem>
+</tocitem>
+
+<tocitem target="spike_tb_tutorial_index.html" image="$toolbox/matlab/icons/demoicon.gif">Tutorial
+
+	<tocitem target="spike_tb_tutorial_1.html">Generating some spike trains</tocitem>
+	<tocitem target="spike_tb_tutorial_2.html">Looking at the trains</tocitem>
+	<tocitem target="spike_tb_tutorial_3.html">Combining the trains</tocitem>
+	<tocitem target="spike_tb_tutorial_4.html">Stimulating a chip</tocitem>
+	<tocitem target="spike_tb_tutorial_5.html">Analysing the received spikes</tocitem>
+</tocitem>
+
+<tocitem target="spike_tb_options.html" image="$toolbox/matlab/icons/pagesicon.gif">Configuring the toolbox
+<!--
+	<tocitem target="spike_tb_options.html#Accessing">Accessing and modifying options</tocitem>
+	<tocitem target="spike_tb_options.html#Persistant">Persistant options</tocitem>
+-->
+</tocitem>
+
+<tocitem target="spike_tb_addressing.html" image="$toolbox/matlab/icons/pagesicon.gif">Toolbox addressing
+
+	<tocitem target="spike_tb_addressing.html#Introduction">Introduction</tocitem>
+	<tocitem target="spike_tb_addressing.html#AddrFields">Addressing fields</tocitem>
+	<tocitem target="spike_tb_addressing.html#AddressTypes">Logical and hardware addresses</tocitem>
+	<tocitem target="spike_tb_addressing.html#Passing">Passing address arguments</tocitem>
+	<tocitem target="spike_tb_addressing.html#UtilityFunc">Utility functions</tocitem>
+	<tocitem target="spike_tb_addressing.html#DefaultSpec">Setting defaults</tocitem>
+	<tocitem target="spike_tb_addressing.html#Channel">Channel addresses</tocitem>
+	<tocitem target="spike_tb_addressing.html#ManualSpec">Manually designing a specification</tocitem>
+</tocitem>
+
+<tocitem target="spike_tb_spiketrainlevels.html" image="$toolbox/matlab/icons/pagesicon.gif">Understanding spike trains
+<!--
+	<tocitem target="spike_tb_spiketrainlevels.html#Definitions">Definitions</tocitem>
+	<tocitem target="spike_tb_spiketrainlevels.html#Instances">Instances</tocitem>
+	<tocitem target="spike_tb_spiketrainlevels.html#Mappings">Mappings</tocitem>
+-->
+</tocitem>
+
+<tocitem target="spike_tb_advanced_trains.html" image="$toolbox/matlab/icons/pagesicon.gif">Advanced spike trains
+</tocitem>
+
+<tocitem target="spike_tb_randgen.html" image="$toolbox/matlab/icons/pagesicon.gif">Random number generators
+</tocitem>
+
+<tocitem target="spike_tb_index_categorical.html" image="$toolbox/matlab/icons/reficon.gif">Functions - Categorical list
+
+	<tocitem target="spike_tb_index_categorical.html#Generation">Spike train generation</tocitem>
+	<tocitem target="spike_tb_index_categorical.html#Plotting">Plotting functions</tocitem>
+	<tocitem target="spike_tb_index_categorical.html#Manipulation">Spike train manipulation functions</tocitem>
+	<tocitem target="spike_tb_index_categorical.html#Analysis">Spike train analysis functions</tocitem>
+	<tocitem target="spike_tb_index_categorical.html#StimMon">Spike train stimulation and monitoring functions</tocitem>
+	<tocitem target="spike_tb_index_categorical.html#Addressing">Functions for manipulating addresses and addressing configurations</tocitem>
+	<tocitem target="spike_tb_index_categorical.html#AddrSpecUtil">Address specification generation utility functions</tocitem>
+	<tocitem target="spike_tb_index_categorical.html#Options">Functions for managing toolbox options</tocitem>
+	<tocitem target="spike_tb_index_categorical.html#Utility">General utility functions</tocitem>
+
+</tocitem>
+<tocitem target="spike_tb_index_alpha.html" image="$toolbox/matlab/icons/reficon.gif">Functions - Alphabetical list</tocitem>
+
+<tocitem target="spike_tb_release_notes.html" image="$toolbox/matlab/icons/notesicon.gif">Release notes</tocitem>
+
+<tocitem target="spike_tb_contact.html" image="$toolbox/matlab/icons/pageicon.gif">Toolbox contact information</tocitem>
+
+<tocitem target="http://www.ini.ethz.ch/~dylan/spike_toolbox" image="$toolbox/matlab/icons/webicon.gif">Spike Toolbox web site</tocitem>
+
+</tocitem>
+</toc>
+
+<!-- END of helptoc.xml -->

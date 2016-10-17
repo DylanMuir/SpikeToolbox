@@ -1,0 +1,88 @@
+<!-- STAddrSpecChannel.html
+     $Id: STAddrSpecChannel.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STAddrPhysicalExtract.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STAddrSpecCompare.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STAddrSpecChannel</span><br />
+Address specification utility function
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stasSpecification] = STAddrSpecChannel(nIgnoreBits, nChannelBits)
+[stasSpecification] = STAddrSpecChannel(nIgnoreBits, nChannelBits, bInvert)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+This function returns an address specification structure for use with the
+Spike Toolbox.  This specification will contain a single ignored address
+field and a single channel address field, with user-specified widths.  The
+channel address field is most significant.
+</p>
+
+<p> 
+The user can optionally supply an argument 'bInvert'.  If this boolean value
+is true, the channel ID address field will have its bits inverted.  If not
+supplied, this argument defaults to false.
+</p>
+
+<p>
+This function is used to help identify the bits used for channel ID
+filtering for monitored spike trains.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_addressing.html">Understanding toolbox addressing</a>,
+<span class="func_ref">
+<a href="STDescribe.html">STDescribe</a>, <a href="STOptions.html">STOptions</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STAddrPhysicalExtract.html" class="navigation"><img src="arrow_left.png" border="0" />
+STAddrPhysicalExtract</a>
+</td>
+
+<td class="next">
+<a href="STAddrSpecCompare.html" class="navigation">STAddrSpecCompare
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STAddrSpecChannel.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STAddrSpecChannel.html --->

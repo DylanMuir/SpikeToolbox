@@ -1,0 +1,89 @@
+<!-- STCreateLinear.html
+     $Id: STCreateLinear.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STCreateGamma.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STCreateSinusoid.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STCreateLinear</span><br />
+Create a linearly changing frequency spike train definition
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stTrain] = STCreateLinear(fStartFreq, fEndFreq)
+[cstTrain] = STCreateLinear(vfStartFreq, vfEndFreq) 
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+STCreateLinear will create a spike train definition where the spiking
+frequency increases linearly with time.  <code>fStartFreq</code> and <code>fEndFreq</code> specify
+the start and ending frequencies respectively.  Note that the duration of a
+spike train (and thus the rate of chance of frequency) is specified when the
+train is instantiated with <a href="STInstantiate.html" class="function">STInstantiate</a>.  <code>stTrain</code> will comprise of a
+field <code>definition</code> containing the spike train definition.
+</p>
+
+<p>
+Either (or both) of <code>vfStartFreq</code> and <code>vfEndFreq</code> can optionally be
+provided as arrays.  In this case, <code>cstTrain</code> will be a cell array of
+spike trains, with the arguments for each definition taken element-wise
+from the input array arguments.  In the case when only a single argument
+is an array, that scalar value will be used to create the definition for
+all values of the array argument.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_spiketrainlevels.html#Definitions">Spike train definitions</a>,
+<a href="../spike_tb_tutorial_1.html">Generating spike trains</a>,
+<span class="func_ref">
+<a href="STCreate.html">STCreate</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STCreateGamma.html" class="navigation"><img src="arrow_left.png" border="0" />
+STCreateGamma</a>
+</td>
+
+<td class="next">
+<a href="STCreateSinusoid.html" class="navigation">STCreateSinusoid
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STCreateLinear.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STCreateLinear.html --->

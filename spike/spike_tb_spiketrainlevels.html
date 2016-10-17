@@ -1,0 +1,128 @@
+<!-- spike_tb_spiketrainlevels.html - Understanding spike trains
+     $Id: spike_tb_spiketrainlevels.html 1481 2005-08-29 12:41:53Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 22nd August, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="spike_tb_styles.css" title="Default">
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="spike_tb_addressing.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="spike_tb_advanced_trains.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="h1">Understanding spike trains</span><br />
+</p>
+
+<hr />
+
+<p>
+This topic explains the concepts behind the Spike Train abstract data structure.
+</p>
+
+<span class="h4">
+<img src="bullet_orange.gif" class="bullet" /><a href="#Definitions">Spike train definitions</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#Instances">Spike train instances</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#Mappings">Spike train mappings</a><br />
+</span>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Definitions" id="Definitions" />Spike train definitions</span><br />
+A spike train may exist in one or more of several forms.  With the most basic calling syntax, <a href="function/STCreate.html" class="function">STCreate</a> creates a spike train <em>definition</em>.  This object defines how the spike train should look in terms of a frequency profile or <abbr title="Inter-Spike Interval">ISI</abbr> distribution.  At this <em>level</em> the spike train contains no spike times or even a desired duration; only this high-level abstract description.  See the <a href="function/STCreate.html"><span class="function">STCreate</span> documentation</a> for details on calling syntax, and <a href="spike_tb_advanced_trains.html">Generating advanced spike trains</a> for more detailed documentation and examples.
+</p>
+
+<p class="script">
+stFalling.definition = <br/ >
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;strType: [1x6 char]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fStartFreq: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fEndFreq: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhInstFreq: [1x1 function_handle]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;fhPlotFunction: [1x1 function_handle]<br />
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Instances" id="Instances" />Spike train instances</span><br />
+<a href="function/STInstantiate.html" class="function">STInstantiate</a> takes a spike train definition object and uses it to create a particular list of spike times.  This object containing a list of spike times is called a spike train <em>instance</em>.  It contains no addressing information associated with the spikes, and if two instances are multiplexed together (using <a href="function/STMultiplex.html" class="function">STMultiplex</a>) then the spikes from both trains will be interleaved in time and will be indistinguishable afterwards.
+</p>
+
+<p>
+<a href="function/STInstantiate.html" class="function">STInstantiate</a> can use various methods to generate a list of spike times from a frequency profile.  Apart from <em>"regular"</em> spike trains, these all involve some degree of stochasticity.  No two spike trains will ever be quite the same...  Spike train instances use a time quantisation (called the <em>temporal resolution</em>) to describe spikes; essentially, only a single spike may exist in any given time bin.  This bin is around <code>1 &mu;s</code>; the toolbox default is in fact <code>0.99 &mu;s</code> to avoid temporal aliasing.
+</p>
+
+<p><a href="function/STInstantiate.html" class="function">STInstantiate</a> can create  sets of correlated spike trains as well as spike trains with exponential memory; see the <a href="function/STInstantiate.html"><span class="function">STInstantiate</span> documentation</a>.
+</p>
+
+<p class="script">
+stFalling.instance =<br />
+&nbsp;&nbsp;&nbsp;&nbsp;fTemporalResolution: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tDuration: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bChunkedMode: [1x1 logical]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;spikeList: [104x1 double]<br />
+<hr />
+
+<p>
+<span class="h3"><a name="Mappings" id="Mappings" />Spike train mappings</span><br />
+Spike train <em>mappings</em> annotate the basic list of spikes in a spike train <em>instance</em> with addressing information; see <a href="spike_tb_addressing.html">Understanding toolbox addressing</a> and the <a href="spike_tb_tutorial_4.html">toolbox tutorial</a> for detailed documentation and examples of how the toolbox handles addresses.
+</p>
+
+<p>
+The mapping component of a spike train contains information about the addressing scheme used to map the train, in the form of an <em>addressing specification</em>.  It may also explicitly list the specific address used to map the spike train, unless it has been multiplexed with spikes from a different address.
+</p>
+
+<p>
+Since mappings contain addressing information associated with each spike, several mapped spike trains can be multiplexed together in time while maintaining their individual identity.  This is required when using a spike train object to stimulate a physical device.  See the <a href="function/STStimulate.html"><span class="function">STStimulate</span> documentation</a> or the <a href="spike_tb_tutorial_4.html">toolbox tutorial</a> for information about and examples for stimulating external devices.
+</p>
+
+<p>
+Spike train mappings can be converted back to instances (<em>"flattened"</em>) using <a href="function/STFlatten.html" class="function">STFlatten</a>.
+</p>
+
+<p class="script">
+stFalling.mapping =<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tDuration: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;fTemporalResolution: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bChunkedMode: [1x1 logical]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stasSpecification: [1x2 struct]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;addrFields: {[1x1 double]&nbsp;&nbsp;[1x1 double]}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;addrSynapse: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;spikeList: [104x2 double]<br />
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="spike_tb_addressing.html" class="navigation"><img src="arrow_left.png" border="0" />
+Understanding addressing</a>
+</td>
+
+<td class="next">
+<a href="spike_tb_advanced_trains.html" class="navigation">
+Advanced spike trains
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: spike_tb_spiketrainlevels.html 1481 2005-08-29 12:41:53Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of spike_tb_spiketrainlevels.html --->

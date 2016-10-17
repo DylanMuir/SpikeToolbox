@@ -1,0 +1,84 @@
+<!-- STStripTo.html
+     $Id: STStripTo.html 2411 2005-11-07 16:48:24Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STStrip.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STToolboxDefaults.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STStripTo</span><br />
+Strip undesired spike train levels from spike trains
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stStrippedTrain] = STStripTo(stTrain, strLevel, strLevel, ...)
+[stCellStrippedTrain] = STStripTo(stCellTrain, strLevel, strLevel, ...) 
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code/>stTrain</code> is a Spike Toolbox spike train object.  Spike train levels will be
+stripped from the train if they don't appear in the list of desired levels.
+Only the levels listed will remain in <code>stStrippedTrain</code>.  If a listed level
+is not present in the train, then a warning will be printed.  If all levels
+are stripped from a train, an empty matrix will be returned.
+</p>
+
+<p>
+STStripTo can accept a cell array of spike trains as its first argument.  In
+this case, each spike train will be stripped and returned in each element of
+<code>stCellStrippedTrain</code>.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_spiketrainlevels.html">Understanding spike trains</a>,
+<span class="func_ref">
+<a href="STStrip.html">STStrip</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STStrip.html" class="navigation"><img src="arrow_left.png" border="0" />
+STStrip</a>
+</td>
+
+<td class="next">
+<a href="STToolboxDefaults.html" class="navigation">STToolboxDefaults
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STStripTo.html 2411 2005-11-07 16:48:24Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STStripTo.html --->

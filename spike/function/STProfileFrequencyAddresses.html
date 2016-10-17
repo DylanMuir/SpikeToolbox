@@ -1,0 +1,85 @@
+<!-- STProfileFrequencyAddresses.html
+     $Id: STProfileFrequencyAddresses.html 3293 2006-03-01 16:40:50Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STProfileFrequency.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STPSTimeHist.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STProfileFrequencyAddresses</span><br />
+Calculate a frequency profile from a mapped spike train, for each address
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[vInstFrequency, vKey] = STProfileFrequencyAddresses(stMappedTrain, tTimeWindow)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code>stTrain</code> is a spike train containing a mapping.
+<code>tTimeWindow</code> specifies the duration in seconds of the time bins that spikes
+will be lumped into.  STProfileFrequency will calculate the spike train frequency for each bin.
+These frequencies will be returned in <code>vInstFrequency</code>.  The format of each row will be
+<code>[time_stamp  frequency1  frequency2 ...]</code>. <code>time_stamp</code> is a real value representing the median time of each bin.  <code>frequencyN</code> is the average frequency of a single neuron during each time bin, in <code>Hz</code>.  Each row in <code>vKey</code> gives the address of the
+neuron corresponding to one of the columns in <code>vInstFrequency</code>.  For
+example, <code>vKey(1)</code> is the address of the neuron corresponding to
+<code>frequency1</code> in <code>vInstFrequency</code>.
+</p>
+
+<p class="note">
+Note that STProfileFrequencyAddresses will skip neurons with no spikes
+in <code>stMappedTrain</code>.  Don't rely on the order of <code>vKey</code> being
+monotonically increasing.
+</p>
+
+<p>
+<span class="h2">See Also</span><br />
+<span class="func_ref">
+<a href="STProfileCountAddresses.html">STProfileCountAddresses</a>,
+<a href="STProfileFrequency.html">STProfileFrequency</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STProfileFrequency.html" class="navigation"><img src="arrow_left.png" border="0" />
+STProfileFrequency</a>
+</td>
+
+<td class="next">
+<a href="STPSTimeHist.html" class="navigation">STPSTimeHist
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STProfileFrequencyAddresses.html 3293 2006-03-01 16:40:50Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STProfileFrequencyAddresses.html --->

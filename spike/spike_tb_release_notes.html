@@ -1,0 +1,105 @@
+<!-- spike_tb_release_notes.html - Toolbox release notes
+     $Id: spike_tb_release_notes.html 7366 2007-08-24 16:04:14Z amw $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 22nd August, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="spike_tb_styles.css" title="Default">
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="spike_tb_randgen.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="spike_tb_contact.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="h1">Release notes</span><br />
+</p>
+
+<hr />
+
+<p>
+Toolbox release notes and known bugs are listed here.
+</p>
+
+<span class="h4">
+<img src="bullet_orange.gif" class="bullet" /><a href="#v03">Release 0.3</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#v02">Release 0.2</a><br />
+</span>
+
+<hr />
+
+<p>
+<span class="h3"><a name="v03" id="v03" />Release 0.3</span><br />
+Current development / release version.  No official release date.
+</p>
+
+<p>
+<span class="h5">Supported systems</span><br />
+The toolbox is assumed to work perfectly on all unix-like systems.  Stimulation of external devices is only supported under Linux, as no <a href="http://www.ini.uzh.ch/~amw/pciaer/">PCI-AER</a> driver exists for other systems.  I'd be interested if you get the toolbox to stimulate under Windows...
+</p>
+
+<p>
+Compiling the toolbox <code>.mex</code> files in the <code>private</code> directory may or may not work "out of the box" under Windows.  In general the toolbox should function equally well on this platform.
+</p>
+
+<p>
+All testing and development has been performed using MATLAB 7.x, although backwards-compatibility with MATLAB 6.5 is desired.  If you find bugs or incompatibilities on MATLAB 6.5, please let the <a href="spike_tb_contact.html">toolbox maintainers</a> know.
+</p>
+
+<p>
+<span class="h5">Known issues</span><br />
+Spike trains instantiated with the <em>regular</em> spike generation mode can have temporal aliasing issues.  These are especially obvious with spike trains that do not have constant frequencies.  Constant frequency spike trains are affected when they have a very round frequency (eg <code>100 Hz</code>).  We recommend using <em>poisson</em> generated trains for changing frequencies, and using slightly-off-round frequencies for constant regular spike trains (eg <code>100.01 Hz</code>).
+</p>
+
+<p>
+The <span class="function">pciaer_stim_mon</span> mex function will not compile if the <code>-ansi</code> compiler option is used for <code>gcc</code> (via <code>mex</code>).  This is a limitation of the <code>pciaer</code> library.  Edit your <code>mex</code> compilation options to disable this compiler flag.
+</p>
+
+<p>
+Most plotting functions do not behave correctly with respect to <span class="function">subplot</span>: They will over-write an entire figure rather than plot only in a specified window.
+</p>
+
+<p>
+With Matlab release 13 and earlier, the toolbox documentation does not integrate into the contents pane of the Matlab help browser.  However, documentation links  from the Matlab Start button and via <a href="function/STWelcome.html" class="function">STWelcome</a> function correctly.
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="v02" id="v02" />Release 0.2</span><br />
+Out of date version; still supported for bug fixes but no new features.
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="spike_tb_randgen.html" class="navigation"><img src="arrow_left.png" border="0" />
+Random number generators</a>
+</td>
+
+<td class="next">
+<a href="spike_tb_contact.html" class="navigation">
+Contact the toolbox maintainers
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: spike_tb_release_notes.html 7366 2007-08-24 16:04:14Z amw $</span>
+
+</body>
+</html>
+
+<!--- END of spike_tb_release_notes.html --->

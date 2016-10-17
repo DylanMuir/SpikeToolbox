@@ -1,0 +1,191 @@
+<!-- spike_tb_options.html - Managing toolbox options
+     $Id: spike_tb_options.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 22nd August, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="spike_tb_styles.css" title="Default">
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="spike_tb_tutorial_index.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="spike_tb_addressing.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="h1">Managing spike toolbox options</span><br />
+</p>
+
+<hr />
+
+<p>
+This topic explains how options for the Spike Toolbox are stored, how to retrieve and modify them and how to make them persistent.
+</p>
+
+<span class="h4">
+<img src="bullet_orange.gif" class="bullet" /><a href="#Accessing">Accessing the toolbox options</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#Persistant">Setting persistant toolbox options</a><br />
+</span>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Accessing" id="Accessing" />Accessing the toolbox options</span><br />
+The toolbox options are manipulated through the <a href="function/STOptions.html" class="function">STOptions</a> function.  This function retrieves and sets the toolbox options structure.
+</p>
+
+<p class="funcdef">
+[stOptions]&nbsp;&nbsp;&nbsp;&nbsp;= <a href="function/STOptions.html">STOptions</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="function/STOptions.html">STOptions</a>(stOptions)<br />
+[stOptionsOld] = <a href="function/STOptions.html">STOptions</a>(stOptionsNew)<br />
+</p>
+
+<p>
+Toolbox options are always stored and manipulated as a MATLAB structure.  You should always use <a href="function/STOptions.html" class="function">STOptions</a> to obtain a valid options structure, rather than creating one from scratch.  This way is faster, anyway.
+</p>
+
+<p class="script">
+stO = STOptions<br />
+stO = <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature: [1x11 char]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ToolboxVersion: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bDisplayProgress: [1x1 logical]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;InstanceTemporalResolution: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MappingTemporalResolution: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RandomGenerator: [1x1 function_handle]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SpikeChunkLength: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DefaultSynchWindowSize: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DefaultCorrWindow: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DefaultCorrSmoothingKernel: [1x8 char]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DefaultCorrSmoothingWindowFactor: [1x1 double]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stasDefaultOutputSpecification: [1x2 struct]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MonitorChannelsAddressing: {[1x2 struct]&nbsp;&nbsp;[1x1 struct]&nbsp;&nbsp;[]&nbsp;&nbsp;[]}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stasMonitorChannelID: [1x2 struct]<br />
+</p>
+
+<p>
+The options structure field names are relatively self-descriptive, but...
+<ul>
+	<li><code>Signature</code> - This field is used by the toolbox to test for a valid options structure.  If you change this field, the toolbox will reject the options structure.</li>
+	<li><code>ToolboxVersion</code> - This field contains the toolbox version used to create the options structure.  If the version numbers do not match, the toolbox will reject the structure.</li>
+	<li><code>bDisplayProgress</code> - Many toolbox functions display the progress of potentially long operations.  This flag can be used to disable or enable this progress display.</li>
+	<li><code>InstanceTemporalResolution</code> - This sets the temporal resolution for creating spike train instances.  All spike train instances have are quantised in time by this amount.</li>
+	<li><code>MappingTemporalResolution</code> - This sets the temporal resolution for creating spike train mappings.</li>
+	<li><code>RandomGenerator</code> - This function handle specifies a random number generator to use.  See <a href="spike_tb_randgen.hmtl">Random number generators</a> for detailed information.</li>
+	<li><code>SpikeChunkLength</code> - This number specifies the maximum number of quantal time bins in a spike train chunk.  A spike train can contain more than one chunk, so this does not impose a limit on the length of a spike train.</li>
+	<li><code>DefaultSynchWindowSize</code> - This duration specifies a default time window for finding synchronous spikes, used by <a href="function/STFindSynchronousPairs.html" class="function">STFindSynchronousPairs</a>.</li>
+	<li><code>DefaultCorrWindow</code> - This duration specifies a default window  over which to perform a cross correlation.  This option is used by <a href="function/STCrossCorrelation.html" class="function">STCrossCorrelation</a>.</li>
+	<li><code>DefaultCorrSmoothingKernel</code> - This string specifies which smoothing kernel that <a href="function/STCrossCorrelation.html" class="function">STCrossCorrelation</a> should use by default.  See the <a href="function/STCrossCorrelation.html"><span class="function">STCrossCorrelation</span> documentation</a> for possible alternatives for this option.</li>
+	<li><code>DefaultCorrSmoothingWindowFactor</code> - This option specifies what proportion of the correlation window the default smoothing window will be, when performing a cross correlation using <a href="function/STCrossCorrelation.html" class="function">STCrossCorrelation</a>.</li>
+	<li><code>stasDefaultOutputSpecification</code> - This addressing specification will be used by default when mapping a spike train.  See <a href="spike_tb_addressing.html">Understanding toolbox addressing</a> for more information on addressing specifications.</li>
+	<li><code>MonitorChannelsAddressing</code> - This cell array of addressing specifications determines which <abbr title="Address Event Representation">AER</abbr> bus monitor channels will be imported when using <a ahref="function/STStimulate.html">STStimulate</a>, as well as the addressing schemes used on each channel.  See <a href="spike_tb_addressing.html#DefaultSpec">Setting default addressing schemes</a> for more information on monitor channel addressing.</li>
+	<li><code>stasMonitorChannelID</code> - This addressing specification determines how to extract the monitor channel ID from a binary hardware address.   See <a href="spike_tb_addressing.html#Channel">Channel address specifications</a> for more information on channel addressing specifications.</li>
+</ul>
+</p>
+
+<p>
+<a href="function/STOptionsDescribe.html" class="function">STOptionsDescribe</a>  gives a nicer display of the current toolbox options, or of a toolbox options structure.
+</p>
+
+<p class="funcdef">
+STOptionsDescribe(stOptions)<br />
+STOptionsDescribe<br />
+</p>
+
+<p class="script">
+STOptionsDescribe;<br />
+--- Spike toolbox options:<br />
+&nbsp;&nbsp;&nbsp;Toolbox version [0.03]<br />
+&nbsp;&nbsp;&nbsp;Operation progress display is [on]<br />
+&nbsp;&nbsp;&nbsp;Default temporal resolution for spike trains:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Instances [0.99] usec<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mappings [1.00] usec<br />
+&nbsp;&nbsp;&nbsp;Toolbox random number generator [rand]<br />
+&nbsp;&nbsp;&nbsp;Maximum spike chunk length [2097152] spikes<br />
+&nbsp;&nbsp;&nbsp;Default spike synchrony matching window [1.00] msec<br />
+&nbsp;&nbsp;&nbsp;Default window size for cross-correlation analysis [1.00] msec<br />
+&nbsp;&nbsp;&nbsp;Default smoothing kernel for cross-correlation analysis [gaussian]<br />
+&nbsp;&nbsp;&nbsp;Default factor for determining smoothing window for cross-correlation [10]<br />
+&nbsp;&nbsp;&nbsp;Default output addressing specification<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|(12)  Synapse address  (8)|(7)  Neuron address  (0)|<br />
+&nbsp;&nbsp;&nbsp;Monitor channel ID addressing specification<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|(15)  Channel ID  (14)|(13)  (Ignored)  (0)|<br />
+&nbsp;&nbsp;&nbsp;Monitor channel address mappings:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[0]: |(12)  Synapse address  (8)|(7)  Neuron address  (0)|<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1]: |(7)  Neuron address  (0)|<br />
+</p>
+
+<p>
+After modifying some aspect of the toolbox options (by obtaining a structure then assigning a new value to a field), use <a href="function/STOptions.html" class="function">STOptions</a> again to set the new options.
+</p>
+
+<p class="script">
+stO.RandomGenerator = @twister;<br />
+STOptions(stO);
+</p>
+
+<p>
+<a href="function/STOptions.html" class="function">STOptions</a> will tell you if you've broken the options structure with your meddling.
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Persistant" id="Persistant" />Setting persistant toolbox options</span><br />
+Although you could re-set your favourite options every time you start MATLAB, it's much less frustrating to save a set of options.  <a href="function/STOptionsSave.html" class="function">STOptionsSave</a> and <a href="function/STOptionsLoad.html" class="function">STOptionsLoad</a> are used to manipulate persistant toolbox options.
+</p>
+
+<p class="funcdef">
+<a href="function/STOptionsSave.html">STOptionsSave</a><br />
+<a href="function/STOptionsSave.html">STOptionsSave</a>(stOptions)<br />
+<a href="function/STOptionsSave.html">STOptionsSave</a>(stOptions, filename)<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="function/STOptionsLoad.html">STOptionsLoad</a><br />
+[stOptions] = <a href="function/STOptionsLoad.html">STOptionsLoad</a><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="function/STOptionsLoad.html">STOptionsLoad</a>(filename)<br />
+</p>
+
+<p>
+The basic calling syntaxes store and retrieve the current toolbox options from a file stored on a per-user basis, in your <code>.matlab</code> directory (or its equivalent on Windows).
+</p>
+
+<p>
+If your options become hopelessly messed up, use <a href="function/STToolboxDefaults.html" class="function">STToolboxDefaults</a> to retrieve the factory defaults in handy-dandy options structure format.  Then use <a href="function/STOptionsSave.html" class="function">STOptionsSave</a> to write them to the persistant database.
+</p>
+
+<p class="funcdef">
+[stOptions] = STToolboxDefaults<br />
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="spike_tb_tutorial_index.html" class="navigation"><img src="arrow_left.png" border="0" />
+Tutorial</a>
+</td>
+
+<td class="next">
+<a href="spike_tb_addressing.html" class="navigation">
+Understanding addressing
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: spike_tb_options.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of spike_tb_options.html --->

@@ -1,0 +1,108 @@
+<!-- STCrossCorrelation.html
+     $Id: STCrossCorrelation.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STCrop.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STDescribe.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STCrossCorrelation</span><br />
+Calcualte cross-correlation for instantiated spike trains
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[vCorrSmoothed, vCorrRaw, vtCorrTime] = ...
+   STCrossCorrelation(stTrain1, stTrain2
+      &lt;, tWindow, strKernel, tSmoothing&gt;)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+STCrossCorrelation calculates the cross-correlation of two spike trains.
+Any mapping information is ignored; this function is designed to work with
+spike train instances.  STFlatten and STExtract can be used to convert
+mapped trains to spike train instances.  <code>stTrain&lt;1, 2&gt;</code> are valid spike
+train objects, which must be at least instantiated.  Spike train definitions
+are not supported by STCrossCorrelation.
+</p>
+
+<p>
+<code>tWindow</code> is an optional argument to specity the time range over which to
+calculate the cross correlation.  The correlation will stretch over
+<code>[-tWindow..tWindow]</code>. <code>tSmoothing</code> is an optional argument that specifies the
+amount of smoothing to perform on the calculated correlation.  A gaussian
+smoothing will be performed with a window width of <code>tSmoothing</code>.  If
+<code>tSmoothing</code> is zero, smoothing will not be performed.  Both time window
+parameters are in seconds.  <code>strKernel</code> can optionally be used to specify
+the kernel used for smoothing the correlation function.  Recognised kernels
+are <code>gaussian</code>, <code>square</code> and <code>none</code>.  The defaults for these arguments can
+be set using STOptions.
+</p>
+
+<p>
+<code>vCorrRaw</code> will be the raw calculated cross correlation.  <code>vCorrSmoothed</code> will
+be the (optionally) smoothed correlation trace.  <code>vtCorrTime</code> will be a
+vector of the corresponding time bins for each entry in <code>vCorr...</code>.  If no
+output arguments are supplied, the (smoothed) correlation will be plotted in
+the current figure.
+</p>
+
+<p>
+To perform an autocorrelation, just supply the same spike train twice.  In
+this case, the zero point will be ignored for smoothing and will be replaced
+by a <code>NaN</code>.
+</p>
+
+
+<!--
+<p>
+<span class="h2">See Also</span><br />
+<span class="func_ref">
+Function references
+</span>
+</p>
+-->
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STCrop.html" class="navigation"><img src="arrow_left.png" border="0" />
+STCrop</a>
+</td>
+
+<td class="next">
+<a href="STDescribe.html" class="navigation">STDescribe
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STCrossCorrelation.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STCrossCorrelation.html --->

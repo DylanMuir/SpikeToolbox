@@ -1,0 +1,100 @@
+<!-- STAddrSpecSynapse2DNeuron.html
+     $Id: STAddrSpecSynapse2DNeuron.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STAddrSpecIgnoreSynapseNeuron.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STConcat.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STAddrSpecSynapse2DNeuron</span><br />
+Address specification utility function
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stasSpecification] = STAddrSpecSynapse2DNeuron(nSynapseBits, nXNeuronBits, nYNeuronBits)
+[stasSpecification] = STAddrSpecSynapse2DNeuron(nSynapseBits, nXNeuronBits, nYNeuronBits, 
+                                                nSynapseMax, nXNeuronMax, nYNeuronMax, 
+                                                bInvertSynapse, bInvertXNeuron, bInvertYNeuron,
+                                                bXSecond) 
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+This function returns an address specification structure for use with the
+Spike Toolbox.  This specification will contain a single synapse address
+field and a two-dimensional neuron address field, all with user-specified
+widths.  The neuron address field is most significant.
+</p>
+
+<p> 
+The user can optionally specify an integer maximum for each field.  If this
+is supplied, then addresses will be range checked.  If a width of zero is
+specified for any field, this field will not be included in the
+specification.
+</p>
+
+<p>
+The user can optionally supply <code>bInvert...</code> specifications for each
+addressing field.  If <code>bInvert...</code> is true, that field will be binary
+inverted before addresses are sent to neuron hardware.
+</p>
+
+<p> 
+The user can optionally specify <code>bXSecond</code>.  If this binary value is true,
+then the second neuron field will be labelled as the X field, and the first
+as the Y field.  By default, the X field comes first (is lower order in the
+address).
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_addressing.html">Understanding toolbox addressing</a>
+<span class="func_ref">
+<a href="STDescribe.html">STDescribe</a>, <a href="STOptions.html">STOptions</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STAddrSpecIgnoreSynapseNeuron.html" class="navigation"><img src="arrow_left.png" border="0" />
+STAddrSpecIgnoreSynapseNeuron</a>
+</td>
+
+<td class="next">
+<a href="STConcat.html" class="navigation">STConcat
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STAddrSpecSynapse2DNeuron.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STAddrSpecSynapse2DNeuron.html --->

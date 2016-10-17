@@ -1,0 +1,47 @@
+<productinfo
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.mathworks.com/namespace/info/v1/info.xsd">
+<?xml-stylesheet type="text/xsl" href="http://www.mathworks.com/namespace/info/v1/info.xsl"?>
+
+<matlabrelease>13</matlabrelease>
+<name>Spike</name>
+<type>toolbox</type>
+<icon>an_spike.gif</icon>
+<help_contents_icon>$toolbox/matlab/icons/book_mat.gif</help_contents_icon>
+<help_location>./spike</help_location>
+
+<list>
+
+<!--listitem>
+<label>Basic Function Help</label>
+<callback>doc fileparts(which('STCreate'))</callback>
+<icon>$toolbox/matlab/icons/book_mat.gif</icon>
+</listitem-->
+
+<listitem>
+<label>Documentation</label>
+<callback>STWelcome('documentation');</callback>
+<icon>$toolbox/matlab/icons/book_mat.gif</icon>
+</listitem>
+
+<listitem>
+<label>Getting started</label>
+<callback>STWelcome('get_started');</callback>
+<icon>$toolbox/matlab/icons/book_mat.gif</icon>
+</listitem>
+
+<listitem>
+<label>Tutorial</label>
+<callback>STWelcome('tutorial');</callback>
+<icon>$toolbox/matlab/icons/demoicon.gif</icon>
+</listitem>
+
+<listitem>
+<label>Product Page (Web)</label>
+<callback>web('http://www.ini.uzh.ch/~dylan/spike_toolbox', '-browser')</callback>
+<icon>$toolbox/matlab/icons/webicon.gif</icon>
+</listitem>
+
+</list>
+
+</productinfo>

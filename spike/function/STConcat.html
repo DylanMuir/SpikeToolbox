@@ -1,0 +1,85 @@
+<!-- STConcat.html
+     $Id: STConcat.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STAddrSpecSynapse2DNeuron.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STCreate.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STConcat</span><br />
+Concatenate two spike trains
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stTrain] = STConcat(stTrain1, stTrain2)
+[stTrain] = STConcat(stTrain1, stTrain2, strLevel)
+[stTrain] = STConcat(stCellTrain)
+[stTrain] = STConcat(stCellTrain, strLevel)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+STConcat combines two spike trains by joining them end-to-end.  <code>stTrain1</code>
+and <code>stTrain2</code> are spike trains containing either mappings or instances.
+<code>stTrain2</code> will be tacked on to the end of <code>stTrain1</code>.  <code>strLevel</code> can be
+optionally used to specify what spike train level to concatenate, and must
+be one of <code>{instance, mapping}</code>.
+</p>
+
+<p> 
+STConcat can also accept a cell array of spike trains to concatenate.  In
+this mode, the trains will be concatenated from index 1 to the end of the array
+</p>
+
+
+<!--
+<p>
+<span class="h2">See Also</span><br />
+<span class="func_ref">
+Function references
+</span>
+</p>
+-->
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STAddrSpecSynapse2DNeuron.html" class="navigation"><img src="arrow_left.png" border="0" />
+STAddrSpecSynapse2DNeuron</a>
+</td>
+
+<td class="next">
+<a href="STCreate.html" class="navigation">STCreate
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STConcat.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STConcat.html --->

@@ -1,0 +1,78 @@
+<!-- STPlot2DMeanFreq.html
+     $Id: STPlot2DMeanFreq.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STPlot2DISI.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STPlot2DRaster.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STPlot2DMeanFreq</span><br />
+Make a 2D plot of the mean frequency over a time interval of each pixel in a 2D array
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+STPlot2DMeanFreq(stTrain)
+STPlot2DMeanFreq(stTrain, bPlot)
+STPlot2DMeanFreq(stTrain, tBin_0, tBin_f)
+STPlot2DMeanFreq(stTrain, bPlot, tBin_0, tBin_f) 
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code>stTrain</code> is a mapped spike train. <code>If bPlot = 1</code> an <span class="function">imagesc</span> type of
+plot will be created in the current axes (or a new figure created) showing
+the mean frequency of each pixel.
+If <code>bPlot = 0</code>, the figure is not created and the function will return
+the mean frequency of each pixel.
+If not specified the plot is created.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_index_categorical.html#Plotting">Plotting functions</a>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STPlot2DISI.html" class="navigation"><img src="arrow_left.png" border="0" />
+STPlot2DISI</a>
+</td>
+
+<td class="next">
+<a href="STPlot2DRaster.html" class="navigation">STPlot2DRaster
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STPlot2DMeanFreq.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STPlot2DMeanFreq.html --->

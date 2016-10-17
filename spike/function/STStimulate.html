@@ -1,0 +1,77 @@
+<!-- STStimulate.html
+     $Id: STStimulate.html 7366 2007-08-24 16:04:14Z amw $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STStimServer.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STStrip.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STStimulate</span><br />
+Send a mapped spike train to the <A href="http://www.ini.uzh.ch/~amw/pciaer/">PCI-<abbr title="Address Event Representation">AER</abbr> board</a>
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+&lt;[stMonTrain]&gt; = STStimulate(stTrain)
+&lt;[stMonTrain]&gt; = STStimulate(stTrain, tMonDuration)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+<code>stTrain</code> is a spike train mapped to a neuron/synapse address, as created
+by <a href="STMap.html" class="function">STMap</a>.  <code>tMonDuration</code> optionally specifies the duration during which to
+monitor the board for spikes.  If <code>tMonDuration</code> is not supplied, it is
+assumed to be the same duration as <code>stTrain</code>, plus one second.  If
+<code>stMonTrain</code> is not required, monitoring will not be performed.
+</p>
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_tutorial_4.html">Stimulating a chip</a>,
+<span class="func_ref">
+<a href="STStimServer.html">STStimServer</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STStimServer.html" class="navigation"><img src="arrow_left.png" border="0" />
+STStimServer</a>
+</td>
+
+<td class="next">
+<a href="STStrip.html" class="navigation">STStrip
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STStimulate.html 7366 2007-08-24 16:04:14Z amw $</span>
+
+</body>
+</html>
+
+<!--- END of STStimulate.html --->

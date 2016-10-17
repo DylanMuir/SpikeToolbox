@@ -1,0 +1,114 @@
+<!-- STOptions.html
+     $Id: STOptions.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="../spike_tb_styles.css" title="Default" />
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="STNullTrain.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="STOptionsDescribe.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="func_header">STOptions</span><br />
+Retrieve and set options for the Spike Toolbox
+</p>
+
+
+<p>
+<span class="h2">Syntax</span><br />
+<span class="func_syntax">
+[stOptions] = STOptions
+              STOptions(stOptions)
+[stOptionsOld] = STOptions(stOptionsNew)
+</span>
+</p>
+
+
+<p>
+<span class="h2">Description</span><br />
+The first usage will retrieve the current toolbox options, for the user to
+either examine or modify.  The modified options can them be set by calling
+STOptions with the second usage mode.
+</p>
+
+<p>
+The third usage will set the toolbox options, and return the <strong>previous</strong>
+options in <code>stOptionsOld</code>.
+</p>
+
+<p>
+STOptions must be called with a valid options structure, as defined by
+<a href="STIsValidOptionsStruct.html" class="function">STIsValidOptionsStruct</a>.  This structure must contain values for all of
+the Spike Toolbox options.  The easiest way to do this is to use STOptions
+to retrieve the current options, modify the returned structure and pass the
+modified structure back to STOptions.  STOptions guarantees to return a
+valid options structure.
+</p>
+
+<p class="note">
+Note that modifying the structure is not enough; to set the toolbox options,
+the structure must be passed back to STOptions as an argument.
+</p>
+
+<p>
+Various utility functions exist to make setting addressing modes easier.
+See the <span class="function">STAddrSpec...</span> family of functions in the <a href="../spike_tb_index_categorical.html#AddrSpecUtil">categorical function index</a> for details.
+</p>
+
+<p>
+<a href="STDescribe.html" class="function">STDescribe</a> will print a summary of the toolbox options when passed an
+options structure as an argument.  <a href="STOptionsDescribe.html" class="function">STOptionsDescribe</a> will describe the
+current toolbox options.
+</p>
+
+
+<p>
+<span class="h2">See Also</span><br />
+<a href="../spike_tb_options.html">Managing toolbox options</a>,
+<a href="../spike_tb_tutorial_4.html#Addressing">Configuring toolbox addressing</a>,
+<a href="../spike_tb_index_categorical.html#AddrSpecUtil">Addressing specification utility functions</a>,
+<span class="func_ref">
+<a href="STIsValidOptionsStruct.html">STIsValidOptionsStruct</a>,
+<a href="STDescribe.html">STDescribe</a>,
+<a href="STOptionsDescribe.html">STOptionsDescribe</a>,
+<a href="STOptionsSave.html">STOptionsSave</a>,
+<a href="STOptionsLoad.html">STOptionsLoad</a>,
+<a href="STToolboxDefaults.html">STToolboxDefaults</a>
+</span>
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="STNullTrain.html" class="navigation"><img src="arrow_left.png" border="0" />
+STNullTrain</a>
+</td>
+
+<td class="next">
+<a href="STOptionsDescribe.html" class="navigation">STOptionsDescribe
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: STOptions.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of STOptions.html --->

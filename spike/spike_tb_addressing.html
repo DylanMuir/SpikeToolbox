@@ -1,0 +1,283 @@
+<!-- spike_tb_addressing.html - Understanding spike toolbox addressing
+     $Id: spike_tb_addressing.html 1783 2005-08-31 21:05:51Z dylan $
+     
+     Author: Dylan Muir <dylan@ini.phys.ethz.ch>
+     Created: 3rd March, 2005
+-->
+
+<html>
+
+<head>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="spike_tb_styles.css" title="Default">
+</head>
+
+<table class="subpage-header">
+<tr>
+<td>Spike Toolbox</td>
+<td align="right">
+<a href="spike_tb_options.html" class="navigation"><img src="arrow_left.png" border="0" /></a><a href="spike_tb_spiketrainlevels.html" class="navigation"><img src="arrow_right.png" border="0" /></a>
+</td>
+</tr>
+</table>
+
+<p>
+<span class="h1">Understanding Spike Toolbox addressing</span><br />
+</p>
+
+<hr />
+
+<span class="h4">
+<img src="bullet_orange.gif" class="bullet" /><a href="#Introduction">Introduction to addressing</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#AddrFields">Addressing fields</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#AddressTypes">Logical and Hardware addresses</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#Passing">Passing addresses and addressing schemes as arguments</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#UtilityFunc">Utility functions for addressing specifications</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#DefaultSpec">Setting default addressing schemes</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#Channel">Channel address specifications</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="ManualSpec">Manually designing an addressing specification</a><br />
+</span>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Introduction" id="Introduction" />Introduction to addressing</span><br />
+In designing the spike toolbox, we realise that we can't predict the types of systems you might want to simulate or stimulate with it.  Chips communicating over spike-based busses can have arbitrary numbers, types and dimensions of addresses you might want to associate with a spike.  More abstract simulation systems might be even more esoteric.
+</p>
+
+<p>
+For this reason, the toolbox supports arbitrary addressing schemes.  Any number of fields of neurons and synapses are supported, as well as built-in range checking and conversion to binary hardware addresses.  However, this flexibility brings with it some complications in the configuration of the toolbox for a particular addressing scheme.  This topic covers all you need to know about setting up any particular addressing scheme and using it to map spike trains.
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="AddrFields" id="AddrFields" />Addressing fields</span><br />
+A toolbox address is composed of one or more <em>fields</em>.  A field encapsulates a single addressing dimension, such as a neuron address (or an X, Y, Z etc. component of a neuron address) or a synapse address (ditto).  When providing a full address to the toolbox, a field index must be provided for each field not set to be ignored.  Any number of fields may be defined in an <em>addressing specification</em>.
+</p>
+
+<p>
+The interpretation of an address field is arbitrary; fields can (and should) be assigned names meaningful to the user, but the toolbox doesn't care.  However, a field can arbitrarily be marked <em>major</em> or <em>minor</em>.  This flag has relevence when the toolbox creates <em>logical addresses</em>, described <a href="#AddressTypes">below</a>.  As mentioned above, fields can be assigned an arbitrary maximum value, and be automatically range checked whenever an addressing operation is performed.
+</p>
+
+<p>
+An addressing field is a simple MATLAB structure, with field names as deescribed below.  When defining a field, the following information is <b>required</b>:
+<ul>
+	<li><code>nWidth</code> - The width of a field in bits.</li>
+</ul>
+The following information is <b>optional</b>:
+<ul>
+	<li><code>Description</code> - A textual representation of what the field means.</li>
+	<li><code>bMajorField</code> - This flag is used when constructing logical addresses.  If a field is marked as <em>major</em> it will be a primary component in constructing a logical address.  For example, neuron addressing fields might be considered <em>major</em>, while synapse addressing fields might be considered <em>minor</em>.  See <a href="#AddressTypes">below</a> for more information on logical addresses.</li>
+	<li><code>bIgnore</code> - A flag indicating that the addressing field should be ignored.  A field marked <em>ignore</em> will not be required by the toolbox when passing a full address as an argument.  This field can be used to mark off unused bits in a binary address.</li>
+	<li><code>bRangeCheck</code> - Along with <code>nMax</code>, defines whether an addressing field should be automatically range-checked by the toolbox.  An error will be printed when an addressing index falls outside the defined range: the full address will be considered invalid by the toolbox.</li>
+	<li><code>nMax</code> - Defines the maximum allowable index for the addressing field.  Note that if a field is <code>8</code> bits then <code>255</code> is automatically taken as the maximum index for that field, if <code>nMax</code> is not defined.  <code>nMax</code> is useful when there are actually only <code>234</code> neurons in the array.</li>
+	<li><code>bInverse</code> - The bits in this addressing field will be negated (inverted) when constucting a binary (<em>hardware</em>) address.</li>
+	<li><code>bReverse</code> - The bits in this addressing field will be reversed (most-significant and least-significant bits will be swapped) when constructing a binary address.</li>
+</ul>
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="AddressTypes" id="AddressTypes" />Logical and Hardware addresses</span><br />
+When displaying raster plots and other information to the user, it is helpful to be able to present a full complex address as a single decimal number.  This is called a <em>logical address</em>.  To perform this conversion, the toolbox groups addressing fields together based on the <em>major</em> or <em>minor</em> flag, described <a href="#AddrFields">above</a>.
+</p>
+
+<p>
+Major fields are combined and placed on the left of a decimal point.  Minor fields are placed on the right of the decimal point.  The least to most significant order of the fields is maintained within each group.  Fields are combined according to the number of bits each field occupies, as specified by the addressing specification.
+</p>
+
+<p>
+Here is an example of constructing a logical address:  For our addressing scheme, we will have a neuron and a synapse address of four bits each.  The neuron address will be least significant, and will be marked as a major field.  The synapse address will be marked as a minor field.
+</p>
+
+<p class="script">
+|(7)  Synapse  (4)|(3)  Neuron  (0)|<br />
+</p>
+
+<p>
+For a full address of <code>(4, 2)</code> (ie a neuron address of <code>4</code> and a synapse address of <code>2</code>), we will simply take the neuron field and place it left of a decimal point, since it is the only major field.  The synapse field will be shifted right by four bits, and placed to the right of the decimal point (ie <code>2</code> becomes <code>0.125</code>).
+</p>
+
+<p>
+<code>(4, 2)</code> --> (addressing specification) --> <code>4.125</code><br />
+</p>
+
+<p>
+<span class="h5">Hardware addresses</span><br />
+Harware addresses are conceptually more simple.  They simply transform each address index into binary according to the addressing specification, arrange the fields in the specified order and output a binary number.
+</p>
+
+<p>
+For the example above, <code>(4, 2)</code> --> (addressing specification) --> <code>00100100</code> (<code>0x24</code>).
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Passing" id="Passing" />Passing addresses and addressing schemes as arguments</span><br />
+When addresses are passed as arguments to the toolbox, they are always written as a fully qualified address.  Each address index is supplied in least-to most-significant field order as a separate argument.  For most functions that accept an address, and addressing specification can be supplied as an argument, as part of the address.  The exception is when manipulating a spike train which already contains an addressing specification.  All mapped spike trains contain a copy of the addressing specification used to create the mapping.  See the documentation for individual toolbox functions to check their calling syntax. 
+</p>
+
+<p>
+Example: <code>stMapped = STMap(stInstantiated, 4, 2);</code><br />
+Using our example addressing scheme above and our example address <code>(4, 2)</code>, this will map a spike train to neuron <code>4</code>, synapse <code>2</code>.
+</p>
+
+<p>
+Addressing schemes themselves are encapsulated in a toolbox <e>addressing specification</em> object.  These can be passed directly into most functions, with the caveat outlined above.  Assuming our simple addressing scheme is encapsulated by the object <code>stasSimple</code>, then
+</p>
+
+<p class="script">
+stMapped = STMap(stInstantiated, 4, 2, stasSimple);
+</p>
+
+<p>
+will map <code>stInstantiated</code> according to our scheme.
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="UtilityFunc" id="UtilityFunc" />Utility functions for addressing specifications</span><br />
+Most basic addressing schemes have specific toolbox functions to create a paramaterised addressing specification.  This eases the process of designing an addressing specification manually.  These utility functions return a pre-made specification object, which can be modified if necessary.  Here we will describe one of these functions; for a full list, see the <a href="spike_tb_index_categorical.html#Addressing">categorical function index</a>.
+</p>
+
+<p class="funcdef">
+[stasSpecification] = ...<br />
+&nbsp;&nbsp;&nbsp;<a href="function/STAddrSpecIgnoreNeuronSynapse.html">STAddrSpecIgnoreNeuronSynapse</a>(nIgnoreBits, nNeuronBits, nSynapseBits)<br />
+[stasSpecification] = ...<br />
+&nbsp;&nbsp;&nbsp;<a href="function/STAddrSpecIgnoreNeuronSynapse.html">STAddrSpecIgnoreNeuronSynapse</a>(nIgnoreBits, nNeuronBits, nSynapseBits, ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nNeuronMax, nSynapseMax, ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bInvertNeuron, bInvertSynapse)<br />
+</p>
+
+<p>
+<a href="function/STAddrSpecIgnoreNeuronSynapse.html" class="function">STAddrSpecIgnoreNeuronSynapse</a> will return a specification for an addressing scheme with (optionally) three fields; a number of ignored bits, a number of bits for a neuron address and a number of bits for a synapse address.  Any of these three fields are optional, and can be removed from the specification by providing <code>0</code> for one of the width arguments.  The two functional fields can optionally be inverted and range-checked.
+</p>
+
+<p>
+Considering again our simple addressing scheme above,
+</p>
+
+<p class="script">
+stasSimple = STAddrSpecIgnoreNeuronSynapse(0, 4, 4);<br />
+</p>
+
+<p>
+will be sufficient to construct a corresponding addressing specification.
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="DefaultSpec" id="DefaultSpec" />Setting default addressing schemes</span><br />
+For detailed information on setting options for the toolbox and making them persistent, see <a href="spike_tb_options.html">Managing spike toolbox options</a>.  This topic assumes you know how to obtain, modify and set a spike toolbox options structure.
+</p>
+
+<p>
+The toolbox options allow you to set a default output addressing specification (which will be used by default when mapping spike trains), and several monitor channel addressing specifications which will be used when monitoring spike trains with <a href="function/STStimulate.html" class="function">STStimulate</a>.  Within the toolbox options structure, the following fields relate to addressing shemes:
+<ul>
+	<li><code>stasDefaultOutputSpecification</code> - This addressing specifcation object sets the default output addressing scheme used when mapping spike trains.</li>
+	<li><code>MonitorChannelsAddressing</code> - This cell array of addressing specification objects defines not only which monitor channels to import by default when monitoring with <a href="function/STStimulate.html" class="function">STStimulate</a>, but also the addressing schemes to apply to spikes arising from those channels.</li>
+	<li><code>stasMonitorChannelID</code> - This addressing specification object defines which bits of the hardware spike address coming from the <abbr title="Address Event Representation">AER</abbr> bus specify the channel address.  Channel addressing specifications are described in detail <a href="#Channel">below</a>.</li>
+</ul>
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Channel" id="Channel" />Channel address specifications</span><br />
+Channel addressing specifications are a restricted type of addressing specification, used to identify which bits in an address relate to the monitor channel ID.  A channel address must contain two fields only, the first with <code>bIgnore</code> set.  The second field will define the channel ID address bits.  As always, there's a utility function <a href="function/STAddrSpecChannel" class="function">STAddrSpecChannel</a> to help you.
+</p>
+
+<p class="funcdef">
+[stasSpecification] = <a href="function/STAddrSpecChannel">STAddrSpecChannel</a>(nIgnoreBits, nChannelBits)<br />
+[stasSpecification] = <a href="function/STAddrSpecChannel">STAddrSpecChannel</a>(nIgnoreBits, nChannelBits, bInvert)<br />
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="ManualSpec" id="ManualSpec" />Manually designing an addressing specification</span><br />
+Spike toolbox addressing specification objects are MATLAB structure arrays, containing only the fields described <a href="#AddrFields">above</a>.  Each address field is a separate array element, in order from least- to most-significant field.  We recommend that you use the utility functions supplied to quickly create specification structures, but creating your own should be relatively easy if the utility functions do not suffice.
+</p>
+
+Three useful functions are <a href="function/STIsValidAddress.html" class="function">STIsValidAddress</a>, <a href="function/STIsValidAddrSpec" class="function">STIsValidAddrSpec</a> and <a href="function/STIsValidChannelAddrSpec.html" class="function">STIsValidChannelAddrSpec</a>, which return a boolean value indicating the validity of the respective data structures.  See the documentation for each function for more details.
+</p>
+
+<p class="funcdef">
+[bValid] = <a href="function/STIsValidAddress.html">STIsValidAddress</a>(nAddr1, nAddr2, ...)<br />
+[bValid] = <a href="function/STIsValidAddress.html">STIsValidAddress</a>(stasSpecification, nAddr1, nAddr2, ...)<br />
+</p>
+
+<p class="funcdef">
+[bValid] = <a href="function/STIsValidAddrSpec">STIsValidAddrSpec</a>(stasSpecification)<br />
+</p>
+
+<p class="funcdef">
+[bValid] = <a href="function/STIsValidChannelAddrSpec.html">STIsValidChannelAddrSpec</a>(stasChannelSpec)<br />
+</p>
+
+<p>
+Our simple address specification from above looks like this:
+</p>
+
+<p class="script">
+stasSimple = <br />
+1x2 struct array with fields:<br />
+&nbsp;&nbsp;&nbsp;Description<br />
+&nbsp;&nbsp;&nbsp;nWidth<br />
+&nbsp;&nbsp;&nbsp;bReverse<br />
+&nbsp;&nbsp;&nbsp;bInvert<br />
+&nbsp;&nbsp;&nbsp;bMajorField<br />
+&nbsp;&nbsp;&nbsp;bRangeCheck<br />
+&nbsp;&nbsp;&nbsp;bIgnore<br />
+<br />
+stasSimple(1) =<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Description: 'Neuron address'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nWidth: 4<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bReverse: 0<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bInvert: 0<br />
+&nbsp;&nbsp;&nbsp;&nbsp;bMajorField: 1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;bRangeCheck: 0<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bIgnore: 0<br />
+<br />
+stasSimple(2) =<br />
+&nbsp;&nbsp;&nbsp;&nbsp;Description: 'Synapse address'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nWidth: 4<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bReverse: 0<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bInvert: 0<br />
+&nbsp;&nbsp;&nbsp;&nbsp;bMajorField: 0<br />
+&nbsp;&nbsp;&nbsp;&nbsp;bRangeCheck: 0<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bIgnore: 0<br />
+</p>
+
+<p>
+<a href="function/STDescribe" class="function">STDescribe</a> is your friend as always, especially when creating an addressing specification from scratch.  <a href="function/STDescribe" class="function">STDescribe</a> will pretty-print an addressing specification in a user-friendly format.
+</p>
+
+
+<!-- Page footer -->
+
+<hr />
+<table class="footer">
+<td class="prev">
+<a href="spike_tb_options.html" class="navigation"><img src="arrow_left.png" border="0" />
+Configuring the toolbox</a>
+</td>
+
+<td class="next">
+<a href="spike_tb_spiketrainlevels.html" class="navigation">
+Spike train levels
+<img src="arrow_right.png" border="0" /></a>
+</td>
+</table>
+<span class="svn_id">$Id: spike_tb_addressing.html 1783 2005-08-31 21:05:51Z dylan $</span>
+
+</body>
+</html>
+
+<!--- END of spike_tb_.html --->
