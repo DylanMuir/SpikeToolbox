@@ -1,5 +1,5 @@
 <!-- spike_tb_tutorial_1.html - Spike train tutorial (generating some trains)
-     $Id: spike_tb_tutorial_1.html 1481 2005-08-29 12:41:53Z dylan $
+     $Id: spike_tb_tutorial_1.html 8347 2008-02-04 17:48:50Z dylan $
      
      Author: Dylan Muir <dylan@ini.phys.ethz.ch>
      Created: 3rd March, 2005
@@ -43,7 +43,6 @@ To create new spike trains, we must use a small set of functions: <a href="funct
 [stTrain] = <a href="function/STCreate.html">STCreate</a>('constant', fFreq, ...)<br />
 [stTrain] = <a href="function/STCreate.html">STCreate</a>('linear', fStartFreq, fEndFreq, ...)<br />
 [stTrain] = <a href="function/STCreate.html">STCreate</a>('sinusoid', fMinFreq, fMaxFreq, tPeriod, ...)<br />
-[stTrain] = <a href="function/STCreate.html">STCreate</a>('gamma', fMeanFreq, fVarFreq, ...)
 </p>
 
 <p>
@@ -100,7 +99,7 @@ This is a simple spike train definition:<br />
 </p>
 
 <p class="funcdef">
-[stTrain] = <a href="function/STInstantiate.html">STInstantiate</a>(stTrainDef, &lt;'regular' / 'poisson'&gt;, tDuration &lt;, mCorrelation, fMemTau&gt;)<br />
+[stTrain] = <a href="function/STInstantiate.html">STInstantiate</a>(stTrainDef, &lt;'regular' / 'poisson' / 'gaussian' / 'gamma'&gt;, tDuration &lt;, mCorrelation, fMemTau&gt;)<br />
 </p>
 
 <p>
@@ -139,7 +138,7 @@ Spike Toolbox tutorial</a>
 <a href="spike_tb_tutorial_2.html" class="navigation">Looking at the trains <img src="arrow_right.png" border="0" /></a>
 </td>
 </table>
-<span class="svn_id">$Id: spike_tb_tutorial_1.html 1481 2005-08-29 12:41:53Z dylan $</span>
+<span class="svn_id">$Id: spike_tb_tutorial_1.html 8347 2008-02-04 17:48:50Z dylan $</span>
 
 </body>
 </html>

@@ -1,7 +1,7 @@
 function [stTrain] = STCreate(strType, varargin)
 
 % STCreate - FUNCTION Create a spike train
-% $Id: STCreate.m 3987 2006-05-09 13:38:38Z dylan $
+% $Id: STCreate.m 8347 2008-02-04 17:48:50Z dylan $
 %
 % Usage: [stTrain] = STCreate(<train definition type>,
 %                             <definition arguments>,
@@ -11,17 +11,15 @@ function [stTrain] = STCreate(strType, varargin)
 % Usage: [stTrain] = STCreate('constant', fFreq, ...)
 %        [stTrain] = STCreate('linear', fStartFreq, fEndFreq, ...)
 %        [stTrain] = STCreate('sinusoid', fMinFreq, fMaxFreq, tPeriod, ...)
-%        [stTrain] = STCreate('gamma', fMeanISI, fVarISI, ...)
 %        [stTrain] = STCreate(..., strTemporalType, tDuration <, nAddr1, nAddr2, ...>)
 %        [stTrain] = STCreate(..., strTemporalType, tDuration <, stasSpecification, nAddr1, nAddr2, ...>)
 %
 % STCreate will create a spike train definition of various types.  The first
 % argument specifies the type of spike train, and must be one of {'constant',
-% 'linear', 'sinusoid', 'gamma'}.
+% 'linear', 'sinusoid'}.
 %
 % The second set of parameters is passed to the definition creation
-% function (See STCreateConstant, STCreateLinear, STCreateSinusoid and
-% STCreateGamma for details of the parameters relating to the spike train
+% function (See STCreateConstant, STCreateLinear and STCreateSinusoid for details of the parameters relating to the spike train
 % types).  When called with only the train definition parameters, 'stTrain'
 % will comprise of a single field 'defintion' containing the spike train
 % definition.
@@ -93,7 +91,7 @@ switch lower(strType)
       stTrain = STCreateConstant(varargin{1});
         
       
-   % - Increasing spike train
+   % - Linearly increasing freqiency profile
    case {'linear', 'l'}
       if (nargin < 3)
            disp('*** STCreate: Incorrect number of arguments for linear train');
@@ -147,37 +145,10 @@ switch lower(strType)
       stTrain = STCreateSinusoid(varargin{1}, varargin{2}, varargin{3});
 
 
-   % - Gamma spike train
-   case {'gamma', 'g'}
-      if (nargin < 3)
-         disp('*** STCreate: Incorrect number of arguments for gamma distributed train');
-         help STCreate;
-         return;
-      end
-      
-      if (nargin > 3)
-         if (nargin < 5)
-            disp('*** STCreate: Not enough arguments to instantiate the gamma distributed train');
-            help STCreate;
-            return;
-         end
-         bInstantiateTrain = true;
-         strTemporalType = varargin{3};
-         tDuration = varargin{4};
-      end
-      
-      if (nargin > 5)
-         addrMapping = varargin(5:end);
-         bMapTrain = true;
-      end
-      
-      stTrain = STCreateGamma(varargin{1}, varargin{2});
-
-
    % - Unknown train type
    otherwise
       disp('*** STCreate: Unknown spike train type.');
-      disp('       Should be one of {''constant'', ''linear'', ''sinusoid'', ''gamma''}');
+      disp('       Should be one of {''constant'', ''linear'', ''sinusoid''}');
       help STCreate;
       return;
 end

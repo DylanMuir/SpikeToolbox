@@ -1,14 +1,21 @@
-function STPlot2DRaster(stTrain, bFreqOn) %, bClear)
+function STPlot2DRaster(stTrain, bFreqOn)
 
 % STPlot2DRaster - FUNCTION Make a raster plot of the spike train, differentiating between rows
-% $Id: STPlot2DRaster.m 3987 2006-05-09 13:38:38Z dylan $
+% $Id: STPlot2DRaster.m 9708 2008-06-27 15:09:56Z chicca $
 %
 % Usage: STPlot2DRaster(stTrain)
+%        STPlot2DRaster(stTrain, bFreqOn)    
 %
-% Where: 'stTrain' is either a mapped spike train.  A raster plot will be
-% created in the current axes (or a new figure created) showing the spike
-% train.
-
+% This function creates a raster plot and mean frequency histogram 
+% in the current axes (or in a new figure) showing the spike train 'stTrain'.
+% 'stTrain' is a mapped spike train.  
+% Only major address fields contribute to the 2D address space, minor 
+% address fields are ignored.
+%
+% The user can optionally specify bFreqOn. If this binary value is true,
+% then the mean frequency histogram will be plotted.  By default, 
+% the mean frequency histogram is plotted.
+%
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 2nd April, 2004 (modified from STPlotRaster by Chiara)
 % Copyright (c) 2004, 2005 Chiara Bartolozzi
@@ -30,28 +37,27 @@ end
 
 
 % -- Handle cell arrays of spike trains
-
 if (iscell(stTrain))
     hFig = gcf;
-    clf;
+    newplot;
     set(hFig, 'UserData', 'CellPlot');
 
     for (nRowIndex = 1:size(stTrain, 1))
         for (nColIndex = 1:size(stTrain, 2))
             subplot( size(stTrain, 1),size(stTrain, 2), ((nColIndex-1) * size(stTrain, 1)) + nRowIndex);
-            STPlot2DRaster(stTrain{nRowIndex, nColIndex},bFreqOn , false);
+            STPlot2DRaster(stTrain{nRowIndex, nColIndex},bFreqOn);
         end
     end
     return;
 end
 
 
-% - Non-cell array of spike trains; should we call clf?
+% - Non-cell array of spike trains
 % - Get the figure handle
 hFig = gcf;
-%if (~strcmp(get(hFig, 'UserData'), 'CellPlot'))
-%   newplot;
-%end
+if (~strcmp(get(hFig, 'UserData'), 'CellPlot'))
+   newplot;
+end
 
 % - Get current plotting extents
 hAxes = gca;
@@ -110,6 +116,7 @@ else
 end
 
 mMeanFreq =  zeros((nMaxY+1)*(nMaxX+1),1);
+count = zeros((nMaxY+1)*(nMaxX+1),1);
 %tISI = 0;
 % -- Do the plot
 
@@ -125,32 +132,36 @@ vNewSubplot(1:2) = vNewSubplot(1:2) + vWindow(1:2);
 subplot('position',vNewSubplot);% Betta
 axis([0 spikeList{length(spikeList)}(end,1).* stMap.fTemporalResolution 0 (nMaxX+1)*(nMaxY+1)]);
 
+
+nNumChunks = length(spikeList);
+
 hold on;
-for (nChunkIndex = 1:length(spikeList))
+for (nChunkIndex = 1:nNumChunks)
     % -- convert the address into x and y
-    [addr{1:nNumAddrFields}] = STAddrLogicalExtract(spikeList{nChunkIndex}(:, 2));
+    [addr{1:nNumAddrFields}] = STAddrLogicalExtract(spikeList{nChunkIndex}(:, 2),stMap.stasSpecification);
 
     nNeuronY = addr{nYAddrIndex};
     nNeuronX = addr{nXAddrIndex};
     for row = 0:nMaxY
-        index_row = find(nNeuronY==row);
+        index_row = find(nNeuronY == row);
         % -- Do the plot
         plot(spikeList{nChunkIndex}(index_row, 1) .* stMap.fTemporalResolution, ...
             spikeList{nChunkIndex}(index_row, 2),strPlotOptions{row+1});
-        for col = 0:nMaxX
-            index = find(nNeuronX==col & nNeuronY==row);
-            if ~isempty(index)
-                % if the pixel sent out the address I calculate the delta t
-                % between two spikes of the same pixel, then I calculate the
-                % mean and the 1/mean is the mean freq.
-                tISI = diff(spikeList{nChunkIndex}(index, 1) .* stMap.fTemporalResolution);
+        if bFreqOn
+            for col = 0:nMaxX
+                index = find(nNeuronX == col & nNeuronY == row);
+                if ~isempty(index)
+                    % if the pixel sent out the address I calculate the delta t
+                    % between two spikes of the same pixel, then I calculate the
+                    % mean and the 1/mean is the mean freq.
+                    tISI = diff(spikeList{nChunkIndex}(index, 1) .* stMap.fTemporalResolution);
 
-                mMeanFreq(spikeList{nChunkIndex}(index(1), 2)+1) = ...
-                    mMeanFreq(spikeList{nChunkIndex}(index(1), 2)+1) + 1/(mean(tISI));
-                infinity = find(isinf(mMeanFreq));
-
-                if ~isempty(infinity)
-                    mMeanFreq(infinity) = mMeanFreq(infinity) + 0;
+                    mMeanFreq(row*nMaxX+col+1) = mMeanFreq(row*nMaxX+col+1)+ 1/(mean(tISI));
+                    count(row*nMaxX+col+1) = count(row*nMaxX+col+1) + 1;
+                    infinity = isinf(mMeanFreq);
+                    if ~isempty(infinity)
+                        mMeanFreq(infinity) = 0;
+                    end
                 end
             end
         end
@@ -163,17 +174,17 @@ xlabel('Time (s)');
 ylabel('Neurons');
 
 if bFreqOn
-    mMeanFreq = mMeanFreq./length(spikeList);
-    %x = [1 : (nMaxY+1)*(nMaxY+1)];
-
+    mMeanFreq = mMeanFreq./count;
+    infinity = isinf(mMeanFreq);
+    if ~isempty(infinity)
+        mMeanFreq(infinity) = 0;
+    end
+    
     % - Make a new subplot
     vNewSubplot = [.8 0 .2 1] .* [fWidth fHeight fWidth fHeight];
     vNewSubplot(1:2) = vNewSubplot(1:2) + vWindow(1:2);
 
     subplot('position',vNewSubplot);
-    %h = subplot('position',[.7 .1 .2 .8]);
-
-    %axis(h,[0 max(mMeanFreq) 0 (nMaxX+1)*(nMaxY+1)]);
 
     barh(mMeanFreq,1);
 
@@ -183,7 +194,6 @@ if bFreqOn
     axis([0 max(mMeanFreq) 0 ((nMaxX+1)*(nMaxY+1))]);
     xlabel('Mean \it{f} (Hz)');
 
-    %axis(h,[0 max(mMeanFreq) 0 (nMaxX+1)*(nMaxY+1)]);
 end
 
 return;

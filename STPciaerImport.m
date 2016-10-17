@@ -1,7 +1,7 @@
 function [varargout] = STPciaerImport(strFilename, cellstasChannelSpecs, stasChannelID)
 
 % STPciaerImport - FUNCTION Import a spike train observed from the PCI-AER monitor
-% $Id: STPciaerImport.m 3985 2006-05-09 13:03:02Z dylan $
+% $Id: STPciaerImport.m 11424 2009-04-08 13:24:44Z emre $
 %
 % Usage: [stTrainOut1, stTrainOut2, ...] = STPciaerImport(strFilename ...
 %           <, cellstasChannelSpecs, stasChannelID>)
@@ -124,6 +124,7 @@ if (isempty(spikeList))
 	return;
 end
 
+
 % -- Determine whether we're using ISIs or not
 vISIs = diff(spikeList(:, 1));
 
@@ -155,20 +156,17 @@ vMasked = bitshift(vShifted, 0, nChannelIDBits);
 vChannelIDs = vMasked;
 
 nReturnIndex = 1;
-for (nChannelIndex = 1:length(vbFilterChannel))
+for nChannelIndex = 1:length(vbFilterChannel)
    if (vbFilterChannel(nChannelIndex))
       % - Filter the spike list
       filtSpikeList = spikeList(vChannelIDs == (nChannelIndex-1), :);
    
       % - Detect and handle a zero-duration train
       if (isempty(filtSpikeList))
-	      mapping.tDuration = 0;
-      	mapping.fTemporalResolution = fImportTemporalFrequency;
-         mapping.stasSpecification = STAddrSpecIgnoreSynapseNeuron(1, 0, 0);
-	      mapping.spikeList = [];
-	      mapping.bChunkedMode = false;
-	      stTrain.mapping = mapping;
-	      varargout{nChannelIndex} = stTrain;
+	      varargout{nChannelIndex} = STNullTrain('mapping', cellstasChannelSpecs{nChannelIndex});
+
+         % - Move to the next output argument
+         nReturnIndex = nReturnIndex + 1;
          continue;
       end
       
@@ -180,10 +178,17 @@ for (nChannelIndex = 1:length(vbFilterChannel))
       stasSpecification = cellstasChannelSpecs{nChannelIndex};
       mapping.stasSpecification = stasSpecification;
       
+      % - Get the hardware address extraction function for this channel
+      if (iscell(stOptions.fhHardwareAddressExtraction))
+         fhHardwareAddressExtraction = stOptions.fhHardwareAddressExtraction{nChannelIndex};
+      else
+         fhHardwareAddressExtraction = stOptions.fhHardwareAddressExtraction;
+      end
+      
       % - Filter spikes through the addressing format
       nRequiredFields = sum(~[stasSpecification.bIgnore]);
       clear addr;
-      [addr{1:nRequiredFields}] = STAddrPhysicalExtract(filtSpikeList(:, 2), stasSpecification);
+      [addr{1:nRequiredFields}] = fhHardwareAddressExtraction(filtSpikeList(:, 2), stasSpecification);
       filtSpikeList(:, 2) = STAddrLogicalConstruct(addr{:}, stasSpecification);
       mapping.spikeList = filtSpikeList;
       

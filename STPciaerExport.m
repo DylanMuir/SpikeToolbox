@@ -1,7 +1,7 @@
 function [mHardTrain] = STPciaerExport(stMappedTrain, strFileName)
 
 % STPciaerExport - FUNCTION Export a mapped spike train to a file or to text
-% $Id: STPciaerExport.m 3987 2006-05-09 13:38:38Z dylan $
+% $Id: STPciaerExport.m 11393 2009-04-02 13:48:59Z dylan $
 %
 % Usage: [mHardTrain] = STPciaerExport(stMappedTrain)
 %        [mHardTrain] = STPciaerExport(stMappedTrain, strFileName)
@@ -16,6 +16,10 @@ function [mHardTrain] = STPciaerExport(stMappedTrain, strFileName)
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 23rd April, 2004
 % Copyright (c) 2004, 2005 Dylan Richard Muir
+
+% -- Get toolbox options
+stO = STOptions;
+
 
 % -- Check arguments
 
@@ -100,10 +104,11 @@ for (nChunkIndex = 1:length(spikeList))
       stasSpecification = stOptions.stasDefaultOutputSpecification;
    end
    
-   % - Convert to physical addresses
+   % -- Convert to physical addresses
+   % - Use the specified translation function
    nRequiredAddressFields = sum(~[stasSpecification.bIgnore]);
    [addr{1:nRequiredAddressFields}] = STAddrLogicalExtract(rawSpikeList(:, 2), stasSpecification);
-   rawSpikeList(:, 2) = STAddrPhysicalConstruct(stasSpecification, addr{:});
+   rawSpikeList(:, 2) = stO.fhHardwareAddressConstruction(stasSpecification, addr{:});
    
    % - Rearrange columns
    %rawSpikeList = [rawSpikeList(:, 2) rawSpikeList(:, 1)];

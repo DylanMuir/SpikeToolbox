@@ -7,7 +7,6 @@
 <name>Spike</name>
 <type>toolbox</type>
 <icon>an_spike.gif</icon>
-<help_contents_icon>$toolbox/matlab/icons/book_mat.gif</help_contents_icon>
 <help_location>./spike</help_location>
 
 <list>

@@ -1,7 +1,7 @@
 function [stOptions] = STToolboxDefaults
 
 % STToolboxDefaults - FUNCTION Creates the user-configurable default options for the spike toolbox
-% $Id: STToolboxDefaults.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STToolboxDefaults.m 11393 2009-04-02 13:48:59Z dylan $
 %
 % Usage: [stOptions] = STToolboxDefaults
 % Returns a Spike Toolbox options structure containing the default options for
@@ -54,7 +54,7 @@ stasSpecificationOutput(2).bReverse = true;
 stOptions.stasDefaultOutputSpecification = stasSpecificationOutput;
 
 % - Set the default monitoring addressing modes
-%   Default is sequencer on channel 0, Elisabetta's chip on  channel 1
+%   Default is sequencer on channel 0, Elisabetta's chip on channel 1
 stasSpecificationElisabetta = STAddrSpecIgnoreSynapseNeuron(0, 0, 5);
 stOptions.MonitorChannelsAddressing = {stasSpecificationOutput, stasSpecificationElisabetta, [], []};
 
@@ -62,5 +62,10 @@ stOptions.MonitorChannelsAddressing = {stasSpecificationOutput, stasSpecificatio
 %   Default is 14-bit chip ID, 2-bit channel ID
 stOptions.stasMonitorChannelID = STAddrSpecChannel(14, 2);
 
+% - Set the default logical-hardware address translator function
+stOptions.fhHardwareAddressConstruction = @STAddrPhysicalConstruct;
+
+% - Set the default hardware-logical address translator function
+stOptions.fhHardwareAddressExtraction = @STAddrPhysicalExtract;
 
 % --- END of STToolboxDefaults.m ---

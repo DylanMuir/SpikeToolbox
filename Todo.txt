@@ -1,5 +1,5 @@
 TODO - List of desired functionality for the spike toolbox
-$Id: Todo.txt 7737 2007-10-05 13:54:24Z dylan $
+$Id: Todo.txt 8352 2008-02-04 17:53:02Z dylan $
  
 --- Desired functionality
 * Fix STExtract so that it has a reasonable interpretation for minimum and maximum addresses (ie a per-field inclusion rather than an everything-in-between inclusion)
@@ -10,7 +10,6 @@ $Id: Todo.txt 7737 2007-10-05 13:54:24Z dylan $
 * Make warnings suppressable, especially 'zero duration train' warnings
 * See if http://glab.bcm.tmc.edu/signal_processing_techniques/spt_data_ana_theor_rout.html has any good ideas for functionality
 * Make all plotting functions "sub-plottable"
-* Use comb filtering of ISIs for poisson spike generation
 
 --- Implemented functionality
 * Modified STInstantiate, STMap, STMultiplex and STPlotRaster to handle cell arrays of spike trains.
@@ -38,5 +37,6 @@ $Id: Todo.txt 7737 2007-10-05 13:54:24Z dylan $
 * Add memory (non-ergodic) capability for spike-train generation
 * Implement STPlotInstFreq to plot ISIs a la Hahnloser
 * Fix STStimulate so it observes the monitor channel specifications
+* Use comb filtering of ISIs for poisson spike generation
 
 --- END of TODO ---

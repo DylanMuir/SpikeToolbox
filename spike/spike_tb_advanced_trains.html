@@ -1,5 +1,5 @@
 <!-- spike_tb_advanced_trains.html - Advanced spike trains
-     $Id: spike_tb_advanced_trains.html 1481 2005-08-29 12:41:53Z dylan $
+     $Id: spike_tb_advanced_trains.html 8349 2008-02-04 17:51:24Z dylan $
      
      Author: Dylan Muir <dylan@ini.phys.ethz.ch>
      Created: 22nd August, 2005
@@ -34,6 +34,7 @@ This topic discusses spike train generation, with particular emphasis on generat
 
 <span class="h4">
 <img src="bullet_orange.gif" class="bullet" /><a href="#FreqProfiles">Available frequency profiles</a><br />
+<img src="bullet_orange.gif" class="bullet" /><a href="#Temporal">Temporal properties of spike train generators</a><br />
 <img src="bullet_orange.gif" class="bullet" /><a href="#Correlated">Generating correlated spike trains</a><br />
 <img src="bullet_orange.gif" class="bullet" /><a href="#NonErgodic">Non-ergodic spike trains</a><br />
 </span>
@@ -47,7 +48,19 @@ This topic discusses spike train generation, with particular emphasis on generat
 	<li><code>'constant'</code> - A constant-frequency spike train is just that -- a train where the average frequency is constant for the entire train.</li>
 	<li><code>'linear'</code> - This profile allows trains to be described with a linear change in average frequency over the duration of the train.  The user specifies the start and end frequencies in Hz.</li>
 	<li><code>'sinusoid'</code> - A spike train with a sinusoidal frequency profile has an ideal instantaneous freqeuncy defined by a sine wave.  The user specifies a minimum and maximum value for spike train frequency, as well as the cycle period.</li>
-	<li><code>'gamma'</code> - This frequency profile defines a spike train in terms of an inter-spike interval profile described with a gamma <abbr title="Probability Density Function">PDF</abbr>.  The user specifies a mean <abbr title="Inter-Spike Interval">ISI</abbr>, as well as the <abbr title="Probability Density Function">PDF</abbr> variance.</li>
+</ul>
+</p>
+
+<hr />
+
+<p>
+<span class="h3"><a name="Temporal" id="Temporal" />Temporal properties of spike train generators</span><br />
+<a href="function/STInstantiate.html" class="function">STInstantiate</a> provides an interface to several spike train generation modes:
+<ul>
+	<li><b>Regular</b> spike trains have constant inter-spike intervals for constant-frequency spike trains. For spike trains with modulated frequency profiles, spikes are placed such that the instantaneous frequency is approximated as closely as is possible with discrete spikes.  Spike times are predictable and regular.</li>
+	<li><b>Poisson</b> spike trains have ISIs drawn from an inhomogeneous Poisson distribution, defined by the frequency profile of the spike train.  In the limit of a constant frequency spike train, ISIs are drawn from an homogeneous Poisson distribution.  The thinning algorithm <a href="#ref1">[1]</a> is used to generate inhomogeneous spike trains.</li>
+	<li><b>Gaussian</b> spike trains have ISIs drawn from a Gaussian distribution with its mean defined by the frequency of a constant spike train, and variance supplied as a parameter to <a href="function/STInstantiate.html" class="function">STInstantiate</a>.  Only constant-frequency spike trains are supported.  These trains are a more realistic simulation of neurons with a constant average spiking frequency.</li>
+	<li><b>Gamma</b> spike trains have ISIs drawn from a Gamma distribution with its mean defined by the frequency of a constant spike train, and variance supplied as a parameter to <a href="function/STInstantiate.html" class="function">STInstantiate</a>.  Only constant-frequency spike trains are supported.  These trains are a good simulation of a renewal-process neuron, with an average refractory period.</li>
 </ul>
 </p>
 
@@ -123,6 +136,13 @@ figure, STPlotRaster(stLinear);<br />
 ...please put a figure here...
 </p>
 
+<hr />
+
+<p>
+<span class="h3">References</span><br />
+<a name="ref1" id="ref1" />[1] Lewis AW, Shedler GS. <b>Simulation of Nonhomogeneous Poisson Processes by Thinning.</b> 1978, Technical report, Naval Postgraduate School Monterey California.
+</p>
+
 
 <!-- Page footer -->
 
@@ -139,7 +159,7 @@ Random number generators
 <img src="arrow_right.png" border="0" /></a>
 </td>
 </table>
-<span class="svn_id">$Id: spike_tb_advanced_trains.html 1481 2005-08-29 12:41:53Z dylan $</span>
+<span class="svn_id">$Id: spike_tb_advanced_trains.html 8349 2008-02-04 17:51:24Z dylan $</span>
 
 </body>
 </html>

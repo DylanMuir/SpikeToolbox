@@ -1,7 +1,7 @@
 function [cstTrain] = STCreateConstant(fFreq)
 
 % STCreateConstant - FUNCTION Create a constant frequency spike train definition
-% $Id: STCreateConstant.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STCreateConstant.m 8352 2008-02-04 17:53:02Z dylan $
 %
 % Usage: [stTrain] = STCreateConstant(fFrequency)
 %        [cstTrain] = STCreateConstant(vfFreqyency)
@@ -37,6 +37,7 @@ for (nTrainIndex = 1:nNumTrains)
     cstTrain{nTrainIndex}.definition.fFreq = fFreq(nTrainIndex);
     cstTrain{nTrainIndex}.definition.fhInstFreq = @STInstantaneousFrequencyConstant;
     cstTrain{nTrainIndex}.definition.fhPlotFunction = @STPlotDefConstant;
+    cstTrain{nTrainIndex}.definition.fMaxFreq = fFreq(nTrainIndex);
 end
 
 % - Fix output variables for only a single spike train

@@ -1,11 +1,11 @@
-function [mScanPath mDist mActSuppr] =  STPlotScanPath(stTrain,bPlot)
+function [mScanPath mDist mActSuppr] =  STPlotScanPath(stTrain, bPlot)
 
 % STPlotScanPath - FUNCTION Returns and plots the "scanpath" from a spike
 % train, it returns the list of address of the active neurons and the duration of
 % the time interval of their activation.
-% $Id: STPlotScanPath.m 8602 2008-02-27 17:49:21Z dylan $
+% $Id: STPlotScanPath.m 8603 2008-02-27 17:49:41Z dylan $
 %
-% Usage:  STPlotScanPath(stTrain<,bPlot)
+% Usage:  [mScanPath mDist mActSuppr] = STPlotScanPath(stTrain <, bPlot>)
 %
 % Where: 'stTrain' is a mapped spike train. This function scans the spike
 % train and returns the address and the time interval of the activation of
@@ -21,6 +21,7 @@ function [mScanPath mDist mActSuppr] =  STPlotScanPath(stTrain,bPlot)
 %
 % 'bPlot' if one a plot of the scanpath is produced, the default is zero;
 % the plot is created only for 2D neuron's arrays
+
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 2nd April, 2004 (Modified from STPlot2DISI by Chiara)
 % Copyright (c) 2004, 2005 Chiara Bartolozzi

@@ -1,13 +1,13 @@
-function [tSpikeTimes] = STTestSpikePoisson(tTimeTrace, tLastSpike, fhInstFreq, ...
+function [tSpikeTimes] = STTestSpikeGaussian(tTimeTrace, tLastSpike, fhInstFreq, ...
                                             	definition, vfRandList, fMemTau, fISIVar)
 
-% STTestSpikePoisson - FUNCTION Internal spike creation test function
-% $Id: STTestSpikePoisson.m 8349 2008-02-04 17:51:24Z dylan $
+% STTestSpikeGaussian - FUNCTION Internal spike creation test function
+% $Id: STTestSpikeGaussian.m 8603 2008-02-27 17:49:41Z dylan $
 %
 % NOT for command-line use
 
-% Usage: [tSpikeTimes] = STTestSpikePoisson(tTimeTrace, tLastSpike, fhInstFreq, ...
-%                                           definition <, vfRandList, fMemTau, fISIVar>)
+% Usage: [tSpikeTimes] = STTestSpikeGaussian(tTimeTrace, tLastSpike, fhInstFreq, ...
+%                                            definition, vfRandList, fMemTau, fISIVar)
 %
 % 'vtTimeTrace' is a vector of discrete time bins over which to generate the
 % spike train.  This may correspond to only a single chunk of the train, or the
@@ -41,10 +41,10 @@ InstanceTemporalResolution = stOptions.InstanceTemporalResolution;
 
 % -- Check arguments
 
-if (nargin < 4)
-   disp('*** STTestSpikePoisson: Incorrect usage.');
+if (nargin < 7)
+   disp('*** STTestSpikeGaussian: Incorrect usage.');
    disp('       This is an internal spike creation test function');
-   help private/STTestSpikePoisson;
+   help private/STTestSpikeGaussian;
    help private/STSpikeCreationTestDescription;
    return;
 end
@@ -56,25 +56,31 @@ bISIMode = true;
 
 if (~exist('fMemTau', 'var') || isempty(fMemTau))
    fMemTau = [];
-else
    bISIMode = false;
 end
 
 if (~exist('vfRandList', 'var') || isempty(vfRandList))
    vfRandList = [];
-else
    bISIMode = false;
 end
 
 
-% --  Call the generation algorithms
+% --  Call the generation algorithm
 
 if (bISIMode)
-   tSpikeTimes = STTestSpikePoissonISI(tTimeTrace, tLastSpike, fhInstFreq, ...
-                                       definition, vfRandList, fMemTau, fISIVar);
-else
-   tSpikeTimes = STTestSpikePoissonSlow(tTimeTrace, tLastSpike, fhInstFreq, ...
-                                        definition, vfRandList, fMemTau, fISIVar);
+   disp('--- STTestSpikeGaussian: Warning: Correlated and non-ergodic spike trains are not supported by');
+   disp('       ''gaussian'' mode generation.  This spike train will be generated without these options.');
 end
 
-% --- END of STTestSpikePoisson.m ---
+% - Was a variable-frequency spike train requested?
+if (~strcmp(definition.strType, 'constant'))
+   disp('*** STTestSpikeGaussian: Error: Variable-frequency spike trains are not supported by ''gaussian''');
+   disp('       mode generation.  An empty spike train will be returned.');
+   tSpikeTimes = [];
+   return;
+end
+
+% - Call the generation algorithm
+tSpikeTimes = STTestSpikeGaussianISI(tTimeTrace, tLastSpike, fhInstFreq, definition, vfRandList, fMemTau, fISIVar);
+
+% --- END of STTestSpikeGaussian.m ---

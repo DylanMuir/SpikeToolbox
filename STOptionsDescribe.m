@@ -1,7 +1,7 @@
 function STOptionsDescribe(stOptions)
 
 % STOptionsDescribe - FUNCTION Display info about an options structure
-% $Id: STOptionsDescribe.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STOptionsDescribe.m 11422 2009-04-08 12:22:44Z dylan $
 %
 % Usage: STOptionsDescribe(stOptions)
 %        STOptionsDescribe
@@ -53,9 +53,24 @@ fprintf(1, '   Default smoothing kernel for cross-correlation analysis [%s]\n', 
 fprintf(1, '   Default factor for determining smoothing window for cross-correlation [%.0f]\n', stOptions.DefaultCorrSmoothingWindowFactor);
 fprintf(1, '   Default output addressing specification\n      ');
 STAddrSpecDescribe(stOptions.stasDefaultOutputSpecification);
+fprintf(1, '   Address fields to physical address translation function [%s]\n', func2str(stOptions.fhHardwareAddressConstruction));
+
+if (iscell(stOptions.fhHardwareAddressExtraction))
+   fprintf(1, '   Physical address to address fields translation functions [');
+   for (nChannelID = 1:numel(stOptions.fhHardwareAddressExtraction))
+      fprintf(1, '%s', func2str(stOptions.fhHardwareAddressExtraction{nChannelID}));
+
+      if (nChannelID < numel(stOptions.fhHardwareAddressExtraction))
+         fprintf(1, ', ');
+      end
+   end
+   fprintf(1, ']\n');
+else
+   fprintf(1, '   Physical address to address fields translation function [%s]\n', func2str(stOptions.fhHardwareAddressExtraction));
+end
+
 fprintf(1, '   Monitor channel ID addressing specification\n      ');
 STAddrSpecDescribe(stOptions.stasMonitorChannelID);
-
 fprintf(1, '   Monitor channel address mappings:\n');
 
 for (nChannelIndex = 1:length(stOptions.MonitorChannelsAddressing))

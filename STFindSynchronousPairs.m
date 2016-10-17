@@ -1,14 +1,10 @@
 function [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2, tWindowSize, strLevel)
 
 % STFindSynchronousPairs - FUNCTION Identify synchronous spikes in spike trains
-% $Id: STFindSynchronousPairs.m 3987 2006-05-09 13:38:38Z dylan $
+% $Id: STFindSynchronousPairs.m 8352 2008-02-04 17:53:02Z dylan $
 %
-% Usage: [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2)
-%        [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2, tWindowSize)
-%        [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2, tWindowSize, strLevel)
-%        [stPairs] = STFindSynchronousPairs(stTrainArray)
-%        [stPairs] = STFindSynchronousPairs(stTrainArray, tWindowSize)
-%        [stPairs] = STFindSynchronousPairs(stTrainArray, tWindowSize, strLevel)
+% Usage: [stPairs] = STFindSynchronousPairs(stTrain1, stTrain2 <, tWindowSize, strLevel>)
+%        [stPairs] = STFindSynchronousPairs(stTrainArray <, tWindowSize, strLevel>)
 %
 % 'stPairs' will contain a spike train instance, each spike of which
 % represents a spike in 'stTrain1' that had a corresponding spike in
@@ -58,6 +54,12 @@ if ((nargin > 1) && iscell(stTrain1))
 else  % The user hasn't supplied a cell array or spike trains
    if (nargin > 4)
       disp('--- STFindSynchronousPairs: Extra arguments ignored');
+   end
+   
+   if (nargin < 2)
+      disp('*** STFindSynchronousPairs: Incorrect usage');
+      help STFindSynchronousPairs;
+      return;
    end
 
    if (~exist('tWindowSize', 'var'))

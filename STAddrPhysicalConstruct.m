@@ -1,12 +1,12 @@
 function [addrPhys] = STAddrPhysicalConstruct(varargin)
 
 % STAddrPhysicalConstruct - FUNCTION Determine a synapse physical address
-% $Id: STAddrPhysicalConstruct.m 3987 2006-05-09 13:38:38Z dylan $
+% $Id: STAddrPhysicalConstruct.m 9601 2008-06-11 08:40:52Z dylan $
 %
 % Usage: [addrPhys] = STAddrPhysicalConstruct(nAddr1, nAddr2, ...)
 %        [addrPhys] = STAddrPhysicalConstruct(stasSpecification, nAddr1, nAddr2, ...)
 %
-% STAddrLogicalConstruct will return the logical address corresponding to a
+% STAddrPhysicalConstruct will return the hardware address corresponding to a
 % synapse address provided by the addressing fields.  The returned address will
 % take the form defined by the addressing specification.  If a specification
 % is not supplied in the argument list, the default output address

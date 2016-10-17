@@ -1,7 +1,7 @@
 function [cstTrain] = STCreateLinear(fStartFreq, fEndFreq)
 
 % STCreateLinear - FUNCTION Create a linearly changing frequency spike train definition
-% $Id: STCreateLinear.m 2411 2005-11-07 16:48:24Z dylan $
+% $Id: STCreateLinear.m 8352 2008-02-04 17:53:02Z dylan $
 %
 % Usage: [stTrain] = STCreateLinear(fStartFreq, fEndFreq)
 %        [cstTrain] = STCreateLinear(vfStartFreq, vfEndFreq)
@@ -77,6 +77,7 @@ for (nTrainIndex = 1:nNumTrains)
     cstTrain{nTrainIndex}.definition.strType = 'linear';
     cstTrain{nTrainIndex}.definition.fStartFreq = fStartFreq(nTrainIndex);
     cstTrain{nTrainIndex}.definition.fEndFreq = fEndFreq(nTrainIndex);
+    cstTrain{nTrainIndex}.definition.fMaxFreq = max([fStartFreq(nTrainIndex) fEndFreq(nTrainIndex)]);
     cstTrain{nTrainIndex}.definition.fhInstFreq = @STInstantaneousFrequencyLinear;
     cstTrain{nTrainIndex}.definition.fhPlotFunction = @STPlotDefLinear;
 end

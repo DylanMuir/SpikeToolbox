@@ -1,7 +1,7 @@
 function [hFigure] = STPlotInstFreq(stTrain, varargin)
 
 % STPlotInstFreq - FUNCTION Plot instantaneous spiking frequency of a spike train
-% $Id: STPlotInstFreq.m 8602 2008-02-27 17:49:21Z dylan $
+% $Id: STPlotInstFreq.m 8603 2008-02-27 17:49:41Z dylan $
 %
 % Usage: <[hFigure]> = STPlotInstFreq(stTrain),
 %                         <'instance' / 'mapping'>,

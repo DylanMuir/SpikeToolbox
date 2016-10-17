@@ -1,19 +1,20 @@
 function mMeanFreq = STPlot2DMeanFreq(stTrain, bPlot, tBin_0, tBin_f)
 
 % STPlot2DMeanFreq - FUNCTION Make a 2D plot of the mean frequency over a time interval of each pixel in a 2D array.
-% $Id: STPlot2DMeanFreq.m 4230 2006-06-07 19:56:58Z chiara $
+% $Id: STPlot2DMeanFreq.m 9691 2008-06-25 11:54:14Z chicca $
 %
 % Usage: STPlot2DMeanFreq(stTrain)
 %        STPlot2DMeanFreq(stTrain, bPlot)
 %        STPlot2DMeanFreq(stTrain, tBin_0, tBin_f)
-%         STPlot2DMeanFreq(stTrain, bPlot, tBin_0, tBin_f)
+%        STPlot2DMeanFreq(stTrain, bPlot, tBin_0, tBin_f)
 %
-% Where: 'stTrain' is a mapped spike train. If bPlot = 1 a imagesc type of
-% plot will be created in the current axes (or a new figure created) showing
-% the mean frequency of each pixel.
+% Where: 'stTrain' is a mapped spike train. Only major address fields 
+% contribute to the 2D address space, minor address fields are ignored.
+% If bPlot = 1 a imagesc type of plot will be created in the current 
+% axes (or a new figure created) showing the mean frequency of each pixel.
 % If bPlot  = 0, the figure is not created and the function will return
 % the mean frequency of each pixel.
-% If not specified the plot is created
+% If not specified the plot is created.
 
 % Author: Dylan Muir <dylan@ini.phys.ethz.ch>
 % Created: 2nd April, 2004 (modified from STPlotRaster by Chiara)
@@ -79,9 +80,10 @@ stMap = stTrain.mapping;
     	 				  
 % -- CHIARA 
 % -- find range of Y neurons and X neurons:
+nNumMajorFields = sum([stMap.stasSpecification.bMajorField]);
 nNumAddrFields = sum(~[stMap.stasSpecification.bIgnore]);
 
-if nNumAddrFields ~= 2    %check for 2D spike trains
+if nNumMajorFields ~= 2    %check for 2D spike trains
   disp('*** STPlot2DMeanFreq: This function supports only 2D arrays');
   return;
 end

@@ -1,5 +1,5 @@
 <!-- STCreate.html
-     $Id: STCreate.html 1783 2005-08-31 21:05:51Z dylan $
+     $Id: STCreate.html 8347 2008-02-04 17:48:50Z dylan $
      
      Author: Dylan Muir <dylan@ini.phys.ethz.ch>
      Created: 3rd March, 2005
@@ -39,7 +39,6 @@ Create a spike train
 [stTrain] = STCreate('constant', fFreq, ...)
 [stTrain] = STCreate('linear', fStartFreq, fEndFreq, ...)
 [stTrain] = STCreate('sinusoid', fMinFreq, fMaxFreq, tPeriod, ...)
-[stTrain] = STCreate('gamma', fMeanISI, fVarISI, ...)
 [stTrain] = STCreate(..., strTemporalType, tDuration &lt;, nAddr1, nAddr2, ...&gt;)
 [stTrain] = STCreate(..., strTemporalType, tDuration &lt;, stasSpecification, nAddr1, nAddr2, ...&gt;) 
 </span>
@@ -50,13 +49,12 @@ Create a spike train
 <span class="h2">Description</span><br />
 STCreate will create a spike train definition of various types.  The first
 argument specifies the type of spike train, and must be one of <code>{constant,
-linear, sinusoid, gamma}</code>.
+linear, sinusoid}</code>.
 </p>
 
 <p>
 The second set of parameters is passed to the definition creation
-function (See <a href="STCreateConstant.html" class="function">STCreateConstant</a>, <a href="STCreateLinear.html" class ="function">STCreateLinear</a>, <a href="STCreateSinusoid.html" class="function">STCreateSinusoid</a> and
-<a href="STCreateGamma.html" class="function">STCreateGamma</a> for details of the parameters relating to the spike train
+function (See <a href="STCreateConstant.html" class="function">STCreateConstant</a>, <a href="STCreateLinear.html" class ="function">STCreateLinear</a> and <a href="STCreateSinusoid.html" class="function">STCreateSinusoid</a> for details of the parameters relating to the spike train
 types).  When called with only the train definition parameters, <code>stTrain</code>
 will comprise of a single field <code>defintion</code> containing the spike train
 definition.
@@ -97,7 +95,6 @@ will have identical spike times for all spikes.
 <a href="STCreateConstant.html">STCreateConstant</a>,
 <a href="STCreateLinear.html">STCreateLinear</a>,
 <a href="STCreateSinusoid.html">STCreateSinusoid</a>,
-<a href="STCreateGamma.html">STCreateGamma</a>,
 <a href="STInstantiate.html">STInstantiate</a>,
 <a href="STMap.html">STMap</a>
 </span>
@@ -118,7 +115,7 @@ STConcat</a>
 <img src="arrow_right.png" border="0" /></a>
 </td>
 </table>
-<span class="svn_id">$Id: STCreate.html 1783 2005-08-31 21:05:51Z dylan $</span>
+<span class="svn_id">$Id: STCreate.html 8347 2008-02-04 17:48:50Z dylan $</span>
 
 </body>
 </html>

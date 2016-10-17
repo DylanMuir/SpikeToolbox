@@ -1,15 +1,16 @@
 function [vFreqMean, vFreqStd, vKey] = STFreqMeanStd(stMappedTrain)
 
-% STFreqMeanStd - FUNCTION returns the mean frequency and its standard
-% deviation (by error propagation) for each address in the spike train:
+% STFreqMeanStd - FUNCTION Returns the mean frequency and its standard deviation
+% $Id: STFreqMeanStd.m 8603 2008-02-27 17:49:41Z dylan $
+%
+% Usage: [vFreqMean, vFreqStd, vKey] = STFreqMeanStd(stMappedTrain)
+%
+% Returns the mean frequency and its standard deviation
+% (by error propagation) for each address in the spike train:
 % error propagation: if y = f(x,z), where x and z are the measures then
 % Dy = abs(df/dx)*Dx + abs(df/dz)*Dz (d.. means partial derivative,
 % D... is the standard deviation)
 % in our case x = ISI and f(x) = 1/x; therefore std of the frequency is std(x)/(mean(x))^2
-% $Id: STFreqMeanStd.m 379 2006-02-17 22:54:30Z chiara, from dylan's code
-% STProfileCountAddresses.m$
-%
-% Usage: [vFreqMean, vFreqStd, vKey] = STFreqMeanStd(stMappedTrain)
 %
 % 'stMappedTrain' is a spike train containing a mapping.
 %
@@ -19,6 +20,7 @@ function [vFreqMean, vFreqStd, vKey] = STFreqMeanStd(stMappedTrain)
 % In case of sparse spikes, we add fake spikes to include a measure of
 % the latency of the first spike, with respect to the start of the
 % acquisition and to the end of the acquisition
+
 % Author: ChiaraBartolozzi <chiara@ini.phys.ethz.ch>
 % Created: 17th February, 2006 (from STProfileCountAddresses)
 

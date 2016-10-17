@@ -1,5 +1,5 @@
 <!-- spike_tb_options.html - Managing toolbox options
-     $Id: spike_tb_options.html 1783 2005-08-31 21:05:51Z dylan $
+     $Id: spike_tb_options.html 11422 2009-04-08 12:22:44Z dylan $
      
      Author: Dylan Muir <dylan@ini.phys.ethz.ch>
      Created: 22nd August, 2005
@@ -57,20 +57,22 @@ Toolbox options are always stored and manipulated as a MATLAB structure.  You sh
 <p class="script">
 stO = STOptions<br />
 stO = <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature: [1x11 char]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ToolboxVersion: [1x1 double]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bDisplayProgress: [1x1 logical]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;InstanceTemporalResolution: [1x1 double]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MappingTemporalResolution: [1x1 double]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RandomGenerator: [1x1 function_handle]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SpikeChunkLength: [1x1 double]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DefaultSynchWindowSize: [1x1 double]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DefaultCorrWindow: [1x1 double]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DefaultCorrSmoothingKernel: [1x8 char]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;DefaultCorrSmoothingWindowFactor: [1x1 double]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stasDefaultOutputSpecification: [1x2 struct]<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MonitorChannelsAddressing: {[1x2 struct]&nbsp;&nbsp;[1x1 struct]&nbsp;&nbsp;[]&nbsp;&nbsp;[]}<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stasMonitorChannelID: [1x2 struct]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature:&nbsp;'ST_0-041_OPT'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ToolboxVersion:&nbsp;0.0410<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bDisplayProgress:&nbsp;1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;InstanceTemporalResolution:&nbsp;9.9000e-07<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MappingTemporalResolution:&nbsp;1.0000e-06<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RandomGenerator:&nbsp;@rand<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SpikeChunkLength:&nbsp;2097152<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DefaultSynchWindowSize:&nbsp;1.0000e-03<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DefaultCorrWindow:&nbsp;1.0000e-03<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DefaultCorrSmoothingKernel:&nbsp;'gaussian'<br />
+&nbsp;&nbsp;&nbsp;&nbsp;DefaultCorrSmoothingWindowFactor:&nbsp;10<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stasDefaultOutputSpecification:&nbsp;[1x2&nbsp;struct]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MonitorChannelsAddressing:&nbsp;{[1x2&nbsp;struct]&nbsp;&nbsp;[1x1&nbsp;struct]&nbsp;&nbsp;[]&nbsp;&nbsp;[]}<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stasMonitorChannelID:&nbsp;[1x2&nbsp;struct]<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhHardwareAddressConstruction:&nbsp;@STAddrPhysicalConstruct<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fhHardwareAddressExtraction:&nbsp;@STAddrPhysicalExtract<br />
 </p>
 
 <p>
@@ -88,8 +90,10 @@ The options structure field names are relatively self-descriptive, but...
 	<li><code>DefaultCorrSmoothingKernel</code> - This string specifies which smoothing kernel that <a href="function/STCrossCorrelation.html" class="function">STCrossCorrelation</a> should use by default.  See the <a href="function/STCrossCorrelation.html"><span class="function">STCrossCorrelation</span> documentation</a> for possible alternatives for this option.</li>
 	<li><code>DefaultCorrSmoothingWindowFactor</code> - This option specifies what proportion of the correlation window the default smoothing window will be, when performing a cross correlation using <a href="function/STCrossCorrelation.html" class="function">STCrossCorrelation</a>.</li>
 	<li><code>stasDefaultOutputSpecification</code> - This addressing specification will be used by default when mapping a spike train.  See <a href="spike_tb_addressing.html">Understanding toolbox addressing</a> for more information on addressing specifications.</li>
-	<li><code>MonitorChannelsAddressing</code> - This cell array of addressing specifications determines which <abbr title="Address Event Representation">AER</abbr> bus monitor channels will be imported when using <a ahref="function/STStimulate.html">STStimulate</a>, as well as the addressing schemes used on each channel.  See <a href="spike_tb_addressing.html#DefaultSpec">Setting default addressing schemes</a> for more information on monitor channel addressing.</li>
+	<li><code>MonitorChannelsAddressing</code> - This cell array of addressing specifications determines which <abbr title="Address Event Representation">AER</abbr> bus monitor channels will be imported when using <a href="function/STStimulate.html" class="function">STStimulate</a>, as well as the addressing schemes used on each channel.  See <a href="spike_tb_addressing.html#DefaultSpec">Setting default addressing schemes</a> for more information on monitor channel addressing.</li>
 	<li><code>stasMonitorChannelID</code> - This addressing specification determines how to extract the monitor channel ID from a binary hardware address.   See <a href="spike_tb_addressing.html#Channel">Channel address specifications</a> for more information on channel addressing specifications.</li>
+	<li><code>fhHardwareAddressConstruction</code> - This function constructs a hardware address from a set of addressing fields, using an addressing specification you supply.  You normally won't need to change which function is called here, as the default (<a href="function/STAddrPhysicalConstruct.html" class="function">STAddrPhysicalConstruct</a>) handles all of the possibilities described in <a href="spike_tb_addressing.html">Understanding toolbox addressing</a>.  You might need to create your own hardware address construction function if the addressing used by your external device is extremely complex.</li>
+	<li><code>fhHardwareAddressExtraction</code> - This function converts a hardware address back into the separate addressing fields.  It performs the opposite task to <code>fhHardwareAddressConstruction</code>.  Again, you shouldn't need to change this option unless your addressing requirements are exceedingly complex.  The default function is <a href="function/STAddrPhysicalExtract.html" class="function">STAddrPhysicalExtract</a>, which is by default applied to all monitor channels.  You can optionally provide a cell array of functions, one per channel defined in <code>MonitorChannelsAddressing</code>.  In that case, the channel ID of a monitored spike train will determine which address tranlsation function in the <code>fhHardwareAddressExtraction</code> cell array is used.
 </ul>
 </p>
 
@@ -105,24 +109,26 @@ STOptionsDescribe<br />
 <p class="script">
 STOptionsDescribe;<br />
 --- Spike toolbox options:<br />
-&nbsp;&nbsp;&nbsp;Toolbox version [0.03]<br />
-&nbsp;&nbsp;&nbsp;Operation progress display is [on]<br />
-&nbsp;&nbsp;&nbsp;Default temporal resolution for spike trains:<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Instances [0.99] usec<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mappings [1.00] usec<br />
-&nbsp;&nbsp;&nbsp;Toolbox random number generator [rand]<br />
-&nbsp;&nbsp;&nbsp;Maximum spike chunk length [2097152] spikes<br />
-&nbsp;&nbsp;&nbsp;Default spike synchrony matching window [1.00] msec<br />
-&nbsp;&nbsp;&nbsp;Default window size for cross-correlation analysis [1.00] msec<br />
-&nbsp;&nbsp;&nbsp;Default smoothing kernel for cross-correlation analysis [gaussian]<br />
-&nbsp;&nbsp;&nbsp;Default factor for determining smoothing window for cross-correlation [10]<br />
-&nbsp;&nbsp;&nbsp;Default output addressing specification<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|(12)  Synapse address  (8)|(7)  Neuron address  (0)|<br />
-&nbsp;&nbsp;&nbsp;Monitor channel ID addressing specification<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|(15)  Channel ID  (14)|(13)  (Ignored)  (0)|<br />
-&nbsp;&nbsp;&nbsp;Monitor channel address mappings:<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[0]: |(12)  Synapse address  (8)|(7)  Neuron address  (0)|<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1]: |(7)  Neuron address  (0)|<br />
+&nbsp;&nbsp;&nbsp;Toolbox&nbsp;version&nbsp;[0.04]<br />
+&nbsp;&nbsp;&nbsp;Operation&nbsp;progress&nbsp;display&nbsp;is&nbsp;[on]<br />
+&nbsp;&nbsp;&nbsp;Default&nbsp;temporal&nbsp;resolution&nbsp;for&nbsp;spike&nbsp;trains:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Instances&nbsp;[0.99]&nbsp;usec<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mappings&nbsp;[1.00]&nbsp;usec<br />
+&nbsp;&nbsp;&nbsp;Toolbox&nbsp;random&nbsp;number&nbsp;generator&nbsp;[rand]<br />
+&nbsp;&nbsp;&nbsp;Maximum&nbsp;spike&nbsp;chunk&nbsp;length&nbsp;[2097152]&nbsp;spikes<br />
+&nbsp;&nbsp;&nbsp;Default&nbsp;spike&nbsp;synchrony&nbsp;matching&nbsp;window&nbsp;[1.00]&nbsp;msec<br />
+&nbsp;&nbsp;&nbsp;Default&nbsp;window&nbsp;size&nbsp;for&nbsp;cross-correlation&nbsp;analysis&nbsp;[1.00]&nbsp;msec<br />
+&nbsp;&nbsp;&nbsp;Default&nbsp;smoothing&nbsp;kernel&nbsp;for&nbsp;cross-correlation&nbsp;analysis&nbsp;[gaussian]<br />
+&nbsp;&nbsp;&nbsp;Default&nbsp;factor&nbsp;for&nbsp;determining&nbsp;smoothing&nbsp;window&nbsp;for&nbsp;cross-correlation&nbsp;[10]<br />
+&nbsp;&nbsp;&nbsp;Default&nbsp;output&nbsp;addressing&nbsp;specification<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|(8)&nbsp;&nbsp;Neuron&nbsp;address&nbsp;<->&nbsp;&nbsp;(4)|(3)&nbsp;&nbsp;Synapse&nbsp;address&nbsp;&nbsp;(0)|<br />
+&nbsp;&nbsp;&nbsp;Address&nbsp;fields&nbsp;to&nbsp;physical&nbsp;address&nbsp;translation&nbsp;function&nbsp;[STAddrPhysicalConstruct]<br />
+&nbsp;&nbsp;&nbsp;Physical&nbsp;address&nbsp;to&nbsp;address&nbsp;fields&nbsp;translation&nbsp;function&nbsp;[STAddrPhysicalExtract]<br />
+&nbsp;&nbsp;&nbsp;Monitor&nbsp;channel&nbsp;ID&nbsp;addressing&nbsp;specification<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|(15)&nbsp;&nbsp;Channel&nbsp;ID&nbsp;&nbsp;(14)|(13)&nbsp;&nbsp;(Ignored)&nbsp;&nbsp;(0)|<br />
+&nbsp;&nbsp;&nbsp;Monitor&nbsp;channel&nbsp;address&nbsp;mappings:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[0]:&nbsp;|(8)&nbsp;&nbsp;Neuron&nbsp;address&nbsp;<->&nbsp;&nbsp;(4)|(3)&nbsp;&nbsp;Synapse&nbsp;address&nbsp;&nbsp;(0)|<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1]:&nbsp;|(4)&nbsp;&nbsp;Neuron&nbsp;address&nbsp;&nbsp;(0)|<br />
 </p>
 
 <p>
@@ -183,7 +189,7 @@ Understanding addressing
 <img src="arrow_right.png" border="0" /></a>
 </td>
 </table>
-<span class="svn_id">$Id: spike_tb_options.html 1783 2005-08-31 21:05:51Z dylan $</span>
+<span class="svn_id">$Id: spike_tb_options.html 11422 2009-04-08 12:22:44Z dylan $</span>
 
 </body>
 </html>
